@@ -28,13 +28,6 @@ export function TopNav() {
         <h1 className="font-sora text-xl font-bold tracking-tight">
           Herd<span style={{ color: "var(--sage)" }}>Flow</span>
         </h1>
-        <span
-          className="text-[11px] font-semibold px-2 py-0.5 rounded-[20px]"
-          style={{ background: "var(--brown-soft)", color: "var(--brown)" }}
-          title="All data is synthetic — for demonstration"
-        >
-          Demo
-        </span>
       </Link>
 
       <div

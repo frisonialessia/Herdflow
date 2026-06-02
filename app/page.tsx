@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github } from "lucide-react";
 import { HeroDemo } from "@/components/HeroDemo";
 import { ZScoreExplainer } from "@/components/ZScoreExplainer";
+import { FarmMapPreview } from "@/components/FarmMapPreview";
 
 export default function LandingPage() {
   return (
@@ -66,6 +67,16 @@ export default function LandingPage() {
         </div>
 
         <HeroDemo />
+      </section>
+
+      <section className="max-w-[1100px] mx-auto px-6 py-8">
+        <div className="text-center mb-8">
+          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Your whole farm, at a glance</h2>
+          <p className="text-[15px] mt-2 max-w-[620px] mx-auto" style={{ color: "var(--muted)" }}>
+            Every animal on one live map — healthy, watch and critical at a glance. Click any pin to drill into its vitals.
+          </p>
+        </div>
+        <FarmMapPreview />
       </section>
 
       <section className="max-w-[1100px] mx-auto px-6 py-8">
