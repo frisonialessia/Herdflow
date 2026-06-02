@@ -36,3 +36,10 @@ Open http://localhost:3000
   |z|>3 = critical. This is what powers the alerts, the map pins, and the trend chart.
 
 All data is synthetic and for demonstration purposes only.
+
+## Docs
+
+- [`EXECUTIVE_SUMMARY.md`](./EXECUTIVE_SUMMARY.md) — one-page pitch
+- [`DOCUMENTATION.md`](./DOCUMENTATION.md) — master technical + product reference
+- [`ROADMAP.md`](./ROADMAP.md) — strategy & 0→1 roadmap
+- [`POC.md`](./POC.md) — detection-engine validation (run `node scripts/poc-eval.mjs`)
