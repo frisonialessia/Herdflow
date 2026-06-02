@@ -35,11 +35,48 @@ Open http://localhost:3000
 
 Swap the generator for real sensor ingestion later — the `Animal` shape stays the same.
 
-## Connecting Supabase (when ready)
+## Auth & Supabase
+
+HerdFlow has two automatic modes:
+
+- **Demo mode (no env vars)** — the synthetic generator drives the dashboard and
+  auth is bypassed. This is what's deployed publicly. Nothing to configure.
+- **Connected mode (env vars set)** — email **magic-link** auth + RLS take over.
+  Unauthenticated users are redirected to `/login`.
+
+The switch is `lib/supabase/config.ts` (`isSupabaseConfigured()`), checked in the
+middleware and layout.
+
+### Supabase setup (when ready)
 
 1. Create a Supabase project.
-2. Run `supabase/schema.sql` in the SQL editor (tables + RLS).
-3. Copy `.env.local.example` to `.env.local` and fill in URL + anon key.
-4. Replace `generateHerd()` calls with queries via `lib/supabase.ts`.
+2. Run `supabase/schema.sql` in the SQL editor (tables + RLS + `profiles` trigger).
+3. Copy `.env.local.example` to `.env.local` and fill in URL + anon/publishable key.
+4. **Magic link template** — in Supabase → Authentication → Email Templates →
+   *Magic Link*, point the link at our confirm route:
 
-Currently the demo does **not** require any environment variables.
+   ```
+   {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email
+   ```
+
+5. Set the Site URL (and any preview URLs) under Authentication → URL Configuration.
+
+> ⚠️ On the free tier, magic-link emails go through Supabase's shared SMTP with
+> low rate limits — fine for a demo, but wire up a real SMTP (e.g. Resend) before
+> relying on it.
+
+### Supabase file structure
+
+```
+lib/supabase/
+  config.ts       # isSupabaseConfigured() — the demo/connected switch
+  client.ts       # browser client (Client Components)
+  server.ts       # server client (Server Components, Route Handlers, Actions)
+  middleware.ts   # session refresh + route gating
+middleware.ts     # root middleware → updateSession()
+app/login/        # magic-link sign-in screen
+app/auth/         # confirm route handler + signOut action
+```
+
+Data still comes from `generateHerd()` even in connected mode — replacing it with
+real DB queries is the next step.
