@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github } from "lucide-react";
+import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github, Thermometer } from "lucide-react";
 import { HeroDemo } from "@/components/HeroDemo";
 import { ZScoreExplainer } from "@/components/ZScoreExplainer";
 import { FarmMapPreview } from "@/components/FarmMapPreview";
@@ -47,11 +47,11 @@ export default function LandingPage() {
           </p>
           <div className="flex gap-3 mt-8 flex-wrap justify-center lg:justify-start">
             <Link
-              href="/dashboard"
+              href="/dashboard?play=fever"
               className="text-white rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2"
               style={{ background: "var(--sage-deep)" }}
             >
-              Launch the live demo <ArrowRight size={16} strokeWidth={2} />
+              <Thermometer size={16} strokeWidth={2} /> See it catch a fever
             </Link>
             <a
               href="https://github.com/frisonialessia/Herdflow"

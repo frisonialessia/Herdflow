@@ -3,6 +3,7 @@ import { HerdProvider } from "@/components/HerdProvider";
 import { AnimalDrawer } from "@/components/AnimalDrawer";
 import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
+import { DemoAutoplay } from "@/components/DemoAutoplay";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,6 +21,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <DashboardShell>{children}</DashboardShell>
           <AnimalDrawer />
           <DemoControls />
+          <DemoAutoplay />
         </HerdProvider>
       </div>
     </div>
