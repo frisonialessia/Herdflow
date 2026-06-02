@@ -1,26 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { TopNav } from "@/components/TopNav";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "HerdFlow — Predictive livestock health",
   description: "Detect animal health anomalies before they're visible to the eye.",
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // In connected mode we surface a sign-out control when there's a session.
-  // In demo mode we never touch cookies, so the public build stays static.
-  let authed = false;
-  if (isSupabaseConfigured()) {
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    authed = Boolean(user);
-  }
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
@@ -33,7 +20,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               boxShadow: "0 30px 60px -30px rgba(58,90,64,0.28)",
             }}
           >
-            <TopNav authed={authed} />
+            <TopNav />
             {children}
           </div>
         </div>
