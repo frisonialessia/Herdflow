@@ -1,9 +1,12 @@
-import { generateHerd, herdSummary } from "@/lib/mock_data_generator";
-import { Species, SPECIES_LABEL } from "@/lib/types";
+"use client";
+
+import { useHerd } from "@/components/HerdProvider";
+import { herdSummary } from "@/lib/mock_data_generator";
+import { Species } from "@/lib/types";
 import { Download, BarChart3, PieChart } from "lucide-react";
 
 export default function ReportsPage() {
-  const herd = generateHerd();
+  const { herd } = useHerd();
   const s = herdSummary(herd);
 
   // health % per species

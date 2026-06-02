@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { generateHerd } from "@/lib/mock_data_generator";
+import { useState } from "react";
+import { useHerd } from "@/components/HerdProvider";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { TrendChart } from "@/components/TrendChart";
 import { fmtMetric, fmtZ, METRIC_LABEL } from "@/lib/format";
@@ -10,7 +10,7 @@ import { BarChart3, BatteryMedium, Activity, CheckCircle2 } from "lucide-react";
 const METRICS: MetricKey[] = ["temperature_c", "activity_index", "rumination_min"];
 
 export default function LivePage() {
-  const herd = useMemo(() => generateHerd(), []);
+  const { herd } = useHerd();
   const flagged = herd.filter((a) => a.status !== "healthy");
   const [animalId, setAnimalId] = useState(flagged[0]?.id ?? herd[0].id);
   const [metric, setMetric] = useState<MetricKey>("temperature_c");

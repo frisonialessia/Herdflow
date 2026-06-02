@@ -106,7 +106,7 @@ export function generateHerd(count = 40, seed = 99): Animal[] {
     const latest = series[series.length - 1];
 
     herd.push({
-      id: crypto.randomUUID(),
+      id: `an-${i}`,
       tag_id: `ES${(100000 + i * 7 + 1).toString()}`,
       name: `${FIRST[i % FIRST.length]}${i >= FIRST.length ? " " + (Math.floor(i / FIRST.length) + 1) : ""}`,
       species: sp,
