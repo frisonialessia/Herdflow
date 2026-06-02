@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sage-deep: #3a5a40;
+  --sage: #588157;
+  --sage-light: #a3b18a;
+  --olive: #6b7d4f;
+  --brown: #7a5230;
+  --brown-soft: #e6dccd;
+  --bg: #f0f0e8;
+  --card: #ffffff;
+  --card-soft: #f4f5ec;
+  --border: #e1e3d6;
+  --ink: #232c22;
+  --muted: #6e7568;
+  --faint: #9aa091;
+  --healthy: #588157;
+  --watch: #9a9a5e;
+  --critical: #8a4f32;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Outfit", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+.font-sora { font-family: "Sora", sans-serif; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.animate-spin-slow { animation: spin 16s linear infinite; }
+.animate-fade { animation: fade 0.35s ease; }
+.animate-pulse-dot { animation: pulse 1.6s infinite; }
