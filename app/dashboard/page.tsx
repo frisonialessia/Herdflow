@@ -40,9 +40,7 @@ export default function OverviewPage() {
     <section className="animate-fade">
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
-          <h2 className="font-sora text-[32px] font-semibold tracking-tight">
-            Hello, <em className="not-italic font-normal" style={{ color: "var(--muted)", fontStyle: "italic" }}>Daniel</em>
-          </h2>
+          <h2 className="font-sora text-[32px] font-semibold tracking-tight">Your herd</h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Pasture A · synced just now</div>
         </div>
         <div className="flex gap-2.5 items-center">
