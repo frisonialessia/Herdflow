@@ -10,7 +10,7 @@ import { BarChart3, BatteryMedium, Activity, CheckCircle2 } from "lucide-react";
 const METRICS: MetricKey[] = ["temperature_c", "activity_index", "rumination_min"];
 
 export default function LivePage() {
-  const { herd } = useHerd();
+  const { herd, selectAnimal } = useHerd();
   const flagged = herd.filter((a) => a.status !== "healthy");
   const [animalId, setAnimalId] = useState(flagged[0]?.id ?? herd[0].id);
   const [metric, setMetric] = useState<MetricKey>("temperature_c");
@@ -73,7 +73,7 @@ export default function LivePage() {
             const alarm = a.status !== "healthy";
             const color = a.status === "critical" ? "var(--critical)" : a.status === "watch" ? "var(--watch)" : "var(--healthy)";
             return (
-              <div key={a.id} className="flex items-center gap-3.5 px-4 py-3.5 bg-white border rounded-[16px]" style={{ borderColor: "var(--border)" }}>
+              <div key={a.id} onClick={() => selectAnimal(a.id)} className="flex items-center gap-3.5 px-4 py-3.5 bg-white border rounded-[16px] cursor-pointer hover:bg-[var(--card-soft)] transition-colors" style={{ borderColor: "var(--border)" }}>
                 <div className="w-10 h-10 rounded-[11px] flex items-center justify-center text-[20px] shrink-0" style={{ background: "var(--card-soft)" }}>
                   {SPECIES_EMOJI[a.species]}
                 </div>

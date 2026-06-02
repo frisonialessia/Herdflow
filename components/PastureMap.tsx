@@ -3,7 +3,7 @@
 import { Animal } from "@/lib/types";
 import { Plus, Minus, Maximize2 } from "lucide-react";
 
-export function PastureMap({ herd }: { herd: Animal[] }) {
+export function PastureMap({ herd, onSelect }: { herd: Animal[]; onSelect?: (id: string) => void }) {
   return (
     <div className="relative rounded-xl2 overflow-hidden min-h-[440px]" style={{ background: "#7c9163" }}>
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 440" preserveAspectRatio="xMidYMid slice">
@@ -35,7 +35,8 @@ export function PastureMap({ herd }: { herd: Animal[] }) {
           const color = a.status === "critical" ? "#8a4f32" : a.status === "watch" ? "#9a9a5e" : "#588157";
           const r = a.status === "critical" ? 6.5 : 5;
           return (
-            <circle key={a.id} cx={cx} cy={cy} r={r} fill={color} stroke="#fff" strokeWidth="1.5">
+            <circle key={a.id} cx={cx} cy={cy} r={r} fill={color} stroke="#fff" strokeWidth="1.5"
+                    onClick={() => onSelect?.(a.id)} style={{ cursor: onSelect ? "pointer" : "default" }}>
               {a.status === "critical" && (
                 <animate attributeName="r" values={`${r};${r + 2.5};${r}`} dur="2s" repeatCount="indefinite" />
               )}

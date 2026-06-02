@@ -16,7 +16,7 @@ const FILTERS: { label: string; sp: Species | "all" }[] = [
 ];
 
 export default function AnimalsPage() {
-  const { herd } = useHerd();
+  const { herd, selectAnimal } = useHerd();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Species | "all">("all");
 
@@ -79,7 +79,7 @@ export default function AnimalsPage() {
             {shown.map((a) => {
               const cls = a.status === "critical" ? "var(--critical)" : a.status === "watch" ? "var(--watch)" : "var(--healthy)";
               return (
-                <tr key={a.id} className="cursor-pointer hover:bg-[var(--card-soft)] transition-colors">
+                <tr key={a.id} onClick={() => selectAnimal(a.id)} className="cursor-pointer hover:bg-[var(--card-soft)] transition-colors">
                   <td className="px-4 py-3.5 border-b text-sm" style={{ borderColor: "var(--border)" }}>
                     <div className="flex items-center gap-2.5">
                       <div className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center text-[17px]" style={{ background: "var(--card-soft)" }}>

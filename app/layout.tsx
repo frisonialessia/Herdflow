@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { TopNav } from "@/components/TopNav";
 import { HerdProvider } from "@/components/HerdProvider";
+import { AnimalDrawer } from "@/components/AnimalDrawer";
 
 export const metadata: Metadata = {
   title: "HerdFlow — Predictive livestock health",
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <HerdProvider>
               <TopNav />
               {children}
+              <AnimalDrawer />
             </HerdProvider>
           </div>
         </div>

@@ -41,3 +41,6 @@ body {
 .animate-spin-slow { animation: spin 16s linear infinite; }
 .animate-fade { animation: fade 0.35s ease; }
 .animate-pulse-dot { animation: pulse 1.6s infinite; }
+
+@keyframes slidein { from { transform: translateX(100%); } to { transform: none; } }
+.animate-slide { animation: slidein 0.28s ease; }

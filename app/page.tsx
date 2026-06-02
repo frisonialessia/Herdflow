@@ -9,7 +9,7 @@ import { PastureMap } from "@/components/PastureMap";
 import { Thermometer, Activity, Wheat, Beef, Plus, Layers } from "lucide-react";
 
 export default function OverviewPage() {
-  const { herd } = useHerd();
+  const { herd, selectAnimal } = useHerd();
   const [group, setGroup] = useState<Species | "all">("all");
   const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
 
@@ -56,7 +56,7 @@ export default function OverviewPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-[18px]">
         <div className="relative">
-          <PastureMap herd={shown} />
+          <PastureMap herd={shown} onSelect={selectAnimal} />
           <div className="absolute bottom-5 left-5 z-[3] rounded-[18px] px-5 py-4"
                style={{ background: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)", boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}>
             <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Health Index</div>
@@ -114,7 +114,8 @@ export default function OverviewPage() {
             </div>
           ) : (
             alerts.map((a) => (
-              <div key={a.id} className="relative overflow-hidden rounded-[18px] p-[18px] border bg-white"
+              <div key={a.id} onClick={() => selectAnimal(a.id)}
+                   className="relative overflow-hidden rounded-[18px] p-[18px] border bg-white cursor-pointer transition-shadow hover:shadow-lg"
                    style={{ borderColor: "var(--border)" }}>
                 <span className="absolute left-0 top-0 bottom-0 w-1"
                       style={{ background: a.status === "critical" ? "var(--critical)" : "var(--watch)" }} />
