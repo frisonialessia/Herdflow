@@ -17,6 +17,8 @@ export const METRIC_LABEL: Record<MetricKey, string> = {
   activity_index: "Activity",
   rumination_min: "Rumination",
   intake_kg: "Intake",
+  heart_rate: "Heart rate",
+  respiration_rate: "Respiration",
 };
 
 export const METRIC_UNIT: Record<MetricKey, string> = {
@@ -24,6 +26,8 @@ export const METRIC_UNIT: Record<MetricKey, string> = {
   activity_index: "",
   rumination_min: " min",
   intake_kg: " kg",
+  heart_rate: " bpm",
+  respiration_rate: "/min",
 };
 
 /** "2h ago" style relative time from an ISO string. */

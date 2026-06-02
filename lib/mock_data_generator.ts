@@ -69,6 +69,8 @@ function buildSeries(
       activity_index: Math.max(0, Math.round(base.activity_index * (0.65 + 0.35 * cyc) - actDrop + gaussian(rnd, 0, 5))),
       rumination_min: Math.max(0, Math.round(base.rumination_min - rumDrop + gaussian(rnd, 0, 22))),
       intake_kg: +Math.max(0, base.intake_kg + gaussian(rnd, 0, base.intake_kg * 0.07)).toFixed(2),
+      heart_rate: Math.max(0, Math.round(base.heart_rate * (0.92 + 0.08 * cyc) + gaussian(rnd, 0, base.heart_rate * 0.04))),
+      respiration_rate: Math.max(0, Math.round(base.respiration_rate + gaussian(rnd, 0, base.respiration_rate * 0.08))),
     });
   }
   return pts;
@@ -76,8 +78,13 @@ function buildSeries(
 
 // Build one animal from a seeded RNG. `anomalyChance` is the probability it
 // carries an injected anomaly (0 = always healthy, used by "Add animal").
-function makeAnimal(i: number, rnd: () => number, anomalyChance: number): Animal {
-  const sp = SPECIES_POOL[Math.floor(rnd() * SPECIES_POOL.length)];
+function makeAnimal(
+  i: number,
+  rnd: () => number,
+  anomalyChance: number,
+  override?: { id?: string; name?: string; species?: Species }
+): Animal {
+  const sp = override?.species ?? SPECIES_POOL[Math.floor(rnd() * SPECIES_POOL.length)];
   const norm = SPECIES_NORMS[sp];
   const metrics = metricsFor(sp);
 
@@ -95,6 +102,8 @@ function makeAnimal(i: number, rnd: () => number, anomalyChance: number): Animal
     activity_index: gaussian(rnd, norm.activity_index, 7),
     rumination_min: norm.rumination_min ? gaussian(rnd, norm.rumination_min, 25) : 0,
     intake_kg: gaussian(rnd, norm.intake_kg, norm.intake_kg * 0.08),
+    heart_rate: gaussian(rnd, norm.heart_rate, norm.heart_rate * 0.05),
+    respiration_rate: gaussian(rnd, norm.respiration_rate, norm.respiration_rate * 0.06),
   };
 
   const series = buildSeries(rnd, sp, personal, anomaly);
@@ -103,9 +112,9 @@ function makeAnimal(i: number, rnd: () => number, anomalyChance: number): Animal
   const latest = series[series.length - 1];
 
   return {
-    id: `an-${i}`,
+    id: override?.id ?? `an-${i}`,
     tag_id: `ES${(100000 + i * 7 + 1).toString()}`,
-    name: `${FIRST[i % FIRST.length]}${i >= FIRST.length ? " " + (Math.floor(i / FIRST.length) + 1) : ""}`,
+    name: override?.name ?? `${FIRST[i % FIRST.length]}${i >= FIRST.length ? " " + (Math.floor(i / FIRST.length) + 1) : ""}`,
     species: sp,
     lot: SPECIES_LABEL[sp],
     paddock: PADDOCKS[Math.floor(rnd() * PADDOCKS.length)],
@@ -131,8 +140,12 @@ export function generateHerd(count = 40, seed = 99): Animal[] {
 
 // A single fresh animal for the demo's "Add animal" action — healthy by default,
 // with a random seed so each one differs.
-export function generateAnimal(i: number, seed = Date.now()): Animal {
-  return makeAnimal(i, mulberry32(seed), 0);
+export function generateAnimal(
+  i: number,
+  seed = Date.now(),
+  override?: { id?: string; name?: string; species?: Species }
+): Animal {
+  return makeAnimal(i, mulberry32(seed), 0, override);
 }
 
 // Convenience aggregate for the Overview header.

@@ -7,7 +7,7 @@ import { SPECIES_EMOJI, SPECIES_LABEL, Species } from "@/lib/types";
 import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
 import { PastureMap } from "@/components/PastureMap";
-import { Thermometer, Activity, Wheat, Beef, Plus, Layers } from "lucide-react";
+import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind } from "lucide-react";
 
 export default function OverviewPage() {
   const { herd, selectAnimal, addAnimal } = useHerd();
@@ -31,7 +31,7 @@ export default function OverviewPage() {
   ];
 
   // herd-average vitals (animals that have each metric) within the shown group
-  const avg = (key: "temperature_c" | "activity_index" | "rumination_min" | "intake_kg", f = 1) => {
+  const avg = (key: "temperature_c" | "activity_index" | "rumination_min" | "intake_kg" | "heart_rate" | "respiration_rate", f = 1) => {
     const xs = shown.map((a) => a.latest[key]).filter((v) => v > 0);
     return xs.length ? xs.reduce((p, c) => p + c, 0) / xs.length / f : 0;
   };
@@ -76,6 +76,8 @@ export default function OverviewPage() {
               <Vital icon={<Activity size={18} strokeWidth={2} color="var(--brown)" />} t="Activity Idx" v={`${Math.round(avg("activity_index"))}`} />
               <Vital icon={<Wheat size={18} strokeWidth={2} color="var(--brown)" />} t="Rumination" v={`${Math.round(avg("rumination_min"))} min`} />
               <Vital icon={<Beef size={18} strokeWidth={2} color="var(--brown)" />} t="Avg Intake" v={`${avg("intake_kg").toFixed(1)} kg`} />
+              <Vital icon={<Heart size={18} strokeWidth={2} color="var(--brown)" />} t="Heart Rate" v={`${Math.round(avg("heart_rate"))} bpm`} />
+              <Vital icon={<Wind size={18} strokeWidth={2} color="var(--brown)" />} t="Respiration" v={`${Math.round(avg("respiration_rate"))}/min`} />
             </div>
           </Panel>
 

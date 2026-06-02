@@ -2,7 +2,13 @@
 
 export type Species = "dairy" | "beef" | "sheep" | "horse" | "poultry";
 export type Severity = "healthy" | "watch" | "critical";
-export type MetricKey = "temperature_c" | "activity_index" | "rumination_min" | "intake_kg";
+export type MetricKey =
+  | "temperature_c"
+  | "activity_index"
+  | "rumination_min"
+  | "intake_kg"
+  | "heart_rate"
+  | "respiration_rate";
 
 export interface MetricPoint {
   recorded_at: string; // ISO
@@ -10,6 +16,8 @@ export interface MetricPoint {
   activity_index: number;
   rumination_min: number;
   intake_kg: number;
+  heart_rate: number;
+  respiration_rate: number;
 }
 
 export interface Baseline {
@@ -17,6 +25,8 @@ export interface Baseline {
   activity_index: number;
   rumination_min: number;
   intake_kg: number;
+  heart_rate: number;
+  respiration_rate: number;
 }
 
 export interface Deviation {
@@ -62,9 +72,9 @@ export const SPECIES_EMOJI: Record<Species, string> = {
 
 // Species-specific normal ranges (mean reference values)
 export const SPECIES_NORMS: Record<Species, Baseline> = {
-  dairy:   { temperature_c: 38.5, activity_index: 60, rumination_min: 480, intake_kg: 11 },
-  beef:    { temperature_c: 38.6, activity_index: 58, rumination_min: 450, intake_kg: 10 },
-  sheep:   { temperature_c: 39.1, activity_index: 56, rumination_min: 430, intake_kg: 4 },
-  horse:   { temperature_c: 37.8, activity_index: 65, rumination_min: 0,   intake_kg: 9 },
-  poultry: { temperature_c: 41.2, activity_index: 70, rumination_min: 0,   intake_kg: 0.12 },
+  dairy:   { temperature_c: 38.5, activity_index: 60, rumination_min: 480, intake_kg: 11,   heart_rate: 65,  respiration_rate: 28 },
+  beef:    { temperature_c: 38.6, activity_index: 58, rumination_min: 450, intake_kg: 10,   heart_rate: 60,  respiration_rate: 26 },
+  sheep:   { temperature_c: 39.1, activity_index: 56, rumination_min: 430, intake_kg: 4,    heart_rate: 75,  respiration_rate: 25 },
+  horse:   { temperature_c: 37.8, activity_index: 65, rumination_min: 0,   intake_kg: 9,    heart_rate: 36,  respiration_rate: 12 },
+  poultry: { temperature_c: 41.2, activity_index: 70, rumination_min: 0,   intake_kg: 0.12, heart_rate: 260, respiration_rate: 24 },
 };

@@ -75,6 +75,8 @@ export function appendTick(a: Animal): Animal {
     activity_index: Math.max(0, Math.round(b.activity_index * (0.85 + 0.15 * cyc) + gaussian(0, 4))),
     rumination_min: Math.max(0, Math.round(b.rumination_min + gaussian(0, 18))),
     intake_kg: round("intake_kg", Math.max(0, b.intake_kg + gaussian(0, b.intake_kg * 0.07))),
+    heart_rate: Math.max(0, Math.round(b.heart_rate * (0.94 + 0.06 * cyc) + gaussian(0, b.heart_rate * 0.04))),
+    respiration_rate: Math.max(0, Math.round(b.respiration_rate + gaussian(0, b.respiration_rate * 0.08))),
   };
   return withSeries(a, [...a.series, next]);
 }

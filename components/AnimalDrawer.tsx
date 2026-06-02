@@ -13,7 +13,7 @@ import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
 import { X, Stethoscope } from "lucide-react";
 
-const METRIC_ORDER: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg"];
+const METRIC_ORDER: MetricKey[] = ["temperature_c", "heart_rate", "respiration_rate", "activity_index", "rumination_min", "intake_kg"];
 
 export function AnimalDrawer() {
   const { selected, selectAnimal } = useHerd();

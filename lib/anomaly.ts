@@ -11,7 +11,7 @@ const stddev = (xs: number[], m: number) =>
 
 /** Mean of each metric across a window — the animal's personal baseline. */
 export function computeBaseline(window: MetricPoint[]): Baseline {
-  const keys: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg"];
+  const keys: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg", "heart_rate", "respiration_rate"];
   const out = {} as Baseline;
   for (const k of keys) out[k] = +mean(window.map((p) => p[k])).toFixed(2);
   return out;

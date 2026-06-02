@@ -3,19 +3,14 @@ import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github, Thermomete
 import { HeroDemo } from "@/components/HeroDemo";
 import { ZScoreExplainer } from "@/components/ZScoreExplainer";
 import { FarmMapPreview } from "@/components/FarmMapPreview";
+import { BrandMark } from "@/components/BrandMark";
 
 export default function LandingPage() {
   return (
     <main className="min-h-screen">
       <header className="max-w-[1100px] mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-full animate-spin-slow"
-            style={{
-              background: "conic-gradient(from 120deg, var(--sage-light), var(--sage), var(--sage-deep), var(--sage-light))",
-              boxShadow: "0 0 16px rgba(88,129,87,0.45)",
-            }}
-          />
+        <div className="flex items-center gap-2.5">
+          <BrandMark size={34} />
           <span className="font-sora text-xl font-bold tracking-tight">
             Herd<span style={{ color: "var(--sage)" }}>Flow</span>
           </span>
