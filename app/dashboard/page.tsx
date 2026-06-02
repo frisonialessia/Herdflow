@@ -5,6 +5,7 @@ import { useHerd } from "@/components/HerdProvider";
 import { herdSummary } from "@/lib/mock_data_generator";
 import { SPECIES_EMOJI, SPECIES_LABEL, Species } from "@/lib/types";
 import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
+import { inferCondition } from "@/lib/conditions";
 import { PastureMap } from "@/components/PastureMap";
 import { Thermometer, Activity, Wheat, Beef, Plus, Layers } from "lucide-react";
 
@@ -134,7 +135,7 @@ export default function OverviewPage() {
                     {STATUS_LABEL[a.status]}
                   </span>
                 </div>
-                <div className="text-sm mb-2">{anomalyText(a.deviation.metric, a.deviation.z_score)}</div>
+                <div className="text-sm mb-2">{inferCondition(a).label}</div>
                 <div className="flex justify-between text-[12.5px]" style={{ color: "var(--muted)" }}>
                   <span>z-score <span className="font-semibold" style={{ color: "var(--ink)" }}>{fmtZ(a.deviation.z_score)}</span></span>
                   <span>{timeAgo(a.latest.recorded_at)}</span>
@@ -146,13 +147,6 @@ export default function OverviewPage() {
       </div>
     </section>
   );
-}
-
-function anomalyText(metric: string, z: number) {
-  if (metric === "temperature_c") return "Fever — body temperature rising";
-  if (metric === "activity_index") return z < 0 ? "Activity collapse — possible lameness" : "Unusual restlessness";
-  if (metric === "rumination_min") return "Reduced rumination vs baseline";
-  return "Feed intake dropping vs baseline";
 }
 
 function Chip({ label, n, color }: { label: string; n: number; color: string }) {

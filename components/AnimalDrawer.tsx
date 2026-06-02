@@ -10,7 +10,8 @@ import { useHerd } from "@/components/HerdProvider";
 import { TrendChart } from "@/components/TrendChart";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
-import { X } from "lucide-react";
+import { inferCondition } from "@/lib/conditions";
+import { X, Stethoscope } from "lucide-react";
 
 const METRIC_ORDER: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg"];
 
@@ -37,6 +38,7 @@ export function AnimalDrawer() {
     a.status === "critical" ? "var(--critical)" : a.status === "watch" ? "var(--watch)" : "var(--healthy)";
   const metrics = METRIC_ORDER.filter((m) => m !== "rumination_min" || a.baseline.rumination_min > 0);
   const dev = a.deviation;
+  const cond = inferCondition(a);
   const history = a.series.slice(-7).reverse(); // most recent first
 
   return (
@@ -76,6 +78,17 @@ export function AnimalDrawer() {
           >
             {STATUS_LABEL[a.status]}
           </span>
+
+          {a.status !== "healthy" && (
+            <div className="rounded-[14px] p-3.5 mb-5 flex gap-3" style={{ background: "#f3ece3", border: "1px solid var(--brown-soft)" }}>
+              <Stethoscope size={18} strokeWidth={2} color="var(--brown)" className="shrink-0 mt-0.5" />
+              <div>
+                <div className="text-[11px] uppercase tracking-wide font-semibold" style={{ color: "var(--brown)" }}>Suspected</div>
+                <div className="text-[14px] font-semibold mt-0.5">{cond.label}</div>
+                <div className="text-[12.5px] mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>{cond.note}</div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3 mb-5">
             {metrics.map((m) => {

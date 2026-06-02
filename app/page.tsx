@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github } from "lucide-react";
 import { HeroDemo } from "@/components/HeroDemo";
+import { ZScoreExplainer } from "@/components/ZScoreExplainer";
 
 export default function LandingPage() {
   return (
@@ -67,6 +68,28 @@ export default function LandingPage() {
         <HeroDemo />
       </section>
 
+      <section className="max-w-[1100px] mx-auto px-6 py-8">
+        <div className="text-center mb-8">
+          <h2 className="font-sora text-[26px] font-semibold tracking-tight">How it works</h2>
+          <p className="text-[15px] mt-2" style={{ color: "var(--muted)" }}>From raw telemetry to an explainable alert — in three steps.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          <Step n={1} icon={<Radio size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Telemetry streams in" body="Wearables and sensors report temperature, activity, rumination and feed intake around the clock." />
+          <Step n={2} icon={<LineChart size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Scored against itself" body="Each animal is compared to its own 14-day rolling baseline — a ±2σ band, not the herd average." />
+          <Step n={3} icon={<ShieldCheck size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Flagged early" body="A z-score past ±2σ raises a watch, past ±3σ a critical — often days before anything is visible." />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6 items-center">
+          <div>
+            <h3 className="font-sora text-[20px] font-semibold tracking-tight">The math, in one picture</h3>
+            <p className="text-[15px] mt-3 leading-relaxed" style={{ color: "var(--muted)" }}>
+              The z-score measures how many standard deviations a reading sits from that animal&apos;s normal.
+              Stay inside the band and all is well; break it and HerdFlow flags exactly which signal moved — and by how much.
+            </p>
+          </div>
+          <ZScoreExplainer />
+        </div>
+      </section>
+
       <section className="max-w-[1100px] mx-auto px-6 pb-20 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Feature
           icon={<LineChart size={20} strokeWidth={2} color="var(--sage-deep)" />}
@@ -95,6 +118,19 @@ export default function LandingPage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function Step({ n, icon, title, body }: { n: number; icon: React.ReactNode; title: string; body: string }) {
+  return (
+    <div className="bg-white border rounded-xl2 p-6 text-left" style={{ borderColor: "var(--border)" }}>
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center font-sora text-[14px] font-semibold text-white" style={{ background: "var(--sage-deep)" }}>{n}</div>
+        <div className="w-9 h-9 rounded-[11px] flex items-center justify-center" style={{ background: "var(--card-soft)" }}>{icon}</div>
+      </div>
+      <h3 className="font-sora text-[16px] font-semibold">{title}</h3>
+      <p className="text-[14px] mt-1.5 leading-relaxed" style={{ color: "var(--muted)" }}>{body}</p>
+    </div>
   );
 }
 

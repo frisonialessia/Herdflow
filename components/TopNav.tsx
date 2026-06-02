@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/dashboard/live", label: "Live Monitoring" },
   { href: "/dashboard/animals", label: "Animals" },
   { href: "/dashboard/reports", label: "Reports" },
+  { href: "/dashboard/impact", label: "Impact" },
 ];
 
 export function TopNav() {
