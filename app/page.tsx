@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github } from "lucide-react";
+import { HeroDemo } from "@/components/HeroDemo";
 
 export default function LandingPage() {
   return (
@@ -26,40 +27,44 @@ export default function LandingPage() {
         </Link>
       </header>
 
-      <section className="max-w-[1100px] mx-auto px-6 pt-10 pb-16 text-center">
-        <span
-          className="inline-flex items-center gap-2 text-[13px] rounded-[30px] px-4 py-1.5 border bg-white"
-          style={{ borderColor: "var(--border)", color: "var(--sage-deep)" }}
-        >
-          <Activity size={14} strokeWidth={2} /> Predictive livestock health
-        </span>
-        <h1 className="font-sora font-bold tracking-tight mt-6 leading-[1.05]" style={{ fontSize: "clamp(34px,6vw,58px)" }}>
-          Catch illness <em className="not-italic" style={{ color: "var(--sage)" }}>before</em> it shows.
-        </h1>
-        <p className="text-[17px] mt-5 max-w-[640px] mx-auto leading-relaxed" style={{ color: "var(--muted)" }}>
-          HerdFlow scores every animal against its own rolling baseline — body temperature, activity,
-          rumination and feed intake — and flags fever, lameness or off-feed days before they&apos;re
-          visible to the eye.
-        </p>
-        <div className="flex gap-3 justify-center mt-8 flex-wrap">
-          <Link
-            href="/dashboard"
-            className="text-white rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2"
-            style={{ background: "var(--sage-deep)" }}
+      <section className="max-w-[1100px] mx-auto px-6 pt-8 pb-16 grid lg:grid-cols-[1fr_1.05fr] gap-10 items-center">
+        <div className="text-center lg:text-left">
+          <span
+            className="inline-flex items-center gap-2 text-[13px] rounded-[30px] px-4 py-1.5 border bg-white"
+            style={{ borderColor: "var(--border)", color: "var(--sage-deep)" }}
           >
-            Launch the live demo <ArrowRight size={16} strokeWidth={2} />
-          </Link>
-          <a
-            href="https://github.com/frisonialessia/Herdflow"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2 border bg-white"
-            style={{ borderColor: "var(--border)", color: "var(--ink)" }}
-          >
-            <Github size={16} strokeWidth={2} /> View source
-          </a>
+            <Activity size={14} strokeWidth={2} /> Predictive livestock health
+          </span>
+          <h1 className="font-sora font-bold tracking-tight mt-6 leading-[1.05]" style={{ fontSize: "clamp(32px,5vw,52px)" }}>
+            Catch illness <em className="not-italic" style={{ color: "var(--sage)" }}>before</em> it shows.
+          </h1>
+          <p className="text-[17px] mt-5 max-w-[560px] mx-auto lg:mx-0 leading-relaxed" style={{ color: "var(--muted)" }}>
+            HerdFlow scores every animal against its own rolling baseline — temperature, activity,
+            rumination and feed intake — and flags fever, lameness or off-feed days before they&apos;re
+            visible to the eye.
+          </p>
+          <div className="flex gap-3 mt-8 flex-wrap justify-center lg:justify-start">
+            <Link
+              href="/dashboard"
+              className="text-white rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2"
+              style={{ background: "var(--sage-deep)" }}
+            >
+              Launch the live demo <ArrowRight size={16} strokeWidth={2} />
+            </Link>
+            <a
+              href="https://github.com/frisonialessia/Herdflow"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2 border bg-white"
+              style={{ borderColor: "var(--border)", color: "var(--ink)" }}
+            >
+              <Github size={16} strokeWidth={2} /> View source
+            </a>
+          </div>
+          <div className="text-[12.5px] mt-4" style={{ color: "var(--faint)" }}>Demo · synthetic data · no sign-up</div>
         </div>
-        <div className="text-[12.5px] mt-4" style={{ color: "var(--faint)" }}>Demo · synthetic data · no sign-up</div>
+
+        <HeroDemo />
       </section>
 
       <section className="max-w-[1100px] mx-auto px-6 pb-20 grid grid-cols-1 md:grid-cols-3 gap-4">
