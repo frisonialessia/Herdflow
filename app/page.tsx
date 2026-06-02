@@ -1,192 +1,106 @@
-"use client";
+import Link from "next/link";
+import { Activity, ArrowRight, ShieldCheck, LineChart, Radio, Github } from "lucide-react";
 
-import { useState } from "react";
-import { useHerd } from "@/components/HerdProvider";
-import { herdSummary } from "@/lib/mock_data_generator";
-import { SPECIES_EMOJI, SPECIES_LABEL, Species } from "@/lib/types";
-import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
-import { PastureMap } from "@/components/PastureMap";
-import { Thermometer, Activity, Wheat, Beef, Plus, Layers } from "lucide-react";
-
-export default function OverviewPage() {
-  const { herd, selectAnimal } = useHerd();
-  const [group, setGroup] = useState<Species | "all">("all");
-  const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
-
-  const s = herdSummary(shown);
-  const alerts = shown.filter((a) => a.status !== "healthy").slice(0, 3);
-
-  // per-group counts (from the full herd, so the selector shows real totals)
-  const countFor = (sp: Species | "all") =>
-    sp === "all" ? herd.length : herd.filter((a) => a.species === sp).length;
-
-  const groups: { label: string; sp: Species | "all" }[] = [
-    { label: "All", sp: "all" },
-    { label: "Dairy Cows", sp: "dairy" },
-    { label: "Beef", sp: "beef" },
-    { label: "Sheep", sp: "sheep" },
-    { label: "Horses", sp: "horse" },
-    { label: "Poultry", sp: "poultry" },
-  ];
-
-  // herd-average vitals (animals that have each metric) within the shown group
-  const avg = (key: "temperature_c" | "activity_index" | "rumination_min" | "intake_kg", f = 1) => {
-    const xs = shown.map((a) => a.latest[key]).filter((v) => v > 0);
-    return xs.length ? xs.reduce((p, c) => p + c, 0) / xs.length / f : 0;
-  };
-
+export default function LandingPage() {
   return (
-    <section className="animate-fade">
-      <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
-        <div>
-          <h2 className="font-sora text-[32px] font-semibold tracking-tight">
-            Hello, <em className="not-italic font-normal" style={{ color: "var(--muted)", fontStyle: "italic" }}>Daniel</em>
-          </h2>
-          <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Pasture A · synced just now</div>
+    <main className="min-h-screen">
+      <header className="max-w-[1100px] mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-8 h-8 rounded-full animate-spin-slow"
+            style={{
+              background: "conic-gradient(from 120deg, var(--sage-light), var(--sage), var(--sage-deep), var(--sage-light))",
+              boxShadow: "0 0 16px rgba(88,129,87,0.45)",
+            }}
+          />
+          <span className="font-sora text-xl font-bold tracking-tight">
+            Herd<span style={{ color: "var(--sage)" }}>Flow</span>
+          </span>
         </div>
-        <div className="flex gap-2.5 items-center">
-          <Chip label="Healthy" n={s.healthy} color="var(--healthy)" />
-          <Chip label="Under watch" n={s.watch} color="var(--watch)" />
-          <button className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
-                  style={{ background: "var(--sage-deep)" }}>
-            <Plus size={16} strokeWidth={2} color="#fff" /> Add Animal
-          </button>
-        </div>
-      </div>
+        <Link
+          href="/dashboard"
+          className="text-white rounded-[30px] px-5 py-2.5 text-sm font-medium flex items-center gap-2"
+          style={{ background: "var(--sage-deep)" }}
+        >
+          Launch demo <ArrowRight size={16} strokeWidth={2} />
+        </Link>
+      </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-[18px]">
-        <div className="relative">
-          <PastureMap herd={shown} onSelect={selectAnimal} />
-          <div className="absolute bottom-5 left-5 z-[3] rounded-[18px] px-5 py-4"
-               style={{ background: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)", boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}>
-            <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Health Index</div>
-            <div className="font-sora text-[30px] font-semibold mt-1">{s.index}%</div>
-            <div className="flex gap-3.5 mt-3 text-[13px]" style={{ color: "var(--muted)" }}>
-              <Legend c="var(--healthy)" t={`Healthy ${s.healthy}`} />
-              <Legend c="var(--watch)" t={`Watch ${s.watch}`} />
-              <Legend c="var(--critical)" t={`Critical ${s.critical}`} />
-            </div>
-          </div>
+      <section className="max-w-[1100px] mx-auto px-6 pt-10 pb-16 text-center">
+        <span
+          className="inline-flex items-center gap-2 text-[13px] rounded-[30px] px-4 py-1.5 border bg-white"
+          style={{ borderColor: "var(--border)", color: "var(--sage-deep)" }}
+        >
+          <Activity size={14} strokeWidth={2} /> Predictive livestock health
+        </span>
+        <h1 className="font-sora font-bold tracking-tight mt-6 leading-[1.05]" style={{ fontSize: "clamp(34px,6vw,58px)" }}>
+          Catch illness <em className="not-italic" style={{ color: "var(--sage)" }}>before</em> it shows.
+        </h1>
+        <p className="text-[17px] mt-5 max-w-[640px] mx-auto leading-relaxed" style={{ color: "var(--muted)" }}>
+          HerdFlow scores every animal against its own rolling baseline — body temperature, activity,
+          rumination and feed intake — and flags fever, lameness or off-feed days before they&apos;re
+          visible to the eye.
+        </p>
+        <div className="flex gap-3 justify-center mt-8 flex-wrap">
+          <Link
+            href="/dashboard"
+            className="text-white rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2"
+            style={{ background: "var(--sage-deep)" }}
+          >
+            Launch the live demo <ArrowRight size={16} strokeWidth={2} />
+          </Link>
+          <a
+            href="https://github.com/frisonialessia/Herdflow"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2 border bg-white"
+            style={{ borderColor: "var(--border)", color: "var(--ink)" }}
+          >
+            <Github size={16} strokeWidth={2} /> View source
+          </a>
         </div>
+        <div className="text-[12.5px] mt-4" style={{ color: "var(--faint)" }}>Demo · synthetic data · no sign-up</div>
+      </section>
 
-        <div className="flex flex-col gap-[18px]">
-          <Panel title="Herd Vitals" icon={<Activity size={18} strokeWidth={2} color="var(--sage-deep)" />}>
-            <div className="grid grid-cols-2 gap-4">
-              <Vital icon={<Thermometer size={18} strokeWidth={2} color="var(--brown)" />} t="Avg Temp" v={`${avg("temperature_c").toFixed(1)}°C`} />
-              <Vital icon={<Activity size={18} strokeWidth={2} color="var(--brown)" />} t="Activity Idx" v={`${Math.round(avg("activity_index"))}`} />
-              <Vital icon={<Wheat size={18} strokeWidth={2} color="var(--brown)" />} t="Rumination" v={`${Math.round(avg("rumination_min"))} min`} />
-              <Vital icon={<Beef size={18} strokeWidth={2} color="var(--brown)" />} t="Avg Intake" v={`${avg("intake_kg").toFixed(1)} kg`} />
-            </div>
-          </Panel>
+      <section className="max-w-[1100px] mx-auto px-6 pb-20 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Feature
+          icon={<LineChart size={20} strokeWidth={2} color="var(--sage-deep)" />}
+          title="Per-animal baselines"
+          body="Each animal is its own control. We compute a rolling mean ±2σ band and z-score the latest reading against its own history — not the herd average."
+        />
+        <Feature
+          icon={<ShieldCheck size={20} strokeWidth={2} color="var(--sage-deep)" />}
+          title="Early, explainable alerts"
+          body="|z|>2 raises a watch, |z|>3 a critical. Every alert shows the metric, the deviation and the trend that triggered it."
+        />
+        <Feature
+          icon={<Radio size={20} strokeWidth={2} color="var(--sage-deep)" />}
+          title="Live telemetry"
+          body="Watch readings stream in and the herd health index move in real time — or trigger an anomaly and see detection fire."
+        />
+      </section>
 
-          <Panel title="Group / Lot" icon={<Layers size={18} strokeWidth={2} color="var(--sage-deep)" />}>
-            <div className="flex gap-2 flex-wrap">
-              {groups.map((g) => {
-                const active = group === g.sp;
-                return (
-                  <button key={g.label} onClick={() => setGroup(g.sp)}
-                          className="rounded-xl px-3.5 py-2 text-[13px] cursor-pointer border"
-                          style={active
-                            ? { background: "var(--sage-deep)", color: "#fff", borderColor: "var(--sage-deep)" }
-                            : { background: "var(--card-soft)", borderColor: "var(--border)" }}>
-                    {g.label} · {countFor(g.sp)}
-                  </button>
-                );
-              })}
-            </div>
-          </Panel>
+      <footer className="border-t" style={{ borderColor: "var(--border)" }}>
+        <div
+          className="max-w-[1100px] mx-auto px-6 py-8 flex items-center justify-between flex-wrap gap-3 text-[13px]"
+          style={{ color: "var(--muted)" }}
+        >
+          <span>HerdFlow — predictive livestock health · Building in Public</span>
+          <span>All data synthetic · for demonstration</span>
         </div>
-      </div>
-
-      <div className="mt-[18px]">
-        <div className="flex items-center justify-between mb-3.5">
-          <h3 className="font-sora text-[17px] font-semibold flex gap-2.5 items-center">
-            Critical Alerts
-            <span className="text-white rounded-[20px] px-2.5 text-[13px] font-semibold" style={{ background: "var(--critical)" }}>
-              {s.watch + s.critical}
-            </span>
-          </h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-          {alerts.length === 0 ? (
-            <div className="rounded-[18px] p-[18px] border bg-white text-sm" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-              No alerts in this group — every animal is within its normal range.
-            </div>
-          ) : (
-            alerts.map((a) => (
-              <div key={a.id} onClick={() => selectAnimal(a.id)}
-                   className="relative overflow-hidden rounded-[18px] p-[18px] border bg-white cursor-pointer transition-shadow hover:shadow-lg"
-                   style={{ borderColor: "var(--border)" }}>
-                <span className="absolute left-0 top-0 bottom-0 w-1"
-                      style={{ background: a.status === "critical" ? "var(--critical)" : "var(--watch)" }} />
-                <div className="flex items-center justify-between mb-2.5">
-                  <div className="flex gap-2.5 items-center">
-                    <div className="w-[38px] h-[38px] rounded-[11px] flex items-center justify-center text-[19px]"
-                         style={{ background: "var(--card-soft)" }}>{SPECIES_EMOJI[a.species]}</div>
-                    <div>
-                      <div className="font-semibold text-[15px]">{a.name}</div>
-                      <div className="text-xs" style={{ color: "var(--faint)" }}>{a.tag_id} · {SPECIES_LABEL[a.species]}</div>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-semibold px-2.5 py-[3px] rounded-[20px] uppercase tracking-wide text-white"
-                        style={{ background: a.status === "critical" ? "var(--critical)" : "var(--watch)" }}>
-                    {STATUS_LABEL[a.status]}
-                  </span>
-                </div>
-                <div className="text-sm mb-2">{anomalyText(a.deviation.metric, a.deviation.z_score)}</div>
-                <div className="flex justify-between text-[12.5px]" style={{ color: "var(--muted)" }}>
-                  <span>z-score <span className="font-semibold" style={{ color: "var(--ink)" }}>{fmtZ(a.deviation.z_score)}</span></span>
-                  <span>{timeAgo(a.latest.recorded_at)}</span>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    </section>
+      </footer>
+    </main>
   );
 }
 
-function anomalyText(metric: string, z: number) {
-  if (metric === "temperature_c") return "Fever — body temperature rising";
-  if (metric === "activity_index") return z < 0 ? "Activity collapse — possible lameness" : "Unusual restlessness";
-  if (metric === "rumination_min") return "Reduced rumination vs baseline";
-  return "Feed intake dropping vs baseline";
-}
-
-function Chip({ label, n, color }: { label: string; n: number; color: string }) {
+function Feature({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center"
-         style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-      {label} <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: color }}>{n}</span>
-    </div>
-  );
-}
-
-function Legend({ c, t }: { c: string; t: string }) {
-  return <div className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: c }} /> {t}</div>;
-}
-
-function Panel({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
-      <div className="flex items-center justify-between mb-[18px]">
-        <h3 className="font-sora text-base font-semibold">{title}</h3>
-        <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center" style={{ background: "var(--card-soft)" }}>{icon}</div>
+    <div className="bg-white border rounded-xl2 p-6 text-left" style={{ borderColor: "var(--border)" }}>
+      <div className="w-11 h-11 rounded-[12px] flex items-center justify-center mb-4" style={{ background: "var(--card-soft)" }}>
+        {icon}
       </div>
-      {children}
-    </div>
-  );
-}
-
-function Vital({ icon, t, v }: { icon: React.ReactNode; t: string; v: string }) {
-  return (
-    <div className="flex gap-3 items-center">
-      <div className="w-[42px] h-[42px] rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--brown-soft)" }}>{icon}</div>
-      <div>
-        <div className="text-xs uppercase tracking-wide" style={{ color: "var(--faint)" }}>{t}</div>
-        <div className="font-sora text-[18px] font-semibold">{v}</div>
-      </div>
+      <h3 className="font-sora text-[17px] font-semibold">{title}</h3>
+      <p className="text-[14px] mt-2 leading-relaxed" style={{ color: "var(--muted)" }}>{body}</p>
     </div>
   );
 }

@@ -5,17 +5,17 @@ import { usePathname } from "next/navigation";
 import { Search, Bell, User } from "lucide-react";
 
 const LINKS = [
-  { href: "/", label: "Overview" },
-  { href: "/live", label: "Live Monitoring" },
-  { href: "/animals", label: "Animals" },
-  { href: "/reports", label: "Reports" },
+  { href: "/dashboard", label: "Overview" },
+  { href: "/dashboard/live", label: "Live Monitoring" },
+  { href: "/dashboard/animals", label: "Animals" },
+  { href: "/dashboard/reports", label: "Reports" },
 ];
 
 export function TopNav() {
   const path = usePathname();
   return (
     <nav className="flex items-center justify-between mb-7">
-      <div className="flex items-center gap-3">
+      <Link href="/" className="flex items-center gap-3">
         <div
           className="w-8 h-8 rounded-full animate-spin-slow"
           style={{
@@ -27,14 +27,21 @@ export function TopNav() {
         <h1 className="font-sora text-xl font-bold tracking-tight">
           Herd<span style={{ color: "var(--sage)" }}>Flow</span>
         </h1>
-      </div>
+        <span
+          className="text-[11px] font-semibold px-2 py-0.5 rounded-[20px]"
+          style={{ background: "var(--brown-soft)", color: "var(--brown)" }}
+          title="All data is synthetic — for demonstration"
+        >
+          Demo
+        </span>
+      </Link>
 
       <div
         className="hidden md:flex gap-1 p-1.5 rounded-full"
         style={{ background: "var(--sage-deep)" }}
       >
         {LINKS.map((l) => {
-          const active = l.href === "/" ? path === "/" : path.startsWith(l.href);
+          const active = l.href === "/dashboard" ? path === "/dashboard" : path.startsWith(l.href);
           return (
             <Link
               key={l.href}

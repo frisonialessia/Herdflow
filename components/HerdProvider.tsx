@@ -5,13 +5,14 @@
 // every page through context, together with:
 //   - the currently-selected animal (detail drawer),
 //   - a "live telemetry" interval that appends new readings every few seconds,
-//   - a "simulate anomaly" action that flips a healthy animal to critical.
+//   - a "simulate anomaly" action that flips a healthy animal to critical,
+//   - "add animal" / "reset" demo actions.
 // Simulated animals are frozen (excluded from the tick) so they stay clearly
 // flagged for the duration of the demo.
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Animal, MetricKey } from "@/lib/types";
-import { generateHerd } from "@/lib/mock_data_generator";
+import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
 
 interface HerdContextValue {
@@ -22,6 +23,7 @@ interface HerdContextValue {
   live: boolean;
   setLive: (v: boolean) => void;
   simulate: (id: string, metric?: MetricKey) => void;
+  addAnimal: () => void;
   reset: () => void;
 }
 
@@ -32,6 +34,7 @@ export function HerdProvider({ children }: { children: React.ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
   const simulatedRef = useRef<Set<string>>(new Set());
+  const addedRef = useRef(0);
 
   const selected = selectedId ? herd.find((a) => a.id === selectedId) ?? null : null;
 
@@ -40,8 +43,17 @@ export function HerdProvider({ children }: { children: React.ReactNode }) {
     setHerd((prev) => prev.map((a) => (a.id === id ? injectAnomaly(a, metric) : a)));
   }
 
+  function addAnimal() {
+    const n = addedRef.current++;
+    const a = generateAnimal(herd.length + n, Date.now() + n);
+    a.id = `an-new-${n}`;
+    setHerd((prev) => [a, ...prev]);
+    setSelectedId(a.id);
+  }
+
   function reset() {
     simulatedRef.current = new Set();
+    addedRef.current = 0;
     setLive(false);
     setSelectedId(null);
     setHerd(generateHerd());
@@ -58,7 +70,7 @@ export function HerdProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, reset }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, addAnimal, reset }}
     >
       {children}
     </HerdContext.Provider>

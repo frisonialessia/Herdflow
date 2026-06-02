@@ -16,7 +16,7 @@ const FILTERS: { label: string; sp: Species | "all" }[] = [
 ];
 
 export default function AnimalsPage() {
-  const { herd, selectAnimal } = useHerd();
+  const { herd, selectAnimal, addAnimal } = useHerd();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Species | "all">("all");
 
@@ -37,7 +37,8 @@ export default function AnimalsPage() {
             {shown.length} of {herd.length} · {flagged} needing attention
           </div>
         </div>
-        <button className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
+        <button onClick={() => addAnimal()}
+                className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
                 style={{ background: "var(--sage-deep)" }}>
           <Plus size={16} strokeWidth={2} color="#fff" /> Add Animal
         </button>

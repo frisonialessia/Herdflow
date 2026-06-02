@@ -47,9 +47,9 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Kpi k="Avg Health Index" v={`${s.index}%`} d="↑ 2.1% vs last month" />
-        <Kpi k="Anomalies Detected" v="37" d="↑ 9 vs last month" down />
-        <Kpi k="Early Catches" v="31" d="84% before visible signs" />
-        <Kpi k="Avg Lead Time" v="2.3d" d="before symptom onset" />
+        <Kpi k="Anomalies Detected" v="37" d="↑ 9 vs last month" down ill />
+        <Kpi k="Early Catches" v="31" d="84% before visible signs" ill />
+        <Kpi k="Avg Lead Time" v="2.3d" d="before symptom onset" ill />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-[18px] mt-[18px]">
@@ -64,6 +64,7 @@ export default function ReportsPage() {
               </div>
             ))}
           </div>
+          <div className="text-[11px] mt-3" style={{ color: "var(--faint)" }}>Illustrative sample data.</div>
         </div>
 
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
@@ -86,10 +87,16 @@ export default function ReportsPage() {
   );
 }
 
-function Kpi({ k, v, d, down }: { k: string; v: string; d: string; down?: boolean }) {
+function Kpi({ k, v, d, down, ill }: { k: string; v: string; d: string; down?: boolean; ill?: boolean }) {
   return (
     <div className="bg-white border rounded-[18px] p-5" style={{ borderColor: "var(--border)" }}>
-      <div className="text-xs uppercase tracking-wide" style={{ color: "var(--faint)" }}>{k}</div>
+      <div className="text-xs uppercase tracking-wide flex items-center gap-1.5" style={{ color: "var(--faint)" }}>
+        {k}
+        {ill && (
+          <span className="normal-case text-[9px] px-1.5 py-0.5 rounded" style={{ background: "var(--card-soft)", color: "var(--faint)" }}
+                title="Illustrative — not computed from the demo data">illustrative</span>
+        )}
+      </div>
       <div className="font-sora text-[28px] font-semibold mt-2">{v}</div>
       <div className="text-[12.5px] mt-1.5" style={{ color: down ? "var(--critical)" : "var(--sage)" }}>{d}</div>
     </div>

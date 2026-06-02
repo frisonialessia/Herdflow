@@ -74,57 +74,65 @@ function buildSeries(
   return pts;
 }
 
+// Build one animal from a seeded RNG. `anomalyChance` is the probability it
+// carries an injected anomaly (0 = always healthy, used by "Add animal").
+function makeAnimal(i: number, rnd: () => number, anomalyChance: number): Animal {
+  const sp = SPECIES_POOL[Math.floor(rnd() * SPECIES_POOL.length)];
+  const norm = SPECIES_NORMS[sp];
+  const metrics = metricsFor(sp);
+
+  const hasAnomaly = rnd() < anomalyChance;
+  const anomaly = hasAnomaly
+    ? {
+        metric: (rnd() < 0.55 ? "temperature_c" : metrics.includes("rumination_min") && rnd() < 0.5 ? "rumination_min" : "activity_index") as MetricKey,
+        intensity: gaussian(rnd, 2.6, 0.6),
+      }
+    : null;
+
+  // individualised baseline (each animal slightly different)
+  const personal = {
+    temperature_c: gaussian(rnd, norm.temperature_c, 0.15),
+    activity_index: gaussian(rnd, norm.activity_index, 7),
+    rumination_min: norm.rumination_min ? gaussian(rnd, norm.rumination_min, 25) : 0,
+    intake_kg: gaussian(rnd, norm.intake_kg, norm.intake_kg * 0.08),
+  };
+
+  const series = buildSeries(rnd, sp, personal, anomaly);
+  const baseline = computeBaseline(series.slice(0, -1));
+  const deviation = detectAnomaly(series, metrics);
+  const latest = series[series.length - 1];
+
+  return {
+    id: `an-${i}`,
+    tag_id: `ES${(100000 + i * 7 + 1).toString()}`,
+    name: `${FIRST[i % FIRST.length]}${i >= FIRST.length ? " " + (Math.floor(i / FIRST.length) + 1) : ""}`,
+    species: sp,
+    lot: SPECIES_LABEL[sp],
+    paddock: PADDOCKS[Math.floor(rnd() * PADDOCKS.length)],
+    x: 8 + rnd() * 84,
+    y: 12 + rnd() * 76,
+    baseline,
+    series,
+    latest,
+    deviation,
+    status: deviation.severity,
+  };
+}
+
 export function generateHerd(count = 40, seed = 99): Animal[] {
   const rnd = mulberry32(seed);
   const herd: Animal[] = [];
-
-  for (let i = 0; i < count; i++) {
-    const sp = SPECIES_POOL[Math.floor(rnd() * SPECIES_POOL.length)];
-    const norm = SPECIES_NORMS[sp];
-    const metrics = metricsFor(sp);
-
-    // ~7% carry an anomaly
-    const hasAnomaly = rnd() < 0.07;
-    const anomaly = hasAnomaly
-      ? {
-          metric: (rnd() < 0.55 ? "temperature_c" : metrics.includes("rumination_min") && rnd() < 0.5 ? "rumination_min" : "activity_index") as MetricKey,
-          intensity: gaussian(rnd, 2.6, 0.6),
-        }
-      : null;
-
-    // individualised baseline (each animal slightly different)
-    const personal = {
-      temperature_c: gaussian(rnd, norm.temperature_c, 0.15),
-      activity_index: gaussian(rnd, norm.activity_index, 7),
-      rumination_min: norm.rumination_min ? gaussian(rnd, norm.rumination_min, 25) : 0,
-      intake_kg: gaussian(rnd, norm.intake_kg, norm.intake_kg * 0.08),
-    };
-
-    const series = buildSeries(rnd, sp, personal, anomaly);
-    const baseline = computeBaseline(series.slice(0, -1));
-    const deviation = detectAnomaly(series, metrics);
-    const latest = series[series.length - 1];
-
-    herd.push({
-      id: `an-${i}`,
-      tag_id: `ES${(100000 + i * 7 + 1).toString()}`,
-      name: `${FIRST[i % FIRST.length]}${i >= FIRST.length ? " " + (Math.floor(i / FIRST.length) + 1) : ""}`,
-      species: sp,
-      lot: SPECIES_LABEL[sp],
-      paddock: PADDOCKS[Math.floor(rnd() * PADDOCKS.length)],
-      x: 8 + rnd() * 84,
-      y: 12 + rnd() * 76,
-      baseline,
-      series,
-      latest,
-      deviation,
-      status: deviation.severity,
-    });
-  }
+  for (let i = 0; i < count; i++) herd.push(makeAnimal(i, rnd, 0.07));
 
   // sort so critical/watch float to the top of lists
   const order = { critical: 0, watch: 1, healthy: 2 };
   return herd.sort((a, b) => order[a.status] - order[b.status]);
+}
+
+// A single fresh animal for the demo's "Add animal" action — healthy by default,
+// with a random seed so each one differs.
+export function generateAnimal(i: number, seed = Date.now()): Animal {
+  return makeAnimal(i, mulberry32(seed), 0);
 }
 
 // Convenience aggregate for the Overview header.
@@ -132,6 +140,6 @@ export function herdSummary(herd: Animal[]) {
   const healthy = herd.filter((a) => a.status === "healthy").length;
   const watch = herd.filter((a) => a.status === "watch").length;
   const critical = herd.filter((a) => a.status === "critical").length;
-  const index = +((healthy / herd.length) * 100).toFixed(1);
+  const index = herd.length ? +((healthy / herd.length) * 100).toFixed(1) : 100;
   return { total: herd.length, healthy, watch, critical, index };
 }

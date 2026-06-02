@@ -112,6 +112,7 @@ export default function LivePage() {
           <div className="border-t mt-4 pt-3.5 flex justify-between items-center text-[13px]" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
             <span>Next calibration</span><span className="font-semibold" style={{ color: "var(--ink)" }}>in 6 days</span>
           </div>
+          <div className="text-[11px] mt-3" style={{ color: "var(--faint)" }}>Sensor metrics are illustrative.</div>
         </div>
       </div>
     </section>
