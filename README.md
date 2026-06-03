@@ -6,7 +6,7 @@ using behavioural telemetry and per-animal z-score baselines.
 
 **This is an interactive demo.** It runs entirely in the browser on synthetic
 data — no backend, no accounts, nothing to configure.
-
+ 
 Built with Next.js 14 (App Router) · TypeScript · Tailwind · Lucide icons.
 
 ## Run locally
