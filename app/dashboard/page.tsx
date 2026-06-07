@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useHerd } from "@/components/HerdProvider";
 import { herdSummary } from "@/lib/mock_data_generator";
 import { SPECIES_EMOJI, SPECIES_LABEL, Species, Animal } from "@/lib/types";
@@ -9,9 +8,6 @@ import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
 import { detectOutbreaks } from "@/lib/outbreak";
 import { analyzeForecast } from "@/lib/forecast";
-import { summarizeRepro } from "@/lib/repro";
-import { summarizeMobility } from "@/lib/mobility";
-import { summarizeNutrition } from "@/lib/nutrition";
 import { PastureMap } from "@/components/PastureMap";
 import { OutbreakBanner } from "@/components/OutbreakBanner";
 import { HeatBanner } from "@/components/HeatBanner";
@@ -22,17 +18,13 @@ import { Thermometer, Activity, Wheat, Beef, Layers, Heart, Wind, Zap } from "lu
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 export default function OverviewPage() {
-  const { herd, selectAnimal, caseFor, bred } = useHerd();
+  const { herd, selectAnimal } = useHerd();
   const [group, setGroup] = useState<Species | "all">("all");
   const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
 
   const s = herdSummary(shown);
   const alerts = shown.filter((a) => a.status !== "healthy").slice(0, 3);
   const outbreaks = useMemo(() => detectOutbreaks(shown), [shown]);
-  const openCases = shown.filter((a) => a.status !== "healthy" && caseFor(a.id).status !== "resolved").length;
-  const inHeat = useMemo(() => summarizeRepro(shown, bred).counts.inHeat, [shown, bred]);
-  const lame = useMemo(() => summarizeMobility(shown).lame.length, [shown]);
-  const offFeed = useMemo(() => summarizeNutrition(shown).offFeed.filter((x) => x.n.status === "off_feed").length, [shown]);
 
   // per-group counts (from the full herd, so the selector shows real totals)
   const countFor = (sp: Species | "all") =>
@@ -63,34 +55,6 @@ export default function OverviewPage() {
         <div className="flex gap-2.5 items-center">
           <Chip label="Healthy" n={s.healthy} color="var(--healthy)" />
           <Chip label="Under watch" n={s.watch} color="var(--watch)" />
-          <Link
-            href="/dashboard/cases"
-            className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center cursor-pointer hover:shadow-sm transition-shadow"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            Open cases <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--brown)" }}>{openCases}</span>
-          </Link>
-          <Link
-            href="/dashboard/breeding"
-            className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center cursor-pointer hover:shadow-sm transition-shadow"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            In heat <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--sage-deep)" }}>{inHeat}</span>
-          </Link>
-          <Link
-            href="/dashboard/mobility"
-            className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center cursor-pointer hover:shadow-sm transition-shadow"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            Lame <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--brown)" }}>{lame}</span>
-          </Link>
-          <Link
-            href="/dashboard/nutrition"
-            className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center cursor-pointer hover:shadow-sm transition-shadow"
-            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
-          >
-            Off-feed <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--brown)" }}>{offFeed}</span>
-          </Link>
           <AddAnimalButton />
         </div>
       </div>

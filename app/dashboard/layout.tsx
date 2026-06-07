@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { TopNav } from "@/components/TopNav";
+import { BoardNav } from "@/components/BoardNav";
 import { HerdProvider } from "@/components/HerdProvider";
 import { AnimalDrawer } from "@/components/AnimalDrawer";
 import { DemoControls } from "@/components/DemoControls";
@@ -40,6 +41,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       >
         <HerdProvider initialHerd={initialHerd}>
           <TopNav />
+          <BoardNav />
           <DashboardShell>{children}</DashboardShell>
           <AnimalDrawer />
           <DemoControls />

@@ -7,7 +7,6 @@
 
 import { useMemo } from "react";
 import { useHerd } from "@/components/HerdProvider";
-import { ReproTabs } from "@/components/ReproTabs";
 import { SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { summarizeCalving, calvingLabel, BUCKET_COLOR, BUCKET_LABEL, CalvingItem } from "@/lib/calving";
 import { Baby, CalendarDays } from "lucide-react";
@@ -31,8 +30,6 @@ export default function CalvingPage() {
           </div>
         </div>
       </div>
-
-      <ReproTabs />
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <Stat label="Overdue" n={counts.overdue} color="var(--critical)" />

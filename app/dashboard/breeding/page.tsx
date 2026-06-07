@@ -7,7 +7,6 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { useHerd } from "@/components/HerdProvider";
-import { ReproTabs } from "@/components/ReproTabs";
 import { SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { summarizeRepro, aiWindow, dimText, ReproItem } from "@/lib/repro";
 import { HeartPulse, Activity, CalendarDays, Syringe } from "lucide-react";
@@ -29,8 +28,6 @@ export default function BreedingPage() {
           </div>
         </div>
       </div>
-
-      <ReproTabs />
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <Stat label="In heat now" n={counts.inHeat} color="var(--sage-deep)" />
