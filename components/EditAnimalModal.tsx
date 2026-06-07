@@ -5,6 +5,8 @@
 
 import { useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
+import { useRole } from "@/components/RoleProvider";
+import { can } from "@/lib/roles";
 import { AnimalForm } from "@/components/AnimalForm";
 import { ModalShell } from "@/components/ModalShell";
 import { Animal } from "@/lib/types";
@@ -13,12 +15,14 @@ import { Trash2 } from "lucide-react";
 
 export function EditAnimalModal({ animal, onClose }: { animal: Animal; onClose: () => void }) {
   const { updateAnimal, removeAnimal } = useHerd();
+  const { role } = useRole();
   const [confirmDel, setConfirmDel] = useState(false);
 
   return (
     <ModalShell title={`Editar · ${animal.name}`} onClose={onClose}>
       <AnimalForm
         mode="edit"
+        medicalEditable={can(role, "editMedical")}
         submitLabel="Guardar cambios"
         onCancel={onClose}
         initial={{ name: animal.name, tag_id: animal.tag_id, species: animal.species, profile: profileFor(animal) }}
@@ -28,6 +32,7 @@ export function EditAnimalModal({ animal, onClose }: { animal: Animal; onClose: 
         }}
       />
 
+      {can(role, "deleteAnimal") && (
       <div className="border-t mt-5 pt-4" style={{ borderColor: "var(--border)" }}>
         {!confirmDel ? (
           <button onClick={() => setConfirmDel(true)} className="flex items-center gap-2 text-[13px] font-medium cursor-pointer bg-transparent border-0 p-0" style={{ color: "var(--brown)" }}>
@@ -45,6 +50,7 @@ export function EditAnimalModal({ animal, onClose }: { animal: Animal; onClose: 
           </div>
         )}
       </div>
+      )}
     </ModalShell>
   );
 }

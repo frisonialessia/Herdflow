@@ -1,12 +1,16 @@
 "use client";
 
 import { useHerd } from "@/components/HerdProvider";
+import { useRole } from "@/components/RoleProvider";
+import { can } from "@/lib/roles";
+import { NoAccess } from "@/components/NoAccess";
 import { herdSummary } from "@/lib/mock_data_generator";
 import { Species } from "@/lib/types";
 import { Download, BarChart3, PieChart } from "lucide-react";
 
 export default function ReportsPage() {
   const { herd } = useHerd();
+  const { role } = useRole();
   const s = herdSummary(herd);
 
   // health % per species
@@ -31,6 +35,8 @@ export default function ReportsPage() {
     { w: "W4", n: 8 }, { w: "W5", n: 10 }, { w: "W6", n: 7 },
   ];
   const maxN = Math.max(...weeks.map((x) => x.n));
+
+  if (!can(role, "finance")) return <NoAccess feature="Reports" />;
 
   return (
     <section className="animate-fade">

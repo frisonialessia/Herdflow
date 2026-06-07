@@ -3,6 +3,7 @@ import { TopNav } from "@/components/TopNav";
 import { BoardNav } from "@/components/BoardNav";
 import { HerdProvider } from "@/components/HerdProvider";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
+import { RoleProvider } from "@/components/RoleProvider";
 import { AnimalDrawer } from "@/components/AnimalDrawer";
 import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
@@ -40,16 +41,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
           boxShadow: "0 30px 60px -30px rgba(58,90,64,0.28)",
         }}
       >
-        <CurrencyProvider>
-          <HerdProvider initialHerd={initialHerd}>
-            <TopNav />
-            <BoardNav />
-            <DashboardShell>{children}</DashboardShell>
-            <AnimalDrawer />
-            <DemoControls />
-            <DemoAutoplay />
-          </HerdProvider>
-        </CurrencyProvider>
+        <RoleProvider>
+          <CurrencyProvider>
+            <HerdProvider initialHerd={initialHerd}>
+              <TopNav />
+              <BoardNav />
+              <DashboardShell>{children}</DashboardShell>
+              <AnimalDrawer />
+              <DemoControls />
+              <DemoAutoplay />
+            </HerdProvider>
+          </CurrencyProvider>
+        </RoleProvider>
       </div>
     </div>
   );

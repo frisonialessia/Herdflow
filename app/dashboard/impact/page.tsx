@@ -3,12 +3,16 @@
 import { useEffect, useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { useCurrency } from "@/components/CurrencyProvider";
+import { useRole } from "@/components/RoleProvider";
+import { can } from "@/lib/roles";
+import { NoAccess } from "@/components/NoAccess";
 import { herdSummary } from "@/lib/mock_data_generator";
 import { Activity, ShieldCheck, Timer, TrendingUp } from "lucide-react";
 
 export default function ImpactPage() {
   const { herd } = useHerd();
   const { code, info, format } = useCurrency();
+  const { role } = useRole();
   const s = herdSummary(herd);
 
   const [catches, setCatches] = useState(Math.max(3, Math.round(herd.length * 0.12)));
@@ -20,6 +24,8 @@ export default function ImpactPage() {
   const monthly = catches * perCatch;
   const annual = monthly * 12;
   const fmt = (n: number) => format(n);
+
+  if (!can(role, "finance")) return <NoAccess feature="Impact" />;
 
   return (
     <section className="animate-fade">

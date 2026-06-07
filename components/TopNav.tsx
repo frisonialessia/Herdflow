@@ -7,21 +7,27 @@ import { Search, User, Menu, X, Settings, LogOut } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 import { SettingsModal } from "@/components/SettingsModal";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { RoleSwitcher, ROLE_ICON } from "@/components/RoleSwitcher";
+import { useRole } from "@/components/RoleProvider";
+import { can, ROLE_ORDER, ROLE_LABEL, ROLE_COLOR } from "@/lib/roles";
 import { signOut as signOutAction } from "@/app/auth/actions";
 
-const LINKS = [
+const LINKS: { href: string; label: string; finance?: boolean }[] = [
   { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/live", label: "Live Monitoring" },
   { href: "/dashboard/animals", label: "Animals" },
-  { href: "/dashboard/reports", label: "Reports" },
-  { href: "/dashboard/impact", label: "Impact" },
+  { href: "/dashboard/reports", label: "Reports", finance: true },
+  { href: "/dashboard/impact", label: "Impact", finance: true },
 ];
 
 export function TopNav() {
   const path = usePathname();
+  const { role, setRole } = useRole();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const links = LINKS.filter((l) => !l.finance || can(role, "finance"));
 
   const isActive = (href: string) => (href === "/dashboard" ? path === "/dashboard" : path.startsWith(href));
   const openSettings = () => { setSettingsOpen(true); setUserOpen(false); setMobileOpen(false); };
@@ -38,7 +44,7 @@ export function TopNav() {
         </Link>
 
         <div className="hidden md:flex gap-1 p-1.5 rounded-full" style={{ background: "var(--sage-deep)" }}>
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -52,6 +58,7 @@ export function TopNav() {
 
         <div className="flex items-center gap-2.5">
           <div className="hidden md:flex gap-2.5 items-center">
+            <RoleSwitcher />
             <IconCircle ariaLabel="Search"><Search size={18} strokeWidth={2} color="var(--sage-deep)" /></IconCircle>
             <NotificationsBell />
 
@@ -91,7 +98,26 @@ export function TopNav() {
             className="md:hidden absolute top-full right-0 mt-2 z-30 rounded-2xl border bg-white p-2 min-w-[210px]"
             style={{ borderColor: "var(--border)", boxShadow: "0 20px 40px -16px rgba(58,90,64,0.35)" }}
           >
-            {LINKS.map((l) => (
+            <div className="text-[10px] uppercase tracking-wide font-semibold px-3 pt-1 pb-1.5" style={{ color: "var(--faint)" }}>Ver como</div>
+            <div className="flex gap-1.5 px-2 pb-2">
+              {ROLE_ORDER.map((r) => {
+                const RIcon = ROLE_ICON[r];
+                const active = r === role;
+                return (
+                  <button
+                    key={r}
+                    onClick={() => { setRole(r); setMobileOpen(false); }}
+                    className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border cursor-pointer"
+                    style={active ? { background: ROLE_COLOR[r], borderColor: ROLE_COLOR[r], color: "#fff" } : { background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
+                  >
+                    <RIcon size={15} strokeWidth={2.2} color={active ? "#fff" : ROLE_COLOR[r]} />
+                    <span className="text-[11px]">{ROLE_LABEL[r]}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="border-t my-1.5" style={{ borderColor: "var(--border)" }} />
+            {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}

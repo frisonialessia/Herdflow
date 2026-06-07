@@ -29,12 +29,14 @@ export function AnimalForm({
   mode,
   initial,
   submitLabel,
+  medicalEditable = true,
   onSubmit,
   onCancel,
 }: {
   mode: "add" | "edit";
   initial?: AnimalFormInitial;
   submitLabel: string;
+  medicalEditable?: boolean; // vet/owner can edit the vaccination card + history
   onSubmit: (r: AnimalFormResult) => void;
   onCancel: () => void;
 }) {
@@ -160,6 +162,7 @@ export function AnimalForm({
         </Field>
       </Section>
 
+      {medicalEditable && (
       <Section title="Salud">
         <Field label="Cartilla de vacunación">
           <div className="flex flex-col gap-2">
@@ -181,6 +184,7 @@ export function AnimalForm({
           <textarea value={medical} onChange={(e) => setMedical(e.target.value)} placeholder="Mastitis tratada (2024)…" rows={2} className={`${inputCls} resize-none`} />
         </Field>
       </Section>
+      )}
 
       <div className="flex gap-2.5 pt-1">
         <button type="button" onClick={onCancel} className="flex-1 rounded-xl px-4 py-2.5 text-[13px] font-medium cursor-pointer border" style={{ borderColor: "var(--border)", background: "var(--card-soft)", color: "var(--ink)" }}>
