@@ -11,6 +11,7 @@ import { TrendChart } from "@/components/TrendChart";
 import { PredictivePanel } from "@/components/PredictivePanel";
 import { CasePanel } from "@/components/CasePanel";
 import { ReproCard } from "@/components/ReproCard";
+import { MobilityCard } from "@/components/MobilityCard";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
@@ -98,6 +99,8 @@ export function AnimalDrawer() {
           <PredictivePanel forecast={forecast} />
 
           <ReproCard animal={a} />
+
+          <MobilityCard animal={a} />
 
           {a.status !== "healthy" && <CasePanel animalId={a.id} />}
 

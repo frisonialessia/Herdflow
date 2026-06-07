@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useHerd } from "@/components/HerdProvider";
 import { buildToday, Domain, Tier, ActionItem } from "@/lib/today";
-import { Stethoscope, ShieldAlert, ThermometerSun, HeartPulse, Baby, ChevronRight, Sun, CheckCircle2, LucideIcon } from "lucide-react";
+import { Stethoscope, ShieldAlert, ThermometerSun, HeartPulse, Baby, Footprints, ChevronRight, Sun, CheckCircle2, LucideIcon } from "lucide-react";
 
 const DOMAIN: Record<Domain, { label: string; icon: LucideIcon; color: string }> = {
   health: { label: "Health", icon: Stethoscope, color: "var(--critical)" },
@@ -15,6 +15,7 @@ const DOMAIN: Record<Domain, { label: string; icon: LucideIcon; color: string }>
   heat: { label: "Heat", icon: ThermometerSun, color: "var(--brown)" },
   breeding: { label: "Breeding", icon: HeartPulse, color: "var(--sage-deep)" },
   calving: { label: "Calving", icon: Baby, color: "var(--sage-deep)" },
+  welfare: { label: "Welfare", icon: Footprints, color: "var(--brown)" },
 };
 
 const TIERS: { key: Tier; label: string; color: string; note: string }[] = [

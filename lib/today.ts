@@ -15,8 +15,9 @@ import { analyzeForecast } from "./forecast";
 import { summarizeHeat } from "./heat";
 import { summarizeRepro, aiWindow } from "./repro";
 import { summarizeCalving, calvingLabel } from "./calving";
+import { mobilityOf, MOB_META } from "./mobility";
 
-export type Domain = "health" | "biosecurity" | "heat" | "breeding" | "calving";
+export type Domain = "health" | "biosecurity" | "heat" | "breeding" | "calving" | "welfare";
 export type Tier = "urgent" | "today" | "upcoming";
 
 export interface ActionItem {
@@ -154,9 +155,27 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
     });
   }
 
+  // ── Welfare: lame animals the vitals pipeline doesn't already flag ────────
+  // (non-healthy animals are already covered by the health section above).
+  for (const a of herd) {
+    if (a.status !== "healthy") continue;
+    const m = mobilityOf(a);
+    if (!m || m.score < 2) continue;
+    items.push({
+      id: `mob-${a.id}`,
+      domain: "welfare",
+      tier: m.score === 3 ? "today" : "upcoming",
+      rank: 40 + m.score * 3,
+      title: `Hoof check · ${a.name}`,
+      detail: `${MOB_META[m.score].label} (mobility ${m.score}/3)`,
+      cta: "Open",
+      animalId: a.id,
+    });
+  }
+
   // ── Group + rank ─────────────────────────────────────────────────────────
   const byTier: Record<Tier, ActionItem[]> = { urgent: [], today: [], upcoming: [] };
-  const byDomain: Record<Domain, number> = { health: 0, biosecurity: 0, heat: 0, breeding: 0, calving: 0 };
+  const byDomain: Record<Domain, number> = { health: 0, biosecurity: 0, heat: 0, breeding: 0, calving: 0, welfare: 0 };
   for (const it of items) {
     byTier[it.tier].push(it);
     byDomain[it.domain]++;
