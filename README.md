@@ -42,4 +42,5 @@ All data is synthetic and for demonstration purposes only.
 - [`EXECUTIVE_SUMMARY.md`](./EXECUTIVE_SUMMARY.md) — one-page pitch
 - [`DOCUMENTATION.md`](./DOCUMENTATION.md) — master technical + product reference
 - [`ROADMAP.md`](./ROADMAP.md) — strategy & 0→1 roadmap
+- [`ENGINEERING_ROADMAP.md`](./ENGINEERING_ROADMAP.md) — technical plan: demo → production SaaS
 - [`POC.md`](./POC.md) — detection-engine validation (run `node scripts/poc-eval.mjs`)
