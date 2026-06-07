@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Search, Bell, User, Menu, X, Settings, LogOut } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 import { SettingsModal } from "@/components/SettingsModal";
+import { signOut as signOutAction } from "@/app/auth/actions";
 
 const LINKS = [
   { href: "/dashboard", label: "Overview" },
@@ -17,14 +18,13 @@ const LINKS = [
 
 export function TopNav() {
   const path = usePathname();
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const isActive = (href: string) => (href === "/dashboard" ? path === "/dashboard" : path.startsWith(href));
   const openSettings = () => { setSettingsOpen(true); setUserOpen(false); setMobileOpen(false); };
-  const signOut = () => { setUserOpen(false); setMobileOpen(false); router.push("/"); };
+  const signOut = () => { setUserOpen(false); setMobileOpen(false); void signOutAction(); };
 
   return (
     <>

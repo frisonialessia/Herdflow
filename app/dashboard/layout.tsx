@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { TopNav } from "@/components/TopNav";
 import { HerdProvider } from "@/components/HerdProvider";
 import { AnimalDrawer } from "@/components/AnimalDrawer";
@@ -5,6 +6,7 @@ import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
 import { DemoAutoplay } from "@/components/DemoAutoplay";
 import { loadHerd } from "@/lib/db/herd";
+import { getSessionUserId } from "@/lib/auth/session";
 import type { Animal } from "@/lib/types";
 
 // Dual mode: with DATABASE_URL set, the dashboard reads the real herd from
@@ -15,8 +17,11 @@ export const dynamic = "force-dynamic";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   let initialHerd: Animal[] | null = null;
   if (process.env.DATABASE_URL) {
+    // Real mode requires a session; the herd is scoped to that user's orgs.
+    const userId = getSessionUserId();
+    if (!userId) redirect("/login");
     try {
-      initialHerd = await loadHerd();
+      initialHerd = await loadHerd(userId);
     } catch (e) {
       console.error("loadHerd failed, falling back to synthetic:", e);
       initialHerd = null;

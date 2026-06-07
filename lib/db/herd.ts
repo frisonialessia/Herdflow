@@ -19,13 +19,28 @@ function position(id: string): { x: number; y: number } {
   return { x: 8 + (h % 84), y: 12 + ((h >>> 8) % 76) };
 }
 
-export async function loadHerd(): Promise<Animal[]> {
+// Tenant scoping (application-level mirror of the schema's RLS): an animal is
+// visible if its org is one the user belongs to, or one that granted access to
+// an org the user belongs to (coop / vet delegation). When this app moves onto
+// Supabase, the same predicate is enforced in the DB by app_accessible_org_ids().
+const ACCESSIBLE_ORGS = `
+  a.org_id in (
+    select org_id from memberships where user_id = $1
+    union
+    select g.grantor_org_id
+      from access_grants g
+      join memberships m on m.org_id = g.grantee_org_id
+     where m.user_id = $1 and g.status = 'active'
+  )`;
+
+export async function loadHerd(userId: string): Promise<Animal[]> {
   const pool = getPool();
   const animals = await pool.query<{ id: string; tag_id: string; name: string | null; species: Species; site_name: string }>(
     `select a.id, a.tag_id, a.name, a.species, s.name as site_name
        from animals a
        join sites s on s.id = a.site_id
-      where a.status = 'active'`
+      where a.status = 'active' and ${ACCESSIBLE_ORGS}`,
+    [userId]
   );
 
   const herd: Animal[] = [];
