@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, Bell, User, Menu, X, Settings, LogOut } from "lucide-react";
+import { Search, User, Menu, X, Settings, LogOut } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 import { SettingsModal } from "@/components/SettingsModal";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import { signOut as signOutAction } from "@/app/auth/actions";
 
 const LINKS = [
@@ -52,10 +53,7 @@ export function TopNav() {
         <div className="flex items-center gap-2.5">
           <div className="hidden md:flex gap-2.5 items-center">
             <IconCircle ariaLabel="Search"><Search size={18} strokeWidth={2} color="var(--sage-deep)" /></IconCircle>
-            <IconCircle ariaLabel="Notifications">
-              <Bell size={18} strokeWidth={2} color="var(--sage-deep)" />
-              <span className="absolute top-0 right-0 w-[9px] h-[9px] rounded-full border-2 border-white" style={{ background: "var(--critical)" }} />
-            </IconCircle>
+            <NotificationsBell />
 
             <div className="relative">
               <button
