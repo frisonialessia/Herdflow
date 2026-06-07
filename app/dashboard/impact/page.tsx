@@ -1,20 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
+import { useCurrency } from "@/components/CurrencyProvider";
 import { herdSummary } from "@/lib/mock_data_generator";
 import { Activity, ShieldCheck, Timer, TrendingUp } from "lucide-react";
 
 export default function ImpactPage() {
   const { herd } = useHerd();
+  const { code, info, format } = useCurrency();
   const s = herdSummary(herd);
 
   const [catches, setCatches] = useState(Math.max(3, Math.round(herd.length * 0.12)));
-  const [perCatch, setPerCatch] = useState(150);
+  const [perCatch, setPerCatch] = useState(info.perCatch.def);
+
+  // Re-scale the per-catch assumption to the selected currency's magnitude.
+  useEffect(() => setPerCatch(info.perCatch.def), [code, info.perCatch.def]);
 
   const monthly = catches * perCatch;
   const annual = monthly * 12;
-  const fmt = (n: number) => "€" + n.toLocaleString("en-US");
+  const fmt = (n: number) => format(n);
 
   return (
     <section className="animate-fade">
@@ -36,7 +41,7 @@ export default function ImpactPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto] gap-6 items-center">
           <Slider label="Early catches / month" value={catches} min={1} max={40} onChange={setCatches} display={`${catches}`} />
-          <Slider label="€ saved per early catch" value={perCatch} min={50} max={500} step={10} onChange={setPerCatch} display={fmt(perCatch)} />
+          <Slider label={`Saved per early catch (${code})`} value={perCatch} min={info.perCatch.min} max={info.perCatch.max} step={info.perCatch.step} onChange={setPerCatch} display={fmt(perCatch)} />
           <div className="text-center lg:text-right">
             <div className="text-xs uppercase tracking-wide" style={{ color: "var(--faint)" }}>Est. annual value</div>
             <div className="font-sora text-[34px] font-semibold" style={{ color: "var(--sage-deep)" }}>{fmt(annual)}</div>

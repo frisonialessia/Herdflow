@@ -1,10 +1,13 @@
 "use client";
 
 import { useHerd } from "@/components/HerdProvider";
+import { useCurrency } from "@/components/CurrencyProvider";
+import { CURRENCY_CODES, CURRENCIES, CurrencyCode } from "@/lib/currency";
 import { X, Play, Pause, RotateCcw, Github } from "lucide-react";
 
 export function SettingsModal({ onClose }: { onClose: () => void }) {
   const { live, setLive, reset } = useHerd();
+  const { code, setCode } = useCurrency();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
@@ -19,6 +22,18 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
             <X size={18} strokeWidth={2} color="var(--muted)" />
           </button>
         </div>
+
+        <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Moneda</div>
+        <select
+          value={code}
+          onChange={(e) => setCode(e.target.value as CurrencyCode)}
+          className="w-full border rounded-xl px-3.5 py-2.5 mb-4 text-sm cursor-pointer outline-none"
+          style={{ background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
+        >
+          {CURRENCY_CODES.map((c) => (
+            <option key={c} value={c}>{CURRENCIES[c].label}</option>
+          ))}
+        </select>
 
         <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Demo data</div>
 
