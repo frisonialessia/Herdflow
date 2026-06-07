@@ -8,7 +8,7 @@ import { AnimalDrawer } from "@/components/AnimalDrawer";
 import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
 import { DemoAutoplay } from "@/components/DemoAutoplay";
-import { loadHerd } from "@/lib/db/herd";
+import { loadHerd, loadOperationalState, type OperationalState } from "@/lib/db/herd";
 import { getSessionUserId } from "@/lib/auth/session";
 import type { Animal } from "@/lib/types";
 
@@ -19,17 +19,22 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   let initialHerd: Animal[] | null = null;
+  let initialOps: OperationalState | null = null;
   if (process.env.DATABASE_URL) {
     // Real mode requires a session; the herd is scoped to that user's orgs.
     const userId = getSessionUserId();
     if (!userId) redirect("/login");
     try {
       initialHerd = await loadHerd(userId);
+      initialOps = await loadOperationalState(userId);
     } catch (e) {
       console.error("loadHerd failed, falling back to synthetic:", e);
       initialHerd = null;
+      initialOps = null;
     }
   }
+  // Persist mutations only when we actually loaded a real herd (DB ids).
+  const persisted = initialHerd !== null;
 
   return (
     <div className="max-w-[1280px] mx-auto p-5">
@@ -43,7 +48,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       >
         <RoleProvider>
           <CurrencyProvider>
-            <HerdProvider initialHerd={initialHerd}>
+            <HerdProvider initialHerd={initialHerd} initialOps={initialOps} persisted={persisted}>
               <TopNav />
               <BoardNav />
               <DashboardShell>{children}</DashboardShell>

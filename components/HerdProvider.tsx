@@ -15,6 +15,7 @@ import { Animal, MetricKey, CaseStatus, CaseState, Species, AnimalProfile } from
 import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
 import { LogEntry } from "@/lib/history";
+import { createAnimalAction, updateAnimalAction, removeAnimalAction, advanceCaseAction, assignCaseAction, markBredAction } from "@/app/dashboard/actions";
 
 const CASE_EVENT_LABEL: Record<CaseStatus, string> = {
   open: "Reabierto",
@@ -65,14 +66,30 @@ export type AnimalPatch = { name?: string; tag_id?: string; profile?: Partial<An
 
 const HerdContext = createContext<HerdContextValue | null>(null);
 
-export function HerdProvider({ children, initialHerd }: { children: React.ReactNode; initialHerd?: Animal[] | null }) {
+export interface InitialOps {
+  cases: Record<string, CaseState>;
+  bred: Record<string, string>;
+  log: Record<string, LogEntry[]>;
+}
+
+export function HerdProvider({
+  children,
+  initialHerd,
+  initialOps,
+  persisted = false,
+}: {
+  children: React.ReactNode;
+  initialHerd?: Animal[] | null;
+  initialOps?: InitialOps | null;
+  persisted?: boolean;
+}) {
   // Real data from the server (DB) when provided; synthetic fallback otherwise.
   const [herd, setHerd] = useState<Animal[]>(() => initialHerd ?? generateHerd());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
-  const [cases, setCases] = useState<Record<string, CaseState>>({});
-  const [bred, setBred] = useState<Record<string, string>>({});
-  const [log, setLog] = useState<Record<string, LogEntry[]>>(() => seedEnrollment(initialHerd ?? herd));
+  const [cases, setCases] = useState<Record<string, CaseState>>(() => initialOps?.cases ?? {});
+  const [bred, setBred] = useState<Record<string, string>>(() => initialOps?.bred ?? {});
+  const [log, setLog] = useState<Record<string, LogEntry[]>>(() => initialOps?.log ?? seedEnrollment(initialHerd ?? herd));
   const simulatedRef = useRef<Set<string>>(new Set());
 
   function logEvent(id: string, entry: Omit<LogEntry, "at"> & { at?: string }) {
@@ -91,6 +108,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
       const evt = { at: new Date().toISOString(), label: CASE_EVENT_LABEL[status] };
       return { ...prev, [id]: { ...cur, status, events: [...cur.events, evt] } };
     });
+    if (persisted) void advanceCaseAction(id, status).catch((e) => console.error(e));
   }
 
   function assignCase(id: string, who: string | null) {
@@ -102,10 +120,12 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
       const evt = { at: new Date().toISOString(), label };
       return { ...prev, [id]: { ...cur, assignee: who, status, events: [...cur.events, evt] } };
     });
+    if (persisted) void assignCaseAction(id, who).catch((e) => console.error(e));
   }
 
   function markBred(id: string) {
     setBred((prev) => ({ ...prev, [id]: new Date().toISOString() }));
+    if (persisted) void markBredAction(id).catch((e) => console.error(e));
   }
 
   const selected = selectedId ? herd.find((a) => a.id === selectedId) ?? null : null;
@@ -134,7 +154,22 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     return ids;
   }
 
-  function addAnimal(input?: AnimalInput) {
+  async function addAnimal(input?: AnimalInput) {
+    if (persisted) {
+      // Server creates the row (with a starter series) and returns the real
+      // record; add it with its DB id so later edits/cases map correctly.
+      try {
+        const created = await createAnimalAction(input ?? {});
+        if (created) {
+          setHerd((prev) => [created, ...prev]);
+          setSelectedId(created.id);
+          logEvent(created.id, { kind: "enrolled", title: "Alta en la plataforma", detail: "Animal agregado al hato" });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return;
+    }
     const n = addedRef.current++;
     const a = generateAnimal(herd.length + n, Date.now() + n, { name: input?.name, species: input?.species });
     a.id = `an-new-${n}`;
@@ -159,11 +194,13 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
       )
     );
     logEvent(id, { kind: "edit", title: "Ficha actualizada" });
+    if (persisted) void updateAnimalAction(id, patch).catch((e) => console.error(e));
   }
 
   function removeAnimal(id: string) {
     setHerd((prev) => prev.filter((a) => a.id !== id));
     setSelectedId((cur) => (cur === id ? null : cur));
+    if (persisted) void removeAnimalAction(id).catch((e) => console.error(e));
     setCases((prev) => {
       const next = { ...prev };
       delete next[id];

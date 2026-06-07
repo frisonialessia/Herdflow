@@ -6,7 +6,8 @@
 // Do NOT import this from a client component (it uses `pg`).
 import { getPool } from "@/server/db";
 import { computeBaseline, detectAnomaly } from "@/lib/anomaly";
-import { SPECIES_LABEL, type Animal, type AnimalProfile, type MetricKey, type MetricPoint, type Species, type VaccineRecord } from "@/lib/types";
+import { SPECIES_LABEL, type Animal, type AnimalProfile, type CaseState, type CaseStatus, type MetricKey, type MetricPoint, type Species, type VaccineRecord } from "@/lib/types";
+import type { LogEntry, HistoryKind } from "@/lib/history";
 
 const isoDate = (d: Date) => new Date(d).toISOString().slice(0, 10);
 
@@ -126,4 +127,54 @@ export async function loadHerd(userId: string): Promise<Animal[]> {
 
   const order = { critical: 0, watch: 1, healthy: 2 };
   return herd.sort((p, q) => order[p.status] - order[q.status]);
+}
+
+const ISO = (d: Date) => new Date(d).toISOString();
+
+export interface OperationalState {
+  cases: Record<string, CaseState>;
+  bred: Record<string, string>;
+  log: Record<string, LogEntry[]>;
+}
+
+/** Read back the persisted operational state (case workflow, breeding marks,
+ * history log) so it survives a reload in real mode. */
+export async function loadOperationalState(userId: string): Promise<OperationalState> {
+  const pool = getPool();
+  const ORG = `org_id in (
+    select org_id from memberships where user_id = $1
+    union
+    select g.grantor_org_id from access_grants g join memberships m on m.org_id = g.grantee_org_id
+     where m.user_id = $1 and g.status = 'active')`;
+
+  const caseRows = await pool.query<{ animal_id: string; status: CaseStatus; assignee: string | null }>(
+    `select animal_id, status, assignee from cases where ${ORG}`,
+    [userId]
+  );
+  const cases: Record<string, CaseState> = {};
+  for (const c of caseRows.rows) cases[c.animal_id] = { status: c.status, assignee: c.assignee, events: [] };
+
+  const evRows = await pool.query<{ animal_id: string; at: Date; label: string }>(
+    `select c.animal_id, ce.at, ce.label from case_events ce join cases c on c.id = ce.case_id where ce.${ORG} order by ce.at asc`,
+    [userId]
+  );
+  for (const e of evRows.rows) cases[e.animal_id]?.events.push({ at: ISO(e.at), label: e.label });
+
+  const bredRows = await pool.query<{ animal_id: string; at: Date }>(
+    `select distinct on (animal_id) animal_id, at from breeding_events where ${ORG} order by animal_id, at desc`,
+    [userId]
+  );
+  const bred: Record<string, string> = {};
+  for (const b of bredRows.rows) bred[b.animal_id] = ISO(b.at);
+
+  const logRows = await pool.query<{ animal_id: string; at: Date; kind: string; title: string; detail: string | null }>(
+    `select animal_id, at, kind, title, detail from animal_events where ${ORG} order by at asc`,
+    [userId]
+  );
+  const log: Record<string, LogEntry[]> = {};
+  for (const l of logRows.rows) {
+    (log[l.animal_id] ??= []).push({ at: ISO(l.at), kind: l.kind as HistoryKind, title: l.title, detail: l.detail ?? undefined });
+  }
+
+  return { cases, bred, log };
 }
