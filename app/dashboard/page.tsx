@@ -11,6 +11,7 @@ import { detectOutbreaks } from "@/lib/outbreak";
 import { analyzeForecast } from "@/lib/forecast";
 import { PastureMap } from "@/components/PastureMap";
 import { OutbreakBanner } from "@/components/OutbreakBanner";
+import { HeatBanner } from "@/components/HeatBanner";
 import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind, Zap } from "lucide-react";
 
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
@@ -70,6 +71,7 @@ export default function OverviewPage() {
       </div>
 
       <OutbreakBanner outbreaks={outbreaks} onSelect={selectAnimal} />
+      <HeatBanner herd={shown} onSelect={selectAnimal} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-[18px]">
         <div className="relative">
