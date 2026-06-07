@@ -15,12 +15,13 @@ import { PastureMap } from "@/components/PastureMap";
 import { OutbreakBanner } from "@/components/OutbreakBanner";
 import { HeatBanner } from "@/components/HeatBanner";
 import { TodayBar } from "@/components/TodayBar";
-import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind, Zap } from "lucide-react";
+import { AddAnimalButton } from "@/components/AddAnimalButton";
+import { Thermometer, Activity, Wheat, Beef, Layers, Heart, Wind, Zap } from "lucide-react";
 
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 export default function OverviewPage() {
-  const { herd, selectAnimal, addAnimal, caseFor, bred } = useHerd();
+  const { herd, selectAnimal, caseFor, bred } = useHerd();
   const [group, setGroup] = useState<Species | "all">("all");
   const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
 
@@ -81,11 +82,7 @@ export default function OverviewPage() {
           >
             Lame <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--brown)" }}>{lame}</span>
           </Link>
-          <button onClick={() => addAnimal()}
-                  className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
-                  style={{ background: "var(--sage-deep)" }}>
-            <Plus size={16} strokeWidth={2} color="#fff" /> Add Animal
-          </button>
+          <AddAnimalButton />
         </div>
       </div>
 

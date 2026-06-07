@@ -11,7 +11,7 @@
 // flagged for the duration of the demo.
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Animal, MetricKey, CaseStatus, CaseState } from "@/lib/types";
+import { Animal, MetricKey, CaseStatus, CaseState, Species } from "@/lib/types";
 import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
 
@@ -32,7 +32,7 @@ interface HerdContextValue {
   setLive: (v: boolean) => void;
   simulate: (id: string, metric?: MetricKey) => void;
   simulateOutbreak: (metric?: MetricKey) => string[];
-  addAnimal: () => void;
+  addAnimal: (spec?: { name?: string; species?: Species }) => void;
   reset: () => void;
   // Case workflow (operational loop on top of an alert).
   cases: Record<string, CaseState>;
@@ -107,9 +107,9 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     return ids;
   }
 
-  function addAnimal() {
+  function addAnimal(spec?: { name?: string; species?: Species }) {
     const n = addedRef.current++;
-    const a = generateAnimal(herd.length + n, Date.now() + n);
+    const a = generateAnimal(herd.length + n, Date.now() + n, spec);
     a.id = `an-new-${n}`;
     setHerd((prev) => [a, ...prev]);
     setSelectedId(a.id);

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
+import { AddAnimalButton } from "@/components/AddAnimalButton";
 import { SPECIES_EMOJI, SPECIES_LABEL, Species } from "@/lib/types";
 import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
-import { Search, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 
 const FILTERS: { label: string; sp: Species | "all" }[] = [
   { label: "All", sp: "all" },
@@ -16,7 +17,7 @@ const FILTERS: { label: string; sp: Species | "all" }[] = [
 ];
 
 export default function AnimalsPage() {
-  const { herd, selectAnimal, addAnimal } = useHerd();
+  const { herd, selectAnimal } = useHerd();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Species | "all">("all");
 
@@ -37,11 +38,7 @@ export default function AnimalsPage() {
             {shown.length} of {herd.length} · {flagged} needing attention
           </div>
         </div>
-        <button onClick={() => addAnimal()}
-                className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
-                style={{ background: "var(--sage-deep)" }}>
-          <Plus size={16} strokeWidth={2} color="#fff" /> Add Animal
-        </button>
+        <AddAnimalButton />
       </div>
 
       <div className="bg-white border rounded-xl2 p-2 overflow-hidden" style={{ borderColor: "var(--border)" }}>
