@@ -1,18 +1,33 @@
 "use client";
 
-// Role pill + dropdown (demo). Lets you preview the app as each role.
+// Role pill. In demo mode it's a dropdown to preview each role; when locked
+// (real mode) it's a static badge showing the user's actual role.
 
 import { useState } from "react";
 import { useRole } from "@/components/RoleProvider";
 import { Role, ROLE_ORDER, ROLE_LABEL, ROLE_DESC, ROLE_COLOR } from "@/lib/roles";
-import { Crown, Tractor, Stethoscope, Check, ChevronDown, LucideIcon } from "lucide-react";
+import { Crown, Briefcase, Tractor, Stethoscope, Eye, Check, ChevronDown, LucideIcon } from "lucide-react";
 
-export const ROLE_ICON: Record<Role, LucideIcon> = { owner: Crown, caretaker: Tractor, vet: Stethoscope };
+export const ROLE_ICON: Record<Role, LucideIcon> = {
+  owner: Crown,
+  manager: Briefcase,
+  herdsman: Tractor,
+  vet: Stethoscope,
+  viewer: Eye,
+};
 
 export function RoleSwitcher() {
-  const { role, setRole } = useRole();
+  const { role, setRole, locked } = useRole();
   const [open, setOpen] = useState(false);
   const Icon = ROLE_ICON[role];
+
+  if (locked) {
+    return (
+      <span className="flex items-center gap-1.5 rounded-full border px-3 py-[7px] text-[12.5px] font-medium bg-white" style={{ borderColor: "var(--border)", color: ROLE_COLOR[role] }}>
+        <Icon size={14} strokeWidth={2.2} /> {ROLE_LABEL[role]}
+      </span>
+    );
+  }
 
   return (
     <div className="relative">
@@ -29,7 +44,7 @@ export function RoleSwitcher() {
         <>
           <div className="fixed inset-0 z-20" onClick={() => setOpen(false)} />
           <div
-            className="absolute right-0 top-full mt-2 z-30 rounded-2xl border bg-white p-2 min-w-[244px]"
+            className="absolute right-0 top-full mt-2 z-30 rounded-2xl border bg-white p-2 min-w-[248px]"
             style={{ borderColor: "var(--border)", boxShadow: "0 20px 40px -16px rgba(58,90,64,0.35)" }}
           >
             <div className="text-[10px] uppercase tracking-wide font-semibold px-2 py-1.5" style={{ color: "var(--faint)" }}>Ver como</div>

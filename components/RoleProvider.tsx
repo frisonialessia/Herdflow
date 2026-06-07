@@ -1,23 +1,27 @@
 "use client";
 
-// Current role (persisted to localStorage so a previewed role survives reloads).
-// Demo-only switcher; in production this comes from the authenticated user.
+// Current role. In real mode it comes from the server (the user's membership)
+// and is locked. In demo mode it's a previewable switcher persisted to
+// localStorage. Either way the UI reads it via useRole(); the server actions
+// re-check the real role independently.
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { Role, isRole } from "@/lib/roles";
 
-const Ctx = createContext<{ role: Role; setRole: (r: Role) => void } | null>(null);
+const Ctx = createContext<{ role: Role; setRole: (r: Role) => void; locked: boolean } | null>(null);
 const KEY = "hf-role";
 
-export function RoleProvider({ children }: { children: React.ReactNode }) {
-  const [role, setRoleState] = useState<Role>("owner");
+export function RoleProvider({ children, serverRole, locked = false }: { children: React.ReactNode; serverRole?: Role | null; locked?: boolean }) {
+  const [role, setRoleState] = useState<Role>(serverRole ?? "owner");
 
   useEffect(() => {
+    if (locked) return; // real mode: role is fixed by the membership
     const stored = typeof window !== "undefined" ? localStorage.getItem(KEY) : null;
     if (isRole(stored)) setRoleState(stored);
-  }, []);
+  }, [locked]);
 
   const setRole = (r: Role) => {
+    if (locked) return;
     setRoleState(r);
     try {
       localStorage.setItem(KEY, r);
@@ -26,7 +30,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  return <Ctx.Provider value={{ role, setRole }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ role, setRole, locked }}>{children}</Ctx.Provider>;
 }
 
 export function useRole() {

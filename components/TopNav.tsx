@@ -22,7 +22,7 @@ const LINKS: { href: string; label: string; finance?: boolean }[] = [
 
 export function TopNav() {
   const path = usePathname();
-  const { role, setRole } = useRole();
+  const { role, setRole, locked } = useRole();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -103,20 +103,20 @@ export function TopNav() {
             className="md:hidden absolute top-full right-0 mt-2 z-30 rounded-2xl border bg-white p-2 min-w-[210px]"
             style={{ borderColor: "var(--border)", boxShadow: "0 20px 40px -16px rgba(58,90,64,0.35)" }}
           >
-            <div className="text-[10px] uppercase tracking-wide font-semibold px-3 pt-1 pb-1.5" style={{ color: "var(--faint)" }}>Ver como</div>
-            <div className="flex gap-1.5 px-2 pb-2">
-              {ROLE_ORDER.map((r) => {
+            <div className="text-[10px] uppercase tracking-wide font-semibold px-3 pt-1 pb-1.5" style={{ color: "var(--faint)" }}>{locked ? "Tu rol" : "Ver como"}</div>
+            <div className="flex flex-col gap-1 px-2 pb-2">
+              {(locked ? [role] : ROLE_ORDER).map((r) => {
                 const RIcon = ROLE_ICON[r];
                 const active = r === role;
                 return (
                   <button
                     key={r}
-                    onClick={() => { setRole(r); setMobileOpen(false); }}
-                    className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border cursor-pointer"
+                    onClick={() => { if (!locked) { setRole(r); setMobileOpen(false); } }}
+                    className="flex items-center gap-2 py-2 px-2.5 rounded-xl border text-left cursor-pointer"
                     style={active ? { background: ROLE_COLOR[r], borderColor: ROLE_COLOR[r], color: "#fff" } : { background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
                   >
                     <RIcon size={15} strokeWidth={2.2} color={active ? "#fff" : ROLE_COLOR[r]} />
-                    <span className="text-[11px]">{ROLE_LABEL[r]}</span>
+                    <span className="text-[12.5px] font-medium">{ROLE_LABEL[r]}</span>
                   </button>
                 );
               })}

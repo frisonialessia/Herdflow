@@ -9,8 +9,10 @@ import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
 import { DemoAutoplay } from "@/components/DemoAutoplay";
 import { loadHerd, loadOperationalState, type OperationalState } from "@/lib/db/herd";
+import { getUserRole } from "@/lib/db/access";
 import { getSessionUserId } from "@/lib/auth/session";
 import type { Animal } from "@/lib/types";
+import type { Role } from "@/lib/roles";
 
 // Dual mode: with DATABASE_URL set, the dashboard reads the real herd from
 // Postgres; without it (the public demo), HerdProvider falls back to the
@@ -20,6 +22,7 @@ export const dynamic = "force-dynamic";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   let initialHerd: Animal[] | null = null;
   let initialOps: OperationalState | null = null;
+  let serverRole: Role | null = null;
   if (process.env.DATABASE_URL) {
     // Real mode requires a session; the herd is scoped to that user's orgs.
     const userId = getSessionUserId();
@@ -27,6 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     try {
       initialHerd = await loadHerd(userId);
       initialOps = await loadOperationalState(userId);
+      serverRole = await getUserRole(userId);
     } catch (e) {
       console.error("loadHerd failed, falling back to synthetic:", e);
       initialHerd = null;
@@ -46,7 +50,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           boxShadow: "0 30px 60px -30px rgba(58,90,64,0.28)",
         }}
       >
-        <RoleProvider>
+        <RoleProvider serverRole={persisted ? serverRole : null} locked={persisted}>
           <CurrencyProvider>
             <HerdProvider initialHerd={initialHerd} initialOps={initialOps} persisted={persisted}>
               <TopNav />
