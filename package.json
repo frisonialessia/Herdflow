@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx server/seed.ts",
-    "db:detect": "tsx server/detect.ts"
+    "db:detect": "tsx server/detect.ts",
+    "db:alerts": "tsx server/alerts.ts"
   },
   "dependencies": {
     "next": "14.2.5",

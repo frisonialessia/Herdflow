@@ -28,6 +28,7 @@ create type grant_role   as enum ('vet','viewer','manager');
 create type grant_status as enum ('pending','active','revoked');
 create type species_t    as enum ('dairy','beef','sheep','horse','poultry');
 create type severity_t   as enum ('healthy','watch','critical');
+create type alert_status as enum ('pending','sent','failed','suppressed');
 
 -- ── Identity & tenancy ──────────────────────────────────────
 create table organizations (
@@ -147,6 +148,27 @@ create table anomalies (
 );
 create index idx_anomalies_open on anomalies (org_id, animal_id) where resolved = false;
 
+-- Alert outbox: one row per critical anomaly worth interrupting a human for.
+-- The detection worker only ENQUEUES (status 'pending'); a separate dispatch
+-- worker (`npm run db:alerts`) delivers them. Decoupled on purpose — a flaky
+-- email/WhatsApp provider must never block or slow down detection, and delivery
+-- can be retried and scaled on its own.
+create table alerts (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null,
+  animal_id   uuid not null references animals(id)   on delete cascade,
+  anomaly_id  uuid not null references anomalies(id) on delete cascade,
+  severity    severity_t not null,
+  status      alert_status not null default 'pending',
+  provider    text,                                   -- console | resend | twilio  (set at dispatch)
+  destination text,                                   -- primary recipient          (set at dispatch)
+  error       text,
+  created_at  timestamptz not null default now(),
+  sent_at     timestamptz,
+  unique (anomaly_id)                                 -- de-dupe: at most one alert per anomaly
+);
+create index idx_alerts_pending on alerts (created_at) where status = 'pending';
+
 -- ── Billing ─────────────────────────────────────────────────
 create table subscriptions (
   org_id             uuid primary key references organizations(id) on delete cascade,
@@ -188,6 +210,7 @@ alter table devices       enable row level security;
 alter table readings      enable row level security;
 alter table baselines     enable row level security;
 alter table anomalies     enable row level security;
+alter table alerts        enable row level security;
 alter table subscriptions enable row level security;
 alter table memberships   enable row level security;
 alter table access_grants enable row level security;
@@ -203,6 +226,7 @@ create policy device_access  on devices       for all using (org_id in (select a
 create policy reading_access on readings      for all using (org_id in (select app_accessible_org_ids()));
 create policy baseline_access on baselines    for all using (org_id in (select app_accessible_org_ids()));
 create policy anomaly_access on anomalies     for all using (org_id in (select app_accessible_org_ids()));
+create policy alert_access   on alerts        for all using (org_id in (select app_accessible_org_ids()));
 create policy sub_access      on subscriptions for all using (org_id in (select app_accessible_org_ids()));
 create policy membership_access on memberships for all
   using (org_id in (select app_accessible_org_ids()) or user_id = app_current_user_id());

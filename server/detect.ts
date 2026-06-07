@@ -28,6 +28,7 @@ async function main() {
 
   let scored = 0;
   let flagged = 0;
+  let enqueued = 0;
   for (const an of animals.rows) {
     const rows = await pool.query<{ recorded_at: Date; metric: string; value: string }>(
       `select recorded_at, metric, value from readings where animal_id = $1 order by recorded_at asc`,
@@ -74,17 +75,30 @@ async function main() {
       );
       if (existing.rowCount === 0) {
         const cond = inferCondition({ status: deviation.severity, deviation } as Animal);
+        const anomalyId = randomUUID();
         await pool.query(
           `insert into anomalies (id, animal_id, org_id, metric, severity, z_score, baseline, observed, condition)
            values ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-          [randomUUID(), an.id, an.org_id, deviation.metric, deviation.severity, deviation.z_score, deviation.baseline, deviation.observed, cond.label]
+          [anomalyId, an.id, an.org_id, deviation.metric, deviation.severity, deviation.z_score, deviation.baseline, deviation.observed, cond.label]
         );
         flagged++;
+
+        // Enqueue an alert for criticals only (watch-level stays in-app to avoid
+        // notification fatigue). Dispatched separately by `npm run db:alerts`.
+        if (deviation.severity === "critical") {
+          await pool.query(
+            `insert into alerts (animal_id, org_id, anomaly_id, severity)
+             values ($1,$2,$3,$4)
+             on conflict (anomaly_id) do nothing`,
+            [an.id, an.org_id, anomalyId, deviation.severity]
+          );
+          enqueued++;
+        }
       }
     }
   }
 
-  console.log(`✓ Detection complete · ${scored} animals scored · ${flagged} new anomalies written`);
+  console.log(`✓ Detection complete · ${scored} animals scored · ${flagged} new anomalies · ${enqueued} alerts enqueued`);
   await pool.end();
 }
 
