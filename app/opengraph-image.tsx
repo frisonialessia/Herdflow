@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "HerdFlow — Predictive livestock health";
+export const alt = "HerdFlow — Salud predictiva del ganado";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -24,10 +24,10 @@ export default function Image() {
           <div style={{ display: "flex", fontSize: 42, fontWeight: 700, color: "#232c22" }}>HerdFlow</div>
         </div>
         <div style={{ display: "flex", fontSize: 76, fontWeight: 800, color: "#232c22", marginTop: 44, lineHeight: 1.05 }}>
-          Catch illness before it shows.
+          Detecta enfermedades antes de que se vean.
         </div>
         <div style={{ display: "flex", fontSize: 32, color: "#6e7568", marginTop: 30 }}>
-          Predictive livestock health · per-animal z-score detection
+          Salud predictiva del ganado · detección por z-score, animal por animal
         </div>
         <div style={{ display: "flex", marginTop: 46, gap: 12 }}>
           {["#588157", "#9a9a5e", "#8a4f32"].map((c) => (

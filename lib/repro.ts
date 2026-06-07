@@ -36,7 +36,7 @@ export interface Repro {
   cycleDay: number; // 0..20 (0 = day of estrus)
   dim: number; // days in milk (dairy) / days since calving
   detectedBy?: "activity" | "cycle";
-  confidence?: "High" | "Medium";
+  confidence?: "Alta" | "Media";
   intensity?: number; // 0..100 heat strength (in_heat)
   onsetHoursAgo?: number; // hours since onset (in_heat)
   daysToHeat?: number; // approaching / open
@@ -50,7 +50,7 @@ export function hash01(s: string): number {
 
 /** Postpartum label: "days in milk" is dairy-specific; others show days since calving. */
 export function dimText(species: Species, dim: number): string {
-  return species === "dairy" ? `${dim} DIM` : `${dim}d since calving`;
+  return species === "dairy" ? `${dim} DEL` : `${dim}d desde el parto`;
 }
 
 /** Per-animal reproductive state. `bred` = user marked her inseminated this session. */
@@ -70,7 +70,7 @@ export function reproOf(a: Animal, bred = false): Repro | null {
     const f = analyzeForecast(a);
     const onsetHoursAgo = f?.hoursSinceFlag && f.hoursSinceFlag > 0 ? f.hoursSinceFlag : 6;
     const intensity = Math.round(Math.min(98, 50 + Math.abs(a.deviation.z_score) * 12));
-    return { status: "in_heat", cycleDay: 0, dim, detectedBy: "activity", confidence: "High", intensity, onsetHoursAgo };
+    return { status: "in_heat", cycleDay: 0, dim, detectedBy: "activity", confidence: "Alta", intensity, onsetHoursAgo };
   }
 
   // 2) Standing heat detected by the cycle monitor, staggered across the herd so
@@ -78,7 +78,7 @@ export function reproOf(a: Animal, bred = false): Repro | null {
   if (hash01(a.id + "heatnow") < HEAT_RATE) {
     const onsetHoursAgo = Math.round(1 + hash01(a.id + "ons") * 20); // 1..21 h
     const intensity = Math.round(58 + hash01(a.id + "int") * 22); // 58..80
-    return { status: "in_heat", cycleDay: 0, dim, detectedBy: "cycle", confidence: "Medium", intensity, onsetHoursAgo };
+    return { status: "in_heat", cycleDay: 0, dim, detectedBy: "cycle", confidence: "Media", intensity, onsetHoursAgo };
   }
 
   // 3) Otherwise a seeded reproductive status (deterministic herd mix).
@@ -106,12 +106,12 @@ export function aiWindow(onsetHoursAgo: number): AIWindow {
   const hoursToOpen = Math.max(0, Math.round(WIN_OPEN_H - onsetHoursAgo));
   const hoursToClose = Math.round(WIN_CLOSE_H - onsetHoursAgo);
   if (onsetHoursAgo < WIN_OPEN_H)
-    return { state: "soon", hoursToOpen, hoursToClose, label: `Window opens in ~${hoursToOpen} h`, color: "var(--watch)" };
+    return { state: "soon", hoursToOpen, hoursToClose, label: `Ventana abre en ~${hoursToOpen} h`, color: "var(--watch)" };
   if (onsetHoursAgo <= WIN_CLOSE_H)
-    return { state: "open", hoursToOpen, hoursToClose, label: `Breed now · closes in ~${hoursToClose} h`, color: "var(--sage-deep)" };
+    return { state: "open", hoursToOpen, hoursToClose, label: `Inseminar ahora · cierra en ~${hoursToClose} h`, color: "var(--sage-deep)" };
   if (onsetHoursAgo <= 28)
-    return { state: "closing", hoursToOpen, hoursToClose, label: "Window closing — breed ASAP", color: "var(--brown)" };
-  return { state: "missed", hoursToOpen, hoursToClose, label: "Window missed — next heat ~21 d", color: "var(--critical)" };
+    return { state: "closing", hoursToOpen, hoursToClose, label: "Ventana cerrando — inseminar pronto", color: "var(--brown)" };
+  return { state: "missed", hoursToOpen, hoursToClose, label: "Ventana perdida — próximo celo ~21 d", color: "var(--critical)" };
 }
 
 export interface ReproItem {

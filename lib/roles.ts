@@ -20,7 +20,7 @@ export type Capability =
 
 export const ROLE_ORDER: Role[] = ["owner", "caretaker", "vet"];
 
-export const ROLE_LABEL: Record<Role, string> = { owner: "Dueño", caretaker: "Cuidador", vet: "Veterinario" };
+export const ROLE_LABEL: Record<Role, string> = { owner: "Propietario", caretaker: "Cuidador", vet: "Veterinario" };
 export const ROLE_DESC: Record<Role, string> = {
   owner: "Acceso total: operación, salud y finanzas",
   caretaker: "Operación diaria del hato",

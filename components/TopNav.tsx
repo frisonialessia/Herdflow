@@ -13,11 +13,11 @@ import { can, ROLE_ORDER, ROLE_LABEL, ROLE_COLOR } from "@/lib/roles";
 import { signOut as signOutAction } from "@/app/auth/actions";
 
 const LINKS: { href: string; label: string; finance?: boolean }[] = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/live", label: "Live Monitoring" },
-  { href: "/dashboard/animals", label: "Animals" },
-  { href: "/dashboard/reports", label: "Reports", finance: true },
-  { href: "/dashboard/impact", label: "Impact", finance: true },
+  { href: "/dashboard", label: "Resumen" },
+  { href: "/dashboard/live", label: "Monitoreo en vivo" },
+  { href: "/dashboard/animals", label: "Animales" },
+  { href: "/dashboard/reports", label: "Reportes", finance: true },
+  { href: "/dashboard/impact", label: "Impacto", finance: true },
 ];
 
 export function TopNav() {
@@ -59,13 +59,13 @@ export function TopNav() {
         <div className="flex items-center gap-2.5">
           <div className="hidden md:flex gap-2.5 items-center">
             <RoleSwitcher />
-            <IconCircle ariaLabel="Search"><Search size={18} strokeWidth={2} color="var(--sage-deep)" /></IconCircle>
+            <IconCircle ariaLabel="Buscar"><Search size={18} strokeWidth={2} color="var(--sage-deep)" /></IconCircle>
             <NotificationsBell />
 
             <div className="relative">
               <button
                 onClick={() => setUserOpen((o) => !o)}
-                aria-label="User menu"
+                aria-label="Menú de usuario"
                 className="w-[38px] h-[38px] rounded-full bg-white border flex items-center justify-center cursor-pointer"
                 style={{ borderColor: "var(--border)" }}
               >
@@ -81,8 +81,8 @@ export function TopNav() {
                       <Cable size={16} strokeWidth={2} /> Integraciones
                     </Link>
                   )}
-                  <MenuItem onClick={openSettings} icon={<Settings size={16} strokeWidth={2} />} label="Settings" />
-                  <MenuItem onClick={signOut} icon={<LogOut size={16} strokeWidth={2} />} label="Sign out" tone="brown" />
+                  <MenuItem onClick={openSettings} icon={<Settings size={16} strokeWidth={2} />} label="Ajustes" />
+                  <MenuItem onClick={signOut} icon={<LogOut size={16} strokeWidth={2} />} label="Cerrar sesión" tone="brown" />
                 </div>
               )}
             </div>
@@ -90,7 +90,7 @@ export function TopNav() {
 
           <button
             onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
+            aria-label="Abrir menú"
             className="md:hidden w-[40px] h-[40px] rounded-full bg-white border flex items-center justify-center cursor-pointer"
             style={{ borderColor: "var(--border)" }}
           >
@@ -139,8 +139,8 @@ export function TopNav() {
                 <Cable size={16} strokeWidth={2} /> Integraciones
               </Link>
             )}
-            <MenuItem onClick={openSettings} icon={<Settings size={16} strokeWidth={2} />} label="Settings" />
-            <MenuItem onClick={signOut} icon={<LogOut size={16} strokeWidth={2} />} label="Sign out" tone="brown" />
+            <MenuItem onClick={openSettings} icon={<Settings size={16} strokeWidth={2} />} label="Ajustes" />
+            <MenuItem onClick={signOut} icon={<LogOut size={16} strokeWidth={2} />} label="Cerrar sesión" tone="brown" />
           </div>
         )}
       </nav>

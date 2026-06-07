@@ -12,7 +12,7 @@ export interface Condition {
 
 export function inferCondition(a: Animal): Condition {
   if (a.status === "healthy") {
-    return { short: "Normal", label: "Within normal range", note: "No action needed." };
+    return { short: "Normal", label: "Dentro del rango normal", note: "Sin acción necesaria." };
   }
 
   const up = a.deviation.z_score > 0;
@@ -20,35 +20,35 @@ export function inferCondition(a: Animal): Condition {
   switch (a.deviation.metric) {
     case "temperature_c":
       return {
-        short: "Fever / mastitis?",
-        label: "Fever — possible mastitis or infection",
-        note: "Check udder and take rectal temperature; isolate if confirmed.",
+        short: "¿Fiebre / mastitis?",
+        label: "Fiebre — posible mastitis o infección",
+        note: "Revisa la ubre y toma temperatura rectal; aísla si se confirma.",
       };
     case "activity_index":
       return up
         ? {
-            short: "Estrus?",
-            label: "Restlessness — possible estrus (heat)",
-            note: "Watch for standing heat; flag for the insemination window.",
+            short: "¿Celo?",
+            label: "Inquietud — posible celo",
+            note: "Vigila el celo en pie; marca para la ventana de inseminación.",
           }
         : {
-            short: "Lameness?",
-            label: "Activity drop — possible lameness or illness",
-            note: "Check feet and gait; inspect for injury or systemic illness.",
+            short: "¿Cojera?",
+            label: "Caída de actividad — posible cojera o enfermedad",
+            note: "Revisa patas y andar; inspecciona por lesión o enfermedad sistémica.",
           };
     case "rumination_min":
       return {
-        short: "Off-feed",
-        label: "Low rumination — off-feed / ketosis risk",
-        note: "Review ration and water access; check fresh cows for ketosis.",
+        short: "Inapetente",
+        label: "Rumia baja — inapetencia / riesgo de cetosis",
+        note: "Revisa la ración y el acceso al agua; checa cetosis en vacas recién paridas.",
       };
     case "intake_kg":
       return {
-        short: "Off-feed",
-        label: "Feed intake dropping — off-feed",
-        note: "Check feed access and appetite; look for early illness.",
+        short: "Inapetente",
+        label: "Consumo bajando — inapetencia",
+        note: "Revisa acceso al alimento y apetito; busca enfermedad temprana.",
       };
     default:
-      return { short: "Anomaly", label: "Deviation from baseline", note: "Review recent readings." };
+      return { short: "Anomalía", label: "Desviación de la línea base", note: "Revisa las lecturas recientes." };
   }
 }

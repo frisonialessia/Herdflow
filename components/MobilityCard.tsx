@@ -28,16 +28,16 @@ export function MobilityCard({ animal: a }: { animal: Animal }) {
     <div className="rounded-[14px] p-4 mb-5" style={{ background: "var(--card)", border: `1px solid ${m.score >= 2 ? meta.color : "var(--border)"}` }}>
       <div className="flex items-center gap-2 mb-2.5">
         <Footprints size={16} strokeWidth={2} color="var(--sage-deep)" />
-        <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Mobility</h3>
+        <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Movilidad</h3>
         <span className="ml-auto text-[11px] font-semibold px-2 py-[2px] rounded-[20px] text-white" style={{ background: meta.color }}>
-          Score {m.score} · {meta.short}
+          Puntaje {m.score} · {meta.short}
         </span>
       </div>
       <div className="flex items-center gap-2.5 mb-2">
         <MobilityScale score={m.score} />
-        <span className="text-[12px]" style={{ color: "var(--muted)" }}>0–3 locomotion</span>
+        <span className="text-[12px]" style={{ color: "var(--muted)" }}>locomoción 0–3</span>
         {m.drop >= 0.05 && (
-          <span className="ml-auto text-[12px] font-semibold" style={{ color: meta.color }}>activity −{Math.round(m.drop * 100)}%</span>
+          <span className="ml-auto text-[12px] font-semibold" style={{ color: meta.color }}>actividad −{Math.round(m.drop * 100)}%</span>
         )}
       </div>
       <div className="text-[12.5px] leading-relaxed" style={{ color: "var(--muted)" }}>{meta.note}</div>

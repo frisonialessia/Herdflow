@@ -47,7 +47,7 @@ export interface TodayBoard {
 }
 
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)} d` : `${h} h`);
-const CASE_LABEL: Record<CaseStatus, string> = { open: "open", acknowledged: "acknowledged", treating: "treating", resolved: "resolved" };
+const CASE_LABEL: Record<CaseStatus, string> = { open: "abierto", acknowledged: "reconocido", treating: "en tratamiento", resolved: "resuelto" };
 
 export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoard {
   const items: ActionItem[] = [];
@@ -59,9 +59,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "biosecurity",
       tier: "urgent",
       rank: 96,
-      title: `Possible outbreak · ${o.paddock}`,
-      detail: `${o.label} — ${o.size} animals${o.criticalCount > 0 ? ` · ${o.criticalCount} critical` : ""}`,
-      cta: "Review",
+      title: `Posible brote · ${o.paddock}`,
+      detail: `${o.label} — ${o.size} animales${o.criticalCount > 0 ? ` · ${o.criticalCount} críticos` : ""}`,
+      cta: "Revisar",
       animalId: o.animalIds[0],
     });
   }
@@ -78,9 +78,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
     let lead = "";
     if (f?.alreadyCritical) {
       const hh = f.hoursFlagToCritical && f.hoursFlagToCritical > 0 ? f.hoursFlagToCritical : f.hoursSinceFlag;
-      if (hh && hh > 0) lead = ` · flagged ${fmtH(hh)} early`;
+      if (hh && hh > 0) lead = ` · marcado ${fmtH(hh)} antes`;
     } else if (f?.projectionHours) {
-      lead = ` · ~${fmtH(f.projectionHours)} to critical`;
+      lead = ` · ~${fmtH(f.projectionHours)} a crítico`;
     }
 
     items.push({
@@ -89,8 +89,8 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       tier: critical && open ? "urgent" : "today",
       rank: (critical ? 80 : 48) + (open ? 10 : 0) + Math.min(12, Math.abs(a.deviation.z_score)),
       title: `${a.name} · ${inferCondition(a).short}`,
-      detail: `${STATUS_LABEL[a.status]} · case ${CASE_LABEL[cs]}${lead}`,
-      cta: "Open",
+      detail: `${STATUS_LABEL[a.status]} · caso ${CASE_LABEL[cs]}${lead}`,
+      cta: "Abrir",
       animalId: a.id,
     });
   }
@@ -104,9 +104,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "heat",
       tier: emergency ? "urgent" : "today",
       rank: emergency ? 92 : 58,
-      title: `Heat ${emergency ? "emergency" : "danger"} · THI ${Math.round(heat.peak.thi)} at peak`,
-      detail: `${heat.atRiskCount} at high risk${heat.topSpecies ? ` · ${SPECIES_LABEL[heat.topSpecies].toLowerCase()} most exposed` : ""} — shade, water & sprinklers at peak`,
-      cta: "Plan",
+      title: `${emergency ? "Emergencia" : "Peligro"} por calor · THI ${Math.round(heat.peak.thi)} en el pico`,
+      detail: `${heat.atRiskCount} en alto riesgo${heat.topSpecies ? ` · ${SPECIES_LABEL[heat.topSpecies].toLowerCase()} más expuestas` : ""} — sombra, agua y aspersores en el pico`,
+      cta: "Planear",
       href: "/dashboard",
     });
   }
@@ -122,9 +122,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "breeding",
       tier: act ? "urgent" : "today",
       rank: 74 - w.hoursToClose,
-      title: `Breed ${a.name}`,
-      detail: `In heat · ${w.label}`,
-      cta: "Breed",
+      title: `Inseminar a ${a.name}`,
+      detail: `En celo · ${w.label}`,
+      cta: "Inseminar",
       animalId: a.id,
     });
   }
@@ -134,9 +134,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "breeding",
       tier: "upcoming",
       rank: 30 - (r.daysToHeat ?? 2),
-      title: `Watch ${a.name} for heat`,
-      detail: `Approaching — expected in ~${r.daysToHeat} d`,
-      cta: "Open",
+      title: `Vigilar celo de ${a.name}`,
+      detail: `Próxima — en ~${r.daysToHeat} d`,
+      cta: "Abrir",
       animalId: a.id,
     });
   }
@@ -149,9 +149,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "calving",
       tier: urgent ? "urgent" : c.daysToCalving <= 10 ? "today" : "upcoming",
       rank: 84 - c.daysToCalving,
-      title: c.bucket === "overdue" ? `Calving overdue · ${a.name}` : `Maternity pen · ${a.name}`,
-      detail: `${calvingLabel(c.daysToCalving)} · day ${c.gestationDay}/${c.gestation}`,
-      cta: "Open",
+      title: c.bucket === "overdue" ? `Parto atrasado · ${a.name}` : `Maternidad · ${a.name}`,
+      detail: `${calvingLabel(c.daysToCalving)} · día ${c.gestationDay}/${c.gestation}`,
+      cta: "Abrir",
       animalId: a.id,
     });
   }
@@ -167,9 +167,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "welfare",
       tier: m.score === 3 ? "today" : "upcoming",
       rank: 40 + m.score * 3,
-      title: `Hoof check · ${a.name}`,
-      detail: `${MOB_META[m.score].label} (mobility ${m.score}/3)`,
-      cta: "Open",
+      title: `Revisar pezuñas · ${a.name}`,
+      detail: `${MOB_META[m.score].label} (movilidad ${m.score}/3)`,
+      cta: "Abrir",
       animalId: a.id,
     });
   }
@@ -184,9 +184,9 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       domain: "nutrition",
       tier: "today",
       rank: 38 + Math.round(n.drop * 12),
-      title: `Feed check · ${a.name}`,
-      detail: `Off-feed · intake ${n.intakePct}% of target`,
-      cta: "Open",
+      title: `Revisar alimentación · ${a.name}`,
+      detail: `Inapetente · consumo ${n.intakePct}% del objetivo`,
+      cta: "Abrir",
       animalId: a.id,
     });
   }

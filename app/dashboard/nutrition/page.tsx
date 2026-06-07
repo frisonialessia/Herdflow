@@ -20,52 +20,52 @@ export default function NutritionPage() {
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[26px] font-semibold tracking-tight flex items-center gap-2.5">
-            <Wheat size={24} strokeWidth={2} color="var(--sage-deep)" /> Nutrition
+            <Wheat size={24} strokeWidth={2} color="var(--sage-deep)" /> Nutrición
           </h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {offCount} off-feed · {offFeed.length - offCount} dipping · {total} animals
+            {offCount} inapetentes · {offFeed.length - offCount} bajando · {total} animales
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[230px_1fr_1fr] gap-[18px] mb-6">
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
-          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Feed Index</div>
+          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Índice de alimentación del hato</div>
           <div className="font-sora text-[40px] font-semibold mt-1" style={{ color: index >= 90 ? "var(--healthy)" : index >= 80 ? "var(--watch)" : "var(--critical)" }}>{index}%</div>
-          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>on feed (not off-feed)</div>
+          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>comiendo (no inapetentes)</div>
         </div>
 
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
-          <div className="text-xs uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Average vs target</div>
-          <Meter label="Dry-matter intake" pct={avgIntakePct} icon={<Utensils size={15} strokeWidth={2} color="var(--brown)" />} />
+          <div className="text-xs uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Promedio vs objetivo</div>
+          <Meter label="Consumo de materia seca" pct={avgIntakePct} icon={<Utensils size={15} strokeWidth={2} color="var(--brown)" />} />
           <div className="mt-3">
-            <Meter label="Rumination (ruminants)" pct={avgRumPct} icon={<Wheat size={15} strokeWidth={2} color="var(--brown)" />} />
+            <Meter label="Rumia (rumiantes)" pct={avgRumPct} icon={<Wheat size={15} strokeWidth={2} color="var(--brown)" />} />
           </div>
         </div>
 
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
-          <div className="text-xs uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Body condition (BCS)</div>
+          <div className="text-xs uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Condición corporal (BCS)</div>
           <div className="flex h-3 rounded-full overflow-hidden mb-3" style={{ background: "var(--card-soft)" }}>
             <Seg n={bcs.thin} total={total} color="var(--watch)" />
             <Seg n={bcs.ideal} total={total} color="var(--healthy)" />
             <Seg n={bcs.over} total={total} color="var(--brown)" />
           </div>
           <div className="flex justify-between text-[12.5px]" style={{ color: "var(--muted)" }}>
-            <span><b style={{ color: "var(--ink)" }}>{bcs.thin}</b> thin</span>
+            <span><b style={{ color: "var(--ink)" }}>{bcs.thin}</b> delgada</span>
             <span><b style={{ color: "var(--ink)" }}>{bcs.ideal}</b> ideal</span>
-            <span><b style={{ color: "var(--ink)" }}>{bcs.over}</b> over</span>
+            <span><b style={{ color: "var(--ink)" }}>{bcs.over}</b> sobrepeso</span>
           </div>
         </div>
       </div>
 
       <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5 mb-3.5">
-        Off-feed watch
+        Vigilancia de inapetencia
         <span className="text-white rounded-[20px] px-2.5 text-[13px] font-semibold" style={{ background: "var(--brown)" }}>{offFeed.length}</span>
       </h3>
 
       {offFeed.length === 0 ? (
         <div className="bg-white border rounded-xl2 text-center text-sm py-10" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          The whole herd is eating to target.
+          Todo el hato come según objetivo.
         </div>
       ) : (
         <div className="flex flex-col gap-2.5">
@@ -101,8 +101,8 @@ function FeedRow({ item, onOpen }: { item: NutritionItem; onOpen: () => void }) 
       </div>
       </div>
       <div className="shrink-0 w-full sm:w-[150px] flex flex-col gap-1.5 pl-[56px] sm:pl-0">
-        <Meter label="Intake" pct={n.intakePct} small />
-        {n.rumPct !== null && <Meter label="Rumination" pct={n.rumPct} small />}
+        <Meter label="Consumo" pct={n.intakePct} small />
+        {n.rumPct !== null && <Meter label="Rumia" pct={n.rumPct} small />}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export function DashboardSkeleton() {
     <div className="animate-fade">
       <div className="flex items-center gap-2 text-[13px] mb-5" style={{ color: "var(--muted)" }}>
         <span className="w-2 h-2 rounded-full animate-pulse-dot" style={{ background: "var(--sage)" }} />
-        Connecting to live sensors…
+        Conectando con los sensores…
       </div>
 
       <div className="flex items-center justify-between mb-[22px]">

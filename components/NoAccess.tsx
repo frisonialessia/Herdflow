@@ -14,7 +14,7 @@ export function NoAccess({ feature }: { feature: string }) {
         </div>
         <div className="font-sora text-[18px] font-semibold">Sin acceso</div>
         <div className="text-[13px] mt-1.5 max-w-[400px] mx-auto leading-relaxed" style={{ color: "var(--muted)" }}>
-          <b>{feature}</b> solo está disponible para el rol <b>Dueño</b>. Estás viendo como <b>{ROLE_LABEL[role]}</b> — cámbialo arriba a la derecha.
+          <b>{feature}</b> solo está disponible para el rol <b>Propietario</b>. Estás viendo como <b>{ROLE_LABEL[role]}</b> — cámbialo arriba a la derecha.
         </div>
       </div>
     </section>

@@ -63,34 +63,34 @@ function meta(metric: MetricKey, paddock: string): { short: string; label: strin
   switch (metric) {
     case "temperature_c":
       return {
-        short: "Fever",
-        label: "Fever cluster",
-        note: `Several animals running fevers in ${paddock}. Possible infectious or respiratory outbreak — isolate this group and call your vet.`,
+        short: "Fiebre",
+        label: "Brote de fiebre",
+        note: `Varios animales con fiebre en ${paddock}. Posible brote infeccioso o respiratorio — aísla este grupo y llama al veterinario.`,
       };
     case "respiration_rate":
       return {
-        short: "Respiratory",
-        label: "Respiratory cluster",
-        note: `Multiple animals breathing hard in ${paddock}. Possible respiratory disease (e.g. pneumonia / BRD) — isolate and ventilate.`,
+        short: "Respiratorio",
+        label: "Brote respiratorio",
+        note: `Varios animales respirando con dificultad en ${paddock}. Posible enfermedad respiratoria (p. ej. neumonía / BRD) — aísla y ventila.`,
       };
     case "rumination_min":
     case "intake_kg":
       return {
-        short: "Off-feed",
-        label: "Off-feed cluster",
-        note: `Several animals off-feed in ${paddock}. Check that pen's feed and water for spoilage or contamination.`,
+        short: "Inapetencia",
+        label: "Brote de inapetencia",
+        note: `Varios animales inapetentes en ${paddock}. Revisa el alimento y el agua de ese corral por descomposición o contaminación.`,
       };
     case "activity_index":
       return {
-        short: "Low activity",
-        label: "Activity-drop cluster",
-        note: `Several animals down in ${paddock}. Check the area for a hazard, heat stress or a shared stressor.`,
+        short: "Actividad baja",
+        label: "Brote de caída de actividad",
+        note: `Varios animales decaídos en ${paddock}. Revisa el área por un peligro, estrés calórico o un factor de estrés compartido.`,
       };
     default:
       return {
-        short: "Anomaly",
-        label: "Anomaly cluster",
-        note: `A group of animals in ${paddock} is deviating together — worth a look.`,
+        short: "Anomalía",
+        label: "Brote de anomalía",
+        note: `Un grupo de animales en ${paddock} se está desviando en conjunto — vale la pena revisarlo.`,
       };
   }
 }

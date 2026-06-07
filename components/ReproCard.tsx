@@ -22,7 +22,7 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
     <div className="rounded-[14px] p-4 mb-5" style={{ background: "var(--card)", border: `1px solid ${accent}` }}>
       <div className="flex items-center gap-2 mb-2">
         <HeartPulse size={16} strokeWidth={2} color="var(--sage-deep)" />
-        <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Reproduction</h3>
+        <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Reproducción</h3>
         <span className="ml-auto text-[12px]" style={{ color: "var(--faint)" }}>{dimText(a.species, r.dim)}</span>
       </div>
       {children}
@@ -35,10 +35,10 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
       <Shell accent="var(--sage)">
         <div className="flex items-center gap-2 flex-wrap mb-2">
           <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider px-2 py-[3px] rounded-[20px] text-white" style={{ background: "var(--sage-deep)" }}>
-            <HeartPulse size={12} strokeWidth={2.4} color="#fff" /> In heat
+            <HeartPulse size={12} strokeWidth={2.4} color="#fff" /> En celo
           </span>
           <span className="text-[12px] font-semibold px-2 py-[2px] rounded-[20px]" style={{ background: "var(--card-soft)", color: "var(--muted)" }}>
-            {r.confidence} confidence · {r.detectedBy === "activity" ? "activity spike" : "cycle"}
+            confianza {r.confidence} · {r.detectedBy === "activity" ? "pico de actividad" : "ciclo"}
           </span>
         </div>
         <div className="flex items-center gap-2 mb-2.5">
@@ -48,14 +48,14 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
           <span className="font-sora text-[13px] font-semibold tabular-nums">{r.intensity}</span>
         </div>
         <div className="text-[13px] leading-relaxed mb-3" style={{ color: "var(--muted)" }}>
-          Onset ~{r.onsetHoursAgo} h ago · <span style={{ color: win.color, fontWeight: 600 }}>{win.label}</span>
+          Inicio hace ~{r.onsetHoursAgo} h · <span style={{ color: win.color, fontWeight: 600 }}>{win.label}</span>
         </div>
         <button
           onClick={() => markBred(a.id)}
           className="w-full flex items-center justify-center gap-2 text-white border-0 rounded-[12px] py-2.5 text-[13px] font-medium cursor-pointer"
           style={{ background: "var(--sage-deep)" }}
         >
-          <Syringe size={15} strokeWidth={2.2} color="#fff" /> Mark bred
+          <Syringe size={15} strokeWidth={2.2} color="#fff" /> Marcar servida
         </button>
       </Shell>
     );
@@ -66,9 +66,9 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
       <Shell accent="var(--brown-soft)">
         <div className="flex items-center gap-2 text-[14px] font-semibold">
           <Check size={16} strokeWidth={2.4} color="var(--sage-deep)" />
-          {justBred ? "Marked bred" : "Bred"} · confirm pregnancy in ~30 d
+          {justBred ? "Servida marcada" : "Servida"} · confirmar preñez en ~30 d
         </div>
-        <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Schedule a pregnancy check; watch for a return to heat at ~21 days.</div>
+        <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Programa una revisión de preñez; vigila un retorno al celo a los ~21 días.</div>
       </Shell>
     );
   }
@@ -78,9 +78,9 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
       <Shell accent="var(--watch)">
         <div className="flex items-center gap-2 text-[14px] font-semibold">
           <CalendarDays size={16} strokeWidth={2.2} color="var(--brown)" />
-          Approaching heat — expected in ~{r.daysToHeat} d
+          Próxima al celo — en ~{r.daysToHeat} d
         </div>
-        <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Watch for standing heat and rising activity over the next 48 hours.</div>
+        <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Vigila el celo en pie y el aumento de actividad en las próximas 48 horas.</div>
       </Shell>
     );
   }
@@ -90,7 +90,7 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
     return (
       <Shell accent="var(--brown-soft)">
         <div className="flex items-center gap-2 text-[14px] font-semibold">
-          <Check size={16} strokeWidth={2.4} color="var(--healthy)" /> Confirmed pregnant
+          <Check size={16} strokeWidth={2.4} color="var(--healthy)" /> Preñez confirmada
         </div>
         {c ? (
           <>
@@ -98,14 +98,14 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
               <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
                 <div className="h-full rounded-full" style={{ width: `${Math.round((c.gestationDay / c.gestation) * 100)}%`, background: BUCKET_COLOR[c.bucket] }} />
               </div>
-              <span className="text-[12px] tabular-nums" style={{ color: "var(--muted)" }}>day {c.gestationDay}/{c.gestation}</span>
+              <span className="text-[12px] tabular-nums" style={{ color: "var(--muted)" }}>día {c.gestationDay}/{c.gestation}</span>
             </div>
             <div className="text-[12.5px] mt-1.5" style={{ color: "var(--muted)" }}>
-              <span style={{ color: BUCKET_COLOR[c.bucket], fontWeight: 600 }}>{calvingLabel(c.daysToCalving)}</span> · expected calving
+              <span style={{ color: BUCKET_COLOR[c.bucket], fontWeight: 600 }}>{calvingLabel(c.daysToCalving)}</span> · parto previsto
             </div>
           </>
         ) : (
-          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>No action — not expected to cycle.</div>
+          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Sin acción — no se espera que cicle.</div>
         )}
       </Shell>
     );
@@ -115,9 +115,9 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
   return (
     <Shell accent="var(--border)">
       <div className="flex items-center gap-2 text-[14px] font-semibold">
-        <CircleDot size={15} strokeWidth={2.2} color="var(--muted)" /> Open · cycling
+        <CircleDot size={15} strokeWidth={2.2} color="var(--muted)" /> Vacía · ciclando
       </div>
-      <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Next heat expected in ~{r.daysToHeat} d (≈21-day cycle).</div>
+      <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>Próximo celo en ~{r.daysToHeat} d (ciclo ≈21 días).</div>
     </Shell>
   );
 }

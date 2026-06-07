@@ -20,7 +20,7 @@ export default function LandingPage() {
           className="text-white rounded-[30px] px-5 py-2.5 text-sm font-medium flex items-center gap-2"
           style={{ background: "var(--sage-deep)" }}
         >
-          Launch demo <ArrowRight size={16} strokeWidth={2} />
+          Abrir demo <ArrowRight size={16} strokeWidth={2} />
         </Link>
       </header>
 
@@ -30,15 +30,15 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 text-[13px] rounded-[30px] px-4 py-1.5 border bg-white"
             style={{ borderColor: "var(--border)", color: "var(--sage-deep)" }}
           >
-            <Activity size={14} strokeWidth={2} /> Predictive livestock health
+            <Activity size={14} strokeWidth={2} /> Salud predictiva del ganado
           </span>
           <h1 className="font-sora font-bold tracking-tight mt-6 leading-[1.05]" style={{ fontSize: "clamp(32px,5vw,52px)" }}>
-            Catch illness <em className="not-italic" style={{ color: "var(--sage)" }}>before</em> it shows.
+            Detecta la enfermedad <em className="not-italic" style={{ color: "var(--sage)" }}>antes</em> de que se vea.
           </h1>
           <p className="text-[17px] mt-5 max-w-[560px] mx-auto lg:mx-0 leading-relaxed" style={{ color: "var(--muted)" }}>
-            HerdFlow scores every animal against its own rolling baseline — temperature, activity,
-            rumination and feed intake — and flags fever, lameness or off-feed days before they&apos;re
-            visible to the eye.
+            HerdFlow evalúa a cada animal contra su propia línea base móvil —temperatura, actividad,
+            rumia y consumo de alimento— y detecta fiebre, cojera o días sin apetito antes de que sean
+            visibles a simple vista.
           </p>
           <div className="flex gap-3 mt-8 flex-wrap justify-center lg:justify-start">
             <Link
@@ -46,7 +46,7 @@ export default function LandingPage() {
               className="text-white rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2"
               style={{ background: "var(--sage-deep)" }}
             >
-              <Thermometer size={16} strokeWidth={2} /> See it catch a fever
+              <Thermometer size={16} strokeWidth={2} /> Míralo detectar una fiebre
             </Link>
             <a
               href="https://github.com/frisonialessia/Herdflow"
@@ -55,10 +55,10 @@ export default function LandingPage() {
               className="rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2 border bg-white"
               style={{ borderColor: "var(--border)", color: "var(--ink)" }}
             >
-              <Github size={16} strokeWidth={2} /> View source
+              <Github size={16} strokeWidth={2} /> Ver código
             </a>
           </div>
-          <div className="text-[12.5px] mt-4" style={{ color: "var(--faint)" }}>Demo · synthetic data · no sign-up</div>
+          <div className="text-[12.5px] mt-4" style={{ color: "var(--faint)" }}>Demo · datos sintéticos · sin registro</div>
         </div>
 
         <HeroDemo />
@@ -66,9 +66,9 @@ export default function LandingPage() {
 
       <section className="max-w-[1100px] mx-auto px-6 py-8">
         <div className="text-center mb-8">
-          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Your whole farm, at a glance</h2>
+          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Todo tu rancho, de un vistazo</h2>
           <p className="text-[15px] mt-2 max-w-[620px] mx-auto" style={{ color: "var(--muted)" }}>
-            Every animal on one live map — healthy, watch and critical at a glance. Click any pin to drill into its vitals.
+            Cada animal en un solo mapa en vivo —sanos, en observación y críticos de un vistazo. Toca cualquier marcador para ver sus signos vitales.
           </p>
         </div>
         <FarmMapPreview />
@@ -76,20 +76,20 @@ export default function LandingPage() {
 
       <section className="max-w-[1100px] mx-auto px-6 py-8">
         <div className="text-center mb-8">
-          <h2 className="font-sora text-[26px] font-semibold tracking-tight">How it works</h2>
-          <p className="text-[15px] mt-2" style={{ color: "var(--muted)" }}>From raw telemetry to an explainable alert — in three steps.</p>
+          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Cómo funciona</h2>
+          <p className="text-[15px] mt-2" style={{ color: "var(--muted)" }}>De la telemetría en bruto a una alerta explicable — en tres pasos.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <Step n={1} icon={<Radio size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Telemetry streams in" body="Wearables and sensors report temperature, activity, rumination and feed intake around the clock." />
-          <Step n={2} icon={<LineChart size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Scored against itself" body="Each animal is compared to its own 14-day rolling baseline — a ±2σ band, not the herd average." />
-          <Step n={3} icon={<ShieldCheck size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Flagged early" body="A z-score past ±2σ raises a watch, past ±3σ a critical — often days before anything is visible." />
+          <Step n={1} icon={<Radio size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Llega la telemetría" body="Los dispositivos y sensores reportan temperatura, actividad, rumia y consumo de alimento las 24 horas." />
+          <Step n={2} icon={<LineChart size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Se evalúa contra sí mismo" body="Cada animal se compara con su propia línea base móvil de 14 días — una banda de ±2σ, no el promedio del rebaño." />
+          <Step n={3} icon={<ShieldCheck size={18} strokeWidth={2} color="var(--sage-deep)" />} title="Se detecta a tiempo" body="Un z-score que rebasa ±2σ levanta una observación; más allá de ±3σ, una alerta crítica — a menudo días antes de que algo sea visible." />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6 items-center">
           <div>
-            <h3 className="font-sora text-[20px] font-semibold tracking-tight">The math, in one picture</h3>
+            <h3 className="font-sora text-[20px] font-semibold tracking-tight">Las matemáticas, en una sola imagen</h3>
             <p className="text-[15px] mt-3 leading-relaxed" style={{ color: "var(--muted)" }}>
-              The z-score measures how many standard deviations a reading sits from that animal&apos;s normal.
-              Stay inside the band and all is well; break it and HerdFlow flags exactly which signal moved — and by how much.
+              El z-score mide cuántas desviaciones estándar se aleja una lectura de lo normal de ese animal.
+              Si se mantiene dentro de la banda, todo está bien; si la rebasa, HerdFlow señala exactamente qué señal cambió — y por cuánto.
             </p>
           </div>
           <ZScoreExplainer />
@@ -99,18 +99,18 @@ export default function LandingPage() {
       <section className="max-w-[1100px] mx-auto px-6 pb-20 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Feature
           icon={<LineChart size={20} strokeWidth={2} color="var(--sage-deep)" />}
-          title="Per-animal baselines"
-          body="Each animal is its own control. We compute a rolling mean ±2σ band and z-score the latest reading against its own history — not the herd average."
+          title="Líneas base por animal"
+          body="Cada animal es su propio control. Calculamos una media móvil con banda de ±2σ y aplicamos el z-score a la última lectura contra su propio historial — no contra el promedio del rebaño."
         />
         <Feature
           icon={<ShieldCheck size={20} strokeWidth={2} color="var(--sage-deep)" />}
-          title="Early, explainable alerts"
-          body="|z|>2 raises a watch, |z|>3 a critical. Every alert shows the metric, the deviation and the trend that triggered it."
+          title="Alertas tempranas y explicables"
+          body="|z|>2 levanta una observación; |z|>3, una crítica. Cada alerta muestra la métrica, la desviación y la tendencia que la disparó."
         />
         <Feature
           icon={<Radio size={20} strokeWidth={2} color="var(--sage-deep)" />}
-          title="Live telemetry"
-          body="Watch readings stream in and the herd health index move in real time — or trigger an anomaly and see detection fire."
+          title="Telemetría en vivo"
+          body="Observa cómo llegan las lecturas y el índice de salud del rebaño se mueve en tiempo real — o dispara una anomalía y mira la detección en acción."
         />
       </section>
 
@@ -119,8 +119,8 @@ export default function LandingPage() {
           className="max-w-[1100px] mx-auto px-6 py-8 flex items-center justify-between flex-wrap gap-3 text-[13px]"
           style={{ color: "var(--muted)" }}
         >
-          <span>HerdFlow — predictive livestock health · Building in Public</span>
-          <span>All data synthetic · for demonstration</span>
+          <span>HerdFlow — salud predictiva del ganado · Building in Public</span>
+          <span>Todos los datos son sintéticos · solo para demostración</span>
         </div>
       </footer>
     </main>

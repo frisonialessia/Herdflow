@@ -21,33 +21,33 @@ export default function BreedingPage() {
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[26px] font-semibold tracking-tight flex items-center gap-2.5">
-            <HeartPulse size={24} strokeWidth={2} color="var(--sage-deep)" /> Reproduction
+            <HeartPulse size={24} strokeWidth={2} color="var(--sage-deep)" /> Reproducción
           </h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {counts.inHeat} in heat now · {counts.approaching} approaching · {counts.breedable} breedable females
+            {counts.inHeat} en celo ahora · {counts.approaching} próximas · {counts.breedable} hembras reproductoras
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-        <Stat label="In heat now" n={counts.inHeat} color="var(--sage-deep)" />
-        <Stat label="Approaching 48 h" n={counts.approaching} color="var(--watch)" />
-        <Stat label="Open" n={counts.open} color="var(--faint)" />
-        <Stat label="Bred" n={counts.bred} color="var(--brown)" />
+        <Stat label="En celo ahora" n={counts.inHeat} color="var(--sage-deep)" />
+        <Stat label="Próximas 48 h" n={counts.approaching} color="var(--watch)" />
+        <Stat label="Vacías" n={counts.open} color="var(--faint)" />
+        <Stat label="Servidas" n={counts.bred} color="var(--brown)" />
         <Link href="/dashboard/calving" className="bg-white border rounded-[14px] p-3.5 cursor-pointer hover:shadow-sm transition-shadow block" style={{ borderColor: "var(--border)" }}>
           <div className="font-sora text-[24px] font-semibold" style={{ color: "var(--healthy)" }}>{counts.pregnant}</div>
           <div className="text-[12px] mt-0.5 flex items-center gap-1 flex-wrap" style={{ color: "var(--muted)" }}>
-            Pregnant <span style={{ color: "var(--sage-deep)", fontWeight: 600 }}>· calving →</span>
+            Preñadas <span style={{ color: "var(--sage-deep)", fontWeight: 600 }}>· partos →</span>
           </div>
         </Link>
       </div>
 
       <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5 mb-3.5">
-        In heat — breed now
+        En celo — inseminar ahora
         <span className="text-white rounded-[20px] px-2.5 text-[13px] font-semibold" style={{ background: "var(--sage-deep)" }}>{counts.inHeat}</span>
       </h3>
       {inHeat.length === 0 ? (
-        <Empty text="No cows in standing heat right now. Approaching cows are listed below." />
+        <Empty text="Ninguna vaca en celo en pie por ahora. Las vacas próximas se listan abajo." />
       ) : (
         <div className="flex flex-col gap-2.5 mb-7">
           {inHeat.map((it) => (
@@ -57,11 +57,11 @@ export default function BreedingPage() {
       )}
 
       <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5 mb-3.5 mt-1">
-        Approaching heat
-        <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>next 48 h</span>
+        Próximas al celo
+        <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>próximas 48 h</span>
       </h3>
       {approaching.length === 0 ? (
-        <Empty text="No cows are due to come into heat in the next 48 hours." />
+        <Empty text="Ninguna vaca entrará en celo en las próximas 48 horas." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
           {approaching.map((it) => (
@@ -76,7 +76,7 @@ export default function BreedingPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-[14px]">{it.a.name} <span className="text-xs font-normal" style={{ color: "var(--faint)" }}>{it.a.tag_id}</span></div>
-                <div className="text-[12.5px]" style={{ color: "var(--muted)" }}>{SPECIES_LABEL[it.a.species]} · {it.r.dim} DIM</div>
+                <div className="text-[12.5px]" style={{ color: "var(--muted)" }}>{SPECIES_LABEL[it.a.species]} · {it.r.dim} DEL</div>
               </div>
               <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2.5 py-1 rounded-[20px] shrink-0" style={{ background: "var(--brown-soft)", color: "var(--brown)" }}>
                 <CalendarDays size={13} strokeWidth={2.2} /> ~{it.r.daysToHeat} d
@@ -108,14 +108,14 @@ function HeatCard({ item, onOpen, onBreed }: { item: ReproItem; onOpen: () => vo
             <span className="font-semibold text-[15px]">{a.name}</span>
             <span className="text-xs" style={{ color: "var(--faint)" }}>{a.tag_id} · {SPECIES_LABEL[a.species]} · {dimText(a.species, r.dim)}</span>
             <span className="inline-flex items-center gap-1 text-[10.5px] font-bold uppercase tracking-wider px-2 py-[2px] rounded-[20px] text-white" style={{ background: "var(--sage-deep)" }}>
-              <HeartPulse size={11} strokeWidth={2.4} color="#fff" /> In heat
+              <HeartPulse size={11} strokeWidth={2.4} color="#fff" /> En celo
             </span>
             <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-[2px] rounded-[20px]" style={{ background: "var(--card-soft)", color: "var(--muted)" }}>
-              <Activity size={11} strokeWidth={2.4} /> {r.confidence} · {r.detectedBy === "activity" ? "activity spike" : "cycle"}
+              <Activity size={11} strokeWidth={2.4} /> {r.confidence} · {r.detectedBy === "activity" ? "pico de actividad" : "ciclo"}
             </span>
           </div>
           <div className="text-[12.5px] mt-1.5" style={{ color: "var(--muted)" }}>
-            Onset ~{r.onsetHoursAgo} h ago · <span style={{ color: win.color, fontWeight: 600 }}>{win.label}</span>
+            Inicio hace ~{r.onsetHoursAgo} h · <span style={{ color: win.color, fontWeight: 600 }}>{win.label}</span>
           </div>
         </div>
         </div>
@@ -127,7 +127,7 @@ function HeatCard({ item, onOpen, onBreed }: { item: ReproItem; onOpen: () => vo
             className="flex items-center gap-1.5 text-white border-0 rounded-[20px] px-3.5 py-2 text-[12.5px] font-medium cursor-pointer"
             style={{ background: "var(--sage-deep)" }}
           >
-            <Syringe size={14} strokeWidth={2.2} color="#fff" /> Mark bred
+            <Syringe size={14} strokeWidth={2.2} color="#fff" /> Marcar servida
           </button>
         </div>
       </div>
@@ -138,7 +138,7 @@ function HeatCard({ item, onOpen, onBreed }: { item: ReproItem; onOpen: () => vo
 function Intensity({ v }: { v: number }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] uppercase tracking-wide" style={{ color: "var(--faint)" }}>Heat</span>
+      <span className="text-[10px] uppercase tracking-wide" style={{ color: "var(--faint)" }}>Celo</span>
       <div className="w-[64px] h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
         <div className="h-full rounded-full" style={{ width: `${v}%`, background: "var(--sage-deep)" }} />
       </div>

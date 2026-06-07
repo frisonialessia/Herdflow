@@ -17,8 +17,8 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
         style={{ borderColor: "var(--border)", boxShadow: "0 30px 60px -20px rgba(58,90,64,0.5)" }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-sora text-[18px] font-semibold">Settings</h3>
-          <button onClick={onClose} title="Close" className="cursor-pointer bg-transparent border-0 p-0">
+          <h3 className="font-sora text-[18px] font-semibold">Ajustes</h3>
+          <button onClick={onClose} title="Cerrar" className="cursor-pointer bg-transparent border-0 p-0">
             <X size={18} strokeWidth={2} color="var(--muted)" />
           </button>
         </div>
@@ -35,7 +35,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
           ))}
         </select>
 
-        <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Demo data</div>
+        <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Datos de demo</div>
 
         <button
           onClick={() => setLive(!live)}
@@ -46,7 +46,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
         >
           <span className="flex items-center gap-2">
             {live ? <Pause size={15} strokeWidth={2} /> : <Play size={15} strokeWidth={2} />}
-            {live ? "Live telemetry on" : "Start live telemetry"}
+            {live ? "Telemetría en vivo activada" : "Iniciar telemetría en vivo"}
           </span>
         </button>
 
@@ -55,11 +55,11 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
           className="w-full flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-[13px] cursor-pointer border"
           style={{ background: "var(--card-soft)", borderColor: "var(--border)" }}
         >
-          <RotateCcw size={15} strokeWidth={2} /> Reset demo data
+          <RotateCcw size={15} strokeWidth={2} /> Reiniciar datos de demo
         </button>
 
         <div className="border-t mt-4 pt-4 text-[12.5px] leading-relaxed" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          HerdFlow demo — all data is synthetic.{" "}
+          Demo de HerdFlow — todos los datos son sintéticos.{" "}
           <a
             href="https://github.com/frisonialessia/Herdflow"
             target="_blank"
@@ -67,7 +67,7 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
             className="inline-flex items-center gap-1 font-medium"
             style={{ color: "var(--sage-deep)" }}
           >
-            <Github size={13} strokeWidth={2} /> Source
+            <Github size={13} strokeWidth={2} /> Código
           </a>
         </div>
       </div>

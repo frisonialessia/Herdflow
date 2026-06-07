@@ -10,19 +10,19 @@ import { buildToday, Domain, Tier, ActionItem } from "@/lib/today";
 import { Stethoscope, ShieldAlert, ThermometerSun, HeartPulse, Baby, Footprints, Wheat, ChevronRight, Sun, CheckCircle2, LucideIcon } from "lucide-react";
 
 const DOMAIN: Record<Domain, { label: string; icon: LucideIcon; color: string }> = {
-  health: { label: "Health", icon: Stethoscope, color: "var(--critical)" },
-  biosecurity: { label: "Biosecurity", icon: ShieldAlert, color: "var(--brown)" },
-  heat: { label: "Heat", icon: ThermometerSun, color: "var(--brown)" },
-  breeding: { label: "Breeding", icon: HeartPulse, color: "var(--sage-deep)" },
-  calving: { label: "Calving", icon: Baby, color: "var(--sage-deep)" },
-  welfare: { label: "Welfare", icon: Footprints, color: "var(--brown)" },
-  nutrition: { label: "Nutrition", icon: Wheat, color: "var(--brown)" },
+  health: { label: "Salud", icon: Stethoscope, color: "var(--critical)" },
+  biosecurity: { label: "Bioseguridad", icon: ShieldAlert, color: "var(--brown)" },
+  heat: { label: "Calor", icon: ThermometerSun, color: "var(--brown)" },
+  breeding: { label: "Reproducción", icon: HeartPulse, color: "var(--sage-deep)" },
+  calving: { label: "Partos", icon: Baby, color: "var(--sage-deep)" },
+  welfare: { label: "Bienestar", icon: Footprints, color: "var(--brown)" },
+  nutrition: { label: "Nutrición", icon: Wheat, color: "var(--brown)" },
 };
 
 const TIERS: { key: Tier; label: string; color: string; note: string }[] = [
-  { key: "urgent", label: "Urgent now", color: "var(--critical)", note: "act immediately" },
-  { key: "today", label: "Today", color: "var(--watch)", note: "before end of day" },
-  { key: "upcoming", label: "Upcoming", color: "var(--sage)", note: "next few days" },
+  { key: "urgent", label: "Urgente ahora", color: "var(--critical)", note: "actuar de inmediato" },
+  { key: "today", label: "Hoy", color: "var(--watch)", note: "antes de terminar el día" },
+  { key: "upcoming", label: "Próximos", color: "var(--sage)", note: "próximos días" },
 ];
 
 export default function TodayPage() {
@@ -39,16 +39,16 @@ export default function TodayPage() {
       <div className="flex items-end justify-between mb-[18px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[26px] font-semibold tracking-tight flex items-center gap-2.5">
-            <Sun size={24} strokeWidth={2} color="var(--sage-deep)" /> Today
+            <Sun size={24} strokeWidth={2} color="var(--sage-deep)" /> Hoy
           </h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {today} · <b style={{ color: "var(--critical)" }}>{board.counts.urgent} urgent</b> · {board.counts.today} today · {board.counts.upcoming} upcoming
+            {today} · <b style={{ color: "var(--critical)" }}>{board.counts.urgent} urgentes</b> · {board.counts.today} hoy · {board.counts.upcoming} próximos
           </div>
         </div>
       </div>
 
       <div className="flex gap-2 flex-wrap mb-5">
-        <Chip label="All" n={board.counts.total} active={filter === "all"} onClick={() => setFilter("all")} />
+        <Chip label="Todos" n={board.counts.total} active={filter === "all"} onClick={() => setFilter("all")} />
         {domains.map((d) => (
           <Chip key={d} label={DOMAIN[d].label} n={board.byDomain[d]} active={filter === d} onClick={() => setFilter(d)} />
         ))}
@@ -129,8 +129,8 @@ function AllClear() {
   return (
     <div className="bg-white border rounded-xl2 text-center py-14" style={{ borderColor: "var(--border)" }}>
       <CheckCircle2 size={40} strokeWidth={1.8} color="var(--healthy)" className="mx-auto mb-3" />
-      <div className="font-sora text-[17px] font-semibold">All clear</div>
-      <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Nothing needs your attention right now.</div>
+      <div className="font-sora text-[17px] font-semibold">Todo en orden</div>
+      <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Nada requiere tu atención ahora.</div>
     </div>
   );
 }

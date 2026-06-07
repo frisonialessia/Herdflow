@@ -20,15 +20,15 @@ export function ZScoreExplainer() {
         <circle cx={W * 0.32} cy={y(53)} r="6" fill="#588157" stroke="#fff" strokeWidth="2" />
         <circle cx={W * 0.74} cy={y(72)} r="7" fill="#8a4f32" stroke="#fff" strokeWidth="2" />
         <text x={W * 0.32} y={y(53) + 24} textAnchor="middle" fontFamily="Outfit" fontSize="11" fill="#6e7568">|z| 0.5 · normal</text>
-        <text x={W * 0.74} y={y(72) - 13} textAnchor="middle" fontFamily="Outfit" fontSize="11" fill="#8a4f32">|z| 3.5 · critical</text>
-        <text x="6" y={y(MEAN) - 6} fontFamily="Outfit" fontSize="11" fill="#588157">baseline</text>
+        <text x={W * 0.74} y={y(72) - 13} textAnchor="middle" fontFamily="Outfit" fontSize="11" fill="#8a4f32">|z| 3.5 · crítico</text>
+        <text x="6" y={y(MEAN) - 6} fontFamily="Outfit" fontSize="11" fill="#588157">línea base</text>
         <text x="6" y={y(UPPER) - 6} fontFamily="Outfit" fontSize="10" fill="#9aa091">+2σ</text>
         <text x="6" y={y(LOWER) + 14} fontFamily="Outfit" fontSize="10" fill="#9aa091">−2σ</text>
       </svg>
       <div className="flex flex-wrap gap-3 mt-3 text-[12.5px]" style={{ color: "var(--muted)" }}>
-        <span className="flex items-center gap-1.5"><span className="w-[12px] h-[10px] rounded-[3px]" style={{ background: "rgba(88,129,87,0.16)" }} /> Normal range ±2σ</span>
-        <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-full" style={{ background: "var(--watch)" }} /> |z| ≥ 2 watch</span>
-        <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-full" style={{ background: "var(--critical)" }} /> |z| ≥ 3 critical</span>
+        <span className="flex items-center gap-1.5"><span className="w-[12px] h-[10px] rounded-[3px]" style={{ background: "rgba(88,129,87,0.16)" }} /> Rango normal ±2σ</span>
+        <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-full" style={{ background: "var(--watch)" }} /> |z| ≥ 2 vigilancia</span>
+        <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-full" style={{ background: "var(--critical)" }} /> |z| ≥ 3 crítico</span>
       </div>
     </div>
   );

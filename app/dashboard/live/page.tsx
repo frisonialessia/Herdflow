@@ -23,10 +23,10 @@ export default function LivePage() {
     <section className="animate-fade">
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
-          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Live Monitoring</h2>
+          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Monitoreo en vivo</h2>
           <div className="text-[13px] mt-1 flex items-center gap-2" style={{ color: "var(--muted)" }}>
             <span className="inline-block w-2 h-2 rounded-full animate-pulse-dot" style={{ background: "var(--healthy)" }} />
-            Streaming · {herd.length} sensors online
+            Transmitiendo · {herd.length} sensores en línea
           </div>
         </div>
       </div>

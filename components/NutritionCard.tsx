@@ -31,19 +31,19 @@ export function NutritionCard({ animal: a }: { animal: Animal }) {
     <div className="rounded-[14px] p-4 mb-5" style={{ background: "var(--card)", border: `1px solid ${flagged ? meta.color : "var(--border)"}` }}>
       <div className="flex items-center gap-2 mb-3">
         <Wheat size={16} strokeWidth={2} color="var(--sage-deep)" />
-        <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Nutrition</h3>
+        <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Nutrición</h3>
         <span className="ml-auto text-[11px] font-semibold px-2 py-[2px] rounded-[20px]" style={flagged ? { background: meta.color, color: "#fff" } : { background: "var(--card-soft)", color: "var(--muted)" }}>
           {meta.short}
         </span>
       </div>
 
       <div className="flex flex-col gap-2.5">
-        <Bar label="Dry-matter intake vs baseline" pct={n.intakePct} />
-        {n.rumPct !== null && <Bar label="Rumination vs baseline" pct={n.rumPct} />}
+        <Bar label="Consumo de materia seca vs línea base" pct={n.intakePct} />
+        {n.rumPct !== null && <Bar label="Rumia vs línea base" pct={n.rumPct} />}
       </div>
 
       <div className="flex items-center justify-between mt-3 pt-3 border-t" style={{ borderColor: "var(--border)" }}>
-        <span className="text-[12.5px]" style={{ color: "var(--muted)" }}>Body condition</span>
+        <span className="text-[12.5px]" style={{ color: "var(--muted)" }}>Condición corporal</span>
         <span className="text-[13px] font-semibold">
           BCS {n.bcs}
           <span className="font-normal ml-1.5" style={{ color: n.bcsBand === "ideal" ? "var(--healthy)" : "var(--brown)" }}>· {n.bcsBand}</span>

@@ -107,13 +107,13 @@ export function PastureMap({
       </svg>
 
       <div className="absolute top-[18px] right-[18px] flex flex-col gap-2 z-[4]">
-        <ZoomButton onClick={() => setZoom((z) => Math.min(2.5, +(z + 0.25).toFixed(2)))} disabled={zoom >= 2.5} label="Zoom in">
+        <ZoomButton onClick={() => setZoom((z) => Math.min(2.5, +(z + 0.25).toFixed(2)))} disabled={zoom >= 2.5} label="Acercar">
           <Plus size={18} strokeWidth={2} color="var(--sage-deep)" />
         </ZoomButton>
-        <ZoomButton onClick={() => setZoom((z) => Math.max(1, +(z - 0.25).toFixed(2)))} disabled={zoom <= 1} label="Zoom out">
+        <ZoomButton onClick={() => setZoom((z) => Math.max(1, +(z - 0.25).toFixed(2)))} disabled={zoom <= 1} label="Alejar">
           <Minus size={18} strokeWidth={2} color="var(--sage-deep)" />
         </ZoomButton>
-        <ZoomButton onClick={() => setZoom(1)} disabled={zoom === 1} label="Reset zoom">
+        <ZoomButton onClick={() => setZoom(1)} disabled={zoom === 1} label="Restablecer zoom">
           <Maximize2 size={18} strokeWidth={2} color="var(--sage-deep)" />
         </ZoomButton>
       </div>

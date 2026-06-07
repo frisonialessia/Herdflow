@@ -72,15 +72,15 @@ export const BUCKET_COLOR: Record<CalvingBucket, string> = {
   carrying: "var(--healthy)",
 };
 export const BUCKET_LABEL: Record<CalvingBucket, string> = {
-  overdue: "Overdue",
-  imminent: "Imminent",
-  due_soon: "Due soon",
-  carrying: "Carrying",
+  overdue: "Atrasada",
+  imminent: "Inminente",
+  due_soon: "Próxima",
+  carrying: "Gestando",
 };
 
 /** "Due in ~12 d" / "Calving today" / "Overdue 2 d". */
 export function calvingLabel(daysToCalving: number): string {
-  if (daysToCalving < 0) return `Overdue ${-daysToCalving} d`;
-  if (daysToCalving === 0) return "Calving today";
-  return `Due in ~${daysToCalving} d`;
+  if (daysToCalving < 0) return `Atrasada ${-daysToCalving} d`;
+  if (daysToCalving === 0) return "Parto hoy";
+  return `Faltan ~${daysToCalving} d`;
 }

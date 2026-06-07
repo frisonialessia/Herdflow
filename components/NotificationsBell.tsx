@@ -67,7 +67,7 @@ export function NotificationsBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label={`Notifications${unread.length ? ` (${unread.length} unread)` : ""}`}
+        aria-label={`Notificaciones${unread.length ? ` (${unread.length} sin leer)` : ""}`}
         className="w-[38px] h-[38px] rounded-full bg-white border flex items-center justify-center cursor-pointer relative"
         style={{ borderColor: "var(--border)" }}
       >
@@ -94,9 +94,9 @@ export function NotificationsBell() {
           style={{ borderColor: "var(--border)", boxShadow: "0 24px 48px -18px rgba(58,90,64,0.4)" }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "var(--border)" }}>
-            <div className="font-sora text-[15px] font-semibold">Alerts</div>
+            <div className="font-sora text-[15px] font-semibold">Alertas</div>
             <div className="text-[12px]" style={{ color: "var(--muted)" }}>
-              {criticalCount} critical · {alerts.length - criticalCount} watch
+              {criticalCount} críticos · {alerts.length - criticalCount} vigilancia
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export function NotificationsBell() {
                   <Stethoscope size={18} strokeWidth={2} color="var(--healthy)" />
                 </div>
                 <div className="text-sm" style={{ color: "var(--muted)" }}>
-                  All clear — every animal is within its normal range.
+                  Todo en orden — cada animal está dentro de su rango normal.
                 </div>
               </div>
             ) : (
@@ -154,7 +154,7 @@ export function NotificationsBell() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[13px] font-medium cursor-pointer transition-colors hover:bg-[var(--card-soft)]"
               style={{ color: "var(--sage-deep)" }}
             >
-              <Check size={15} strokeWidth={2.2} /> Mark all as read
+              <Check size={15} strokeWidth={2.2} /> Marcar todo como leído
             </button>
           )}
         </div>

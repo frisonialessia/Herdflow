@@ -34,10 +34,10 @@ export function HeatBanner({ herd, onSelect }: { herd: Animal[]; onSelect: (id: 
   const acute = band.key === "danger" || band.key === "emergency";
   const top = heat.risks[0]?.animal;
   const peakText = heat.pastPeak
-    ? `peaked ${hourLabel(15)}`
+    ? `pico fue ${hourLabel(15)}`
     : heat.hoursToPeak < 1
-    ? "peaking now"
-    : `peaks ~${hourLabel(15)} (in ${Math.round(heat.hoursToPeak)} h)`;
+    ? "en el pico ahora"
+    : `pico ~${hourLabel(15)} (en ${Math.round(heat.hoursToPeak)} h)`;
 
   return (
     <button
@@ -59,7 +59,7 @@ export function HeatBanner({ herd, onSelect }: { herd: Animal[]; onSelect: (id: 
             {band.label}
           </span>
           <span className="font-sora text-[15px] font-semibold">
-            THI {Math.round(heat.now.thi)} now · {peakText} · THI {Math.round(heat.peak.thi)}
+            THI {Math.round(heat.now.thi)} ahora · {peakText} · THI {Math.round(heat.peak.thi)}
           </span>
           <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-2 py-[2px] rounded-[20px]" style={{ background: "var(--brown-soft)", color: "var(--brown)" }}>
             {Math.round(heat.now.tempC)}°C
@@ -69,8 +69,8 @@ export function HeatBanner({ herd, onSelect }: { herd: Animal[]; onSelect: (id: 
         <div className="text-[13px] mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>
           {heat.atRiskCount > 0 && (
             <b style={{ color: "var(--ink)" }}>
-              {heat.atRiskCount} animal{heat.atRiskCount === 1 ? "" : "s"} at high risk
-              {heat.topSpecies ? ` · ${SPECIES_LABEL[heat.topSpecies].toLowerCase()} most exposed` : ""}.{" "}
+              {heat.atRiskCount} animal{heat.atRiskCount === 1 ? "" : "es"} en alto riesgo
+              {heat.topSpecies ? ` · ${SPECIES_LABEL[heat.topSpecies].toLowerCase()} más expuestas` : ""}.{" "}
             </b>
           )}
           {band.advice}
@@ -78,7 +78,7 @@ export function HeatBanner({ herd, onSelect }: { herd: Animal[]; onSelect: (id: 
       </div>
 
       <span className="flex items-center gap-1 text-[13px] font-medium shrink-0 self-center" style={{ color: band.color }}>
-        {heat.atRiskCount > 0 ? `${heat.atRiskCount} at risk` : "Review"}
+        {heat.atRiskCount > 0 ? `${heat.atRiskCount} en riesgo` : "Revisar"}
         <ChevronRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-0.5" />
       </span>
     </button>

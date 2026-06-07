@@ -31,12 +31,12 @@ export default function OverviewPage() {
     sp === "all" ? herd.length : herd.filter((a) => a.species === sp).length;
 
   const groups: { label: string; sp: Species | "all" }[] = [
-    { label: "All", sp: "all" },
-    { label: "Dairy Cows", sp: "dairy" },
-    { label: "Beef", sp: "beef" },
-    { label: "Sheep", sp: "sheep" },
-    { label: "Horses", sp: "horse" },
-    { label: "Poultry", sp: "poultry" },
+    { label: "Todos", sp: "all" },
+    { label: "Vacas lecheras", sp: "dairy" },
+    { label: "Carne", sp: "beef" },
+    { label: "Ovejas", sp: "sheep" },
+    { label: "Caballos", sp: "horse" },
+    { label: "Aves", sp: "poultry" },
   ];
 
   // herd-average vitals (animals that have each metric) within the shown group
@@ -49,12 +49,12 @@ export default function OverviewPage() {
     <section className="animate-fade">
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
-          <h2 className="font-sora text-[32px] font-semibold tracking-tight">Your herd</h2>
-          <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Pasture A · synced just now</div>
+          <h2 className="font-sora text-[32px] font-semibold tracking-tight">Tu hato</h2>
+          <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Potrero A · sincronizado ahora</div>
         </div>
         <div className="flex gap-2.5 items-center">
-          <Chip label="Healthy" n={s.healthy} color="var(--healthy)" />
-          <Chip label="Under watch" n={s.watch} color="var(--watch)" />
+          <Chip label="Sano" n={s.healthy} color="var(--healthy)" />
+          <Chip label="En vigilancia" n={s.watch} color="var(--watch)" />
           <AddAnimalButton />
         </div>
       </div>
@@ -68,29 +68,29 @@ export default function OverviewPage() {
           <PastureMap herd={shown} onSelect={selectAnimal} outbreaks={outbreaks} />
           <div className="absolute bottom-5 left-5 z-[3] rounded-[18px] px-5 py-4"
                style={{ background: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)", boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}>
-            <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Health Index</div>
+            <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Índice de salud del hato</div>
             <div className="font-sora text-[30px] font-semibold mt-1">{s.index}%</div>
             <div className="flex gap-3.5 mt-3 text-[13px]" style={{ color: "var(--muted)" }}>
-              <Legend c="var(--healthy)" t={`Healthy ${s.healthy}`} />
-              <Legend c="var(--watch)" t={`Watch ${s.watch}`} />
-              <Legend c="var(--critical)" t={`Critical ${s.critical}`} />
+              <Legend c="var(--healthy)" t={`Sano ${s.healthy}`} />
+              <Legend c="var(--watch)" t={`Vigilancia ${s.watch}`} />
+              <Legend c="var(--critical)" t={`Crítico ${s.critical}`} />
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-[18px]">
-          <Panel title="Herd Vitals" icon={<Activity size={18} strokeWidth={2} color="var(--sage-deep)" />}>
+          <Panel title="Signos vitales del hato" icon={<Activity size={18} strokeWidth={2} color="var(--sage-deep)" />}>
             <div className="grid grid-cols-2 gap-4">
-              <Vital icon={<Thermometer size={18} strokeWidth={2} color="var(--brown)" />} t="Avg Temp" v={`${avg("temperature_c").toFixed(1)}°C`} />
-              <Vital icon={<Activity size={18} strokeWidth={2} color="var(--brown)" />} t="Activity Idx" v={`${Math.round(avg("activity_index"))}`} />
-              <Vital icon={<Wheat size={18} strokeWidth={2} color="var(--brown)" />} t="Rumination" v={`${Math.round(avg("rumination_min"))} min`} />
-              <Vital icon={<Beef size={18} strokeWidth={2} color="var(--brown)" />} t="Avg Intake" v={`${avg("intake_kg").toFixed(1)} kg`} />
-              <Vital icon={<Heart size={18} strokeWidth={2} color="var(--brown)" />} t="Heart Rate" v={`${Math.round(avg("heart_rate"))} bpm`} />
-              <Vital icon={<Wind size={18} strokeWidth={2} color="var(--brown)" />} t="Respiration" v={`${Math.round(avg("respiration_rate"))}/min`} />
+              <Vital icon={<Thermometer size={18} strokeWidth={2} color="var(--brown)" />} t="Temp. prom." v={`${avg("temperature_c").toFixed(1)}°C`} />
+              <Vital icon={<Activity size={18} strokeWidth={2} color="var(--brown)" />} t="Índice de actividad" v={`${Math.round(avg("activity_index"))}`} />
+              <Vital icon={<Wheat size={18} strokeWidth={2} color="var(--brown)" />} t="Rumia" v={`${Math.round(avg("rumination_min"))} min`} />
+              <Vital icon={<Beef size={18} strokeWidth={2} color="var(--brown)" />} t="Consumo prom." v={`${avg("intake_kg").toFixed(1)} kg`} />
+              <Vital icon={<Heart size={18} strokeWidth={2} color="var(--brown)" />} t="Frec. cardíaca" v={`${Math.round(avg("heart_rate"))} bpm`} />
+              <Vital icon={<Wind size={18} strokeWidth={2} color="var(--brown)" />} t="Respiración" v={`${Math.round(avg("respiration_rate"))}/min`} />
             </div>
           </Panel>
 
-          <Panel title="Group / Lot" icon={<Layers size={18} strokeWidth={2} color="var(--sage-deep)" />}>
+          <Panel title="Grupo / Lote" icon={<Layers size={18} strokeWidth={2} color="var(--sage-deep)" />}>
             <div className="flex gap-2 flex-wrap">
               {groups.map((g) => {
                 const active = group === g.sp;
@@ -112,7 +112,7 @@ export default function OverviewPage() {
       <div className="mt-[18px]">
         <div className="flex items-center justify-between mb-3.5">
           <h3 className="font-sora text-[17px] font-semibold flex gap-2.5 items-center">
-            Critical Alerts
+            Alertas críticas
             <span className="text-white rounded-[20px] px-2.5 text-[13px] font-semibold" style={{ background: "var(--critical)" }}>
               {s.watch + s.critical}
             </span>
@@ -121,7 +121,7 @@ export default function OverviewPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           {alerts.length === 0 ? (
             <div className="rounded-[18px] p-[18px] border bg-white text-sm" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-              No alerts in this group — every animal is within its normal range.
+              Sin alertas en este grupo — cada animal está dentro de su rango normal.
             </div>
           ) : (
             alerts.map((a) => (
@@ -167,9 +167,9 @@ function LeadChip({ animal }: { animal: Animal }) {
   let text: string | null = null;
   if (f.alreadyCritical) {
     const h = f.hoursFlagToCritical && f.hoursFlagToCritical > 0 ? f.hoursFlagToCritical : f.hoursSinceFlag;
-    if (h && h > 0) text = `${fmtH(h)} early warning`;
+    if (h && h > 0) text = `aviso anticipado de ${fmtH(h)}`;
   } else if (f.projectionHours) {
-    text = `→ critical in ~${fmtH(f.projectionHours)}`;
+    text = `→ crítico en ~${fmtH(f.projectionHours)}`;
   }
   if (!text) return null;
   return (

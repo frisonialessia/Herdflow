@@ -35,13 +35,13 @@ export function OutbreakBanner({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-[3px] rounded-[20px] text-white" style={{ background: "var(--critical)" }}>
-                Possible outbreak
+                Posible brote
               </span>
               <span className="font-sora text-[15px] font-semibold">
                 {o.label} · {o.paddock}
               </span>
               <span className="text-[12px] font-semibold px-2 py-[2px] rounded-[20px]" style={{ background: "var(--brown-soft)", color: "var(--brown)" }}>
-                {o.size} animals{o.criticalCount > 0 ? ` · ${o.criticalCount} critical` : ""}
+                {o.size} animales{o.criticalCount > 0 ? ` · ${o.criticalCount} críticos` : ""}
               </span>
             </div>
             <div className="text-[13px] mt-1 leading-relaxed" style={{ color: "var(--muted)" }}>
@@ -49,7 +49,7 @@ export function OutbreakBanner({
             </div>
           </div>
           <span className="flex items-center gap-1 text-[13px] font-medium shrink-0 self-center" style={{ color: "var(--critical)" }}>
-            Review <ChevronRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-0.5" />
+            Revisar <ChevronRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-0.5" />
           </span>
         </button>
       ))}

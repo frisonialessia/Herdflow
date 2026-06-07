@@ -20,25 +20,25 @@ export default function MobilityPage() {
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[26px] font-semibold tracking-tight flex items-center gap-2.5">
-            <Footprints size={24} strokeWidth={2} color="var(--sage-deep)" /> Mobility & welfare
+            <Footprints size={24} strokeWidth={2} color="var(--sage-deep)" /> Movilidad y bienestar
           </h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {lame.length} lame (score 2–3) · {total} hooved animals scored
+            {lame.length} cojas (puntaje 2–3) · {total} animales con pezuña evaluados
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-[18px] mb-6">
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
-          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Mobility Index</div>
+          <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Índice de movilidad del hato</div>
           <div className="font-sora text-[40px] font-semibold mt-1" style={{ color: index >= 85 ? "var(--healthy)" : index >= 70 ? "var(--watch)" : "var(--critical)" }}>
             {index}%
           </div>
-          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>scoring 0–1 (sound)</div>
+          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>con puntaje 0–1 (sanas)</div>
         </div>
 
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
-          <div className="text-xs uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Locomotion score distribution</div>
+          <div className="text-xs uppercase tracking-wide mb-3" style={{ color: "var(--muted)" }}>Distribución de puntaje de locomoción</div>
           <div className="flex h-3 rounded-full overflow-hidden mb-4" style={{ background: "var(--card-soft)" }}>
             {([0, 1, 2, 3] as MobScore[]).map((s) =>
               dist[s] > 0 ? <div key={s} style={{ width: `${(dist[s] / total) * 100}%`, background: MOB_META[s].color }} title={`${MOB_META[s].label}: ${dist[s]}`} /> : null
@@ -59,13 +59,13 @@ export default function MobilityPage() {
       </div>
 
       <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5 mb-3.5">
-        Needs a hoof check
+        Requieren revisión de pezuñas
         <span className="text-white rounded-[20px] px-2.5 text-[13px] font-semibold" style={{ background: "var(--brown)" }}>{lame.length}</span>
       </h3>
 
       {lame.length === 0 ? (
         <div className="bg-white border rounded-xl2 text-center text-sm py-10" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          No lame animals — the whole herd is scoring 0–1.
+          Sin animales cojos — todo el hato tiene puntaje 0–1.
         </div>
       ) : (
         <div className="flex flex-col gap-2.5">

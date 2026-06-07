@@ -25,20 +25,20 @@ export function TodayBar() {
           <Sun size={18} color="#fff" strokeWidth={2} />
         </span>
         <div className="min-w-0">
-          <div className="font-sora text-[14px] font-semibold">Today</div>
+          <div className="font-sora text-[14px] font-semibold">Hoy</div>
           <div className="text-[12.5px] truncate" style={{ color: "var(--muted)" }}>
             {board.counts.total === 0 ? (
-              "All clear — nothing needs attention"
+              "Todo en orden — nada pendiente"
             ) : (
               <>
-                <b style={{ color: "var(--critical)" }}>{board.counts.urgent} urgent</b> · {board.counts.today} today · {board.counts.upcoming} upcoming
+                <b style={{ color: "var(--critical)" }}>{board.counts.urgent} urgentes</b> · {board.counts.today} hoy · {board.counts.upcoming} próximos
               </>
             )}
           </div>
         </div>
       </div>
       <span className="flex items-center gap-1 text-[13px] font-medium shrink-0" style={{ color: "var(--sage-deep)" }}>
-        Action center <ChevronRight size={16} strokeWidth={2.2} />
+        Centro de acción <ChevronRight size={16} strokeWidth={2.2} />
       </span>
     </Link>
   );

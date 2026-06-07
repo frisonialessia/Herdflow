@@ -10,9 +10,9 @@ import { MetricKey } from "@/lib/types";
 import { FlaskConical, Play, Pause, RotateCcw, Zap, X, ShieldAlert } from "lucide-react";
 
 const ANOMALY_TYPES: { label: string; metric: MetricKey }[] = [
-  { label: "Fever", metric: "temperature_c" },
-  { label: "Activity drop", metric: "activity_index" },
-  { label: "Low rumination", metric: "rumination_min" },
+  { label: "Fiebre", metric: "temperature_c" },
+  { label: "Caída de actividad", metric: "activity_index" },
+  { label: "Baja rumia", metric: "rumination_min" },
 ];
 
 export function DemoControls() {
@@ -41,8 +41,8 @@ export function DemoControls() {
     setLastName(null);
     setObNote(
       ids.length
-        ? `Outbreak simulated — ${ids.length} nearby animals clustered. Watch the map.`
-        : "Not enough healthy animals to cluster."
+        ? `Brote simulado — ${ids.length} animales cercanos agrupados. Observa el mapa.`
+        : "No hay suficientes animales sanos para formar un grupo."
     );
   }
 
@@ -55,9 +55,9 @@ export function DemoControls() {
         >
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-sora text-[15px] font-semibold flex items-center gap-2">
-              <FlaskConical size={16} strokeWidth={2} color="var(--sage-deep)" /> Demo controls
+              <FlaskConical size={16} strokeWidth={2} color="var(--sage-deep)" /> Controles de demo
             </h3>
-            <button onClick={() => setOpen(false)} title="Close" className="cursor-pointer bg-transparent border-0 p-0">
+            <button onClick={() => setOpen(false)} title="Cerrar" className="cursor-pointer bg-transparent border-0 p-0">
               <X size={16} strokeWidth={2} color="var(--muted)" />
             </button>
           </div>
@@ -71,13 +71,13 @@ export function DemoControls() {
           >
             <span className="flex items-center gap-2">
               {live ? <Pause size={15} strokeWidth={2} /> : <Play size={15} strokeWidth={2} />}
-              {live ? "Live telemetry on" : "Start live telemetry"}
+              {live ? "Telemetría en vivo activada" : "Iniciar telemetría en vivo"}
             </span>
             {live && <span className="w-2 h-2 rounded-full bg-white animate-pulse-dot" />}
           </button>
 
           <div className="text-[11px] uppercase tracking-wide mb-1.5" style={{ color: "var(--faint)" }}>
-            Trigger anomaly
+            Disparar anomalía
           </div>
           <div className="flex gap-1.5 mb-2">
             {ANOMALY_TYPES.map((t) => (
@@ -98,11 +98,11 @@ export function DemoControls() {
             className="w-full flex items-center justify-center gap-2 text-white border-0 rounded-xl px-3.5 py-2.5 text-[13px] font-medium cursor-pointer"
             style={{ background: "var(--critical)" }}
           >
-            <Zap size={15} strokeWidth={2} color="#fff" /> Trigger on a healthy animal
+            <Zap size={15} strokeWidth={2} color="#fff" /> Disparar en un animal sano
           </button>
           {lastName && (
             <div className="text-[12px] mt-2" style={{ color: "var(--muted)" }}>
-              Flagged <span className="font-semibold" style={{ color: "var(--ink)" }}>{lastName}</span> — opened in the panel.
+              Se marcó a <span className="font-semibold" style={{ color: "var(--ink)" }}>{lastName}</span> — abierto en el panel.
             </div>
           )}
 
@@ -111,20 +111,20 @@ export function DemoControls() {
             className="w-full flex items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-[13px] font-medium cursor-pointer border mt-2"
             style={{ background: "var(--card-soft)", borderColor: "var(--critical)", color: "var(--critical)" }}
           >
-            <ShieldAlert size={15} strokeWidth={2} color="var(--critical)" /> Simulate outbreak (cluster)
+            <ShieldAlert size={15} strokeWidth={2} color="var(--critical)" /> Simular brote (grupo)
           </button>
           {obNote && (
             <div className="text-[12px] mt-2" style={{ color: "var(--muted)" }}>{obNote}</div>
           )}
 
           <div className="border-t mt-3 pt-3 flex items-center justify-between" style={{ borderColor: "var(--border)" }}>
-            <span className="text-[12px]" style={{ color: "var(--muted)" }}>{flagged} flagged now</span>
+            <span className="text-[12px]" style={{ color: "var(--muted)" }}>{flagged} marcados ahora</span>
             <button
               onClick={reset}
               className="flex items-center gap-1.5 text-[12px] cursor-pointer bg-transparent border-0 p-0"
               style={{ color: "var(--sage-deep)" }}
             >
-              <RotateCcw size={13} strokeWidth={2} /> Reset
+              <RotateCcw size={13} strokeWidth={2} /> Reiniciar
             </button>
           </div>
         </div>

@@ -68,11 +68,11 @@ export function HeroDemo() {
           <div className="w-9 h-9 rounded-[11px] flex items-center justify-center text-[20px]" style={{ background: "var(--card-soft)" }}>🐄</div>
           <div>
             <div className="font-semibold text-[14px] leading-tight">Lola</div>
-            <div className="text-[12px]" style={{ color: "var(--faint)" }}>ES100001 · Dairy Cow</div>
+            <div className="text-[12px]" style={{ color: "var(--faint)" }}>ES100001 · Vaca lechera</div>
           </div>
         </div>
         <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>
-          <span className="w-2 h-2 rounded-full animate-pulse-dot" style={{ background: "var(--healthy)" }} /> Live
+          <span className="w-2 h-2 rounded-full animate-pulse-dot" style={{ background: "var(--healthy)" }} /> En vivo
         </span>
       </div>
 
@@ -97,18 +97,18 @@ export function HeroDemo() {
           className="absolute top-1 right-1 flex items-center gap-1.5 text-white text-[11.5px] font-semibold px-2.5 py-1 rounded-[20px] transition-opacity duration-500"
           style={{ background: "var(--critical)", opacity: breached ? 1 : 0 }}
         >
-          <AlertTriangle size={13} strokeWidth={2.5} /> Critical detected · +{z.toFixed(1)}σ
+          <AlertTriangle size={13} strokeWidth={2.5} /> Crítico detectado · +{z.toFixed(1)}σ
         </div>
       </div>
 
       <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
         <div className="flex gap-3 text-[11.5px]" style={{ color: "var(--muted)" }}>
-          <span className="flex items-center gap-1.5"><span className="w-[14px]" style={{ borderTop: "2.5px solid var(--critical)" }} /> Reading</span>
-          <span className="flex items-center gap-1.5"><span className="w-[14px]" style={{ borderTop: "2px dashed var(--sage)" }} /> Baseline</span>
+          <span className="flex items-center gap-1.5"><span className="w-[14px]" style={{ borderTop: "2.5px solid var(--critical)" }} /> Lectura</span>
+          <span className="flex items-center gap-1.5"><span className="w-[14px]" style={{ borderTop: "2px dashed var(--sage)" }} /> Línea base</span>
           <span className="flex items-center gap-1.5"><span className="w-[12px] h-[10px] rounded-[3px]" style={{ background: "rgba(88,129,87,0.16)" }} /> ±2σ</span>
         </div>
         <div className="text-[12px] font-semibold" style={{ color: breached ? "var(--critical)" : "var(--muted)" }}>
-          {breached ? "Vet check recommended" : "Within normal range"}
+          {breached ? "Se recomienda revisión veterinaria" : "Dentro del rango normal"}
         </div>
       </div>
     </div>

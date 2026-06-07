@@ -23,30 +23,30 @@ export default function CalvingPage() {
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[26px] font-semibold tracking-tight flex items-center gap-2.5">
-            <Baby size={24} strokeWidth={2} color="var(--sage-deep)" /> Calving
+            <Baby size={24} strokeWidth={2} color="var(--sage-deep)" /> Partos
           </h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {counts.imminent + counts.overdue} need attention · {counts.dueSoon} due within 3 weeks · {counts.pregnant} pregnant
+            {counts.imminent + counts.overdue} requieren atención · {counts.dueSoon} en 3 semanas · {counts.pregnant} preñadas
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-        <Stat label="Overdue" n={counts.overdue} color="var(--critical)" />
-        <Stat label="Imminent (≤3 d)" n={counts.imminent} color="var(--brown)" />
-        <Stat label="Due soon (≤3 wk)" n={counts.dueSoon} color="var(--watch)" />
-        <Stat label="Carrying" n={counts.carrying} color="var(--healthy)" />
-        <Stat label="Pregnant" n={counts.pregnant} color="var(--sage-deep)" />
+        <Stat label="Atrasada" n={counts.overdue} color="var(--critical)" />
+        <Stat label="Inminente (≤3 d)" n={counts.imminent} color="var(--brown)" />
+        <Stat label="Próxima (≤3 sem)" n={counts.dueSoon} color="var(--watch)" />
+        <Stat label="Gestando" n={counts.carrying} color="var(--healthy)" />
+        <Stat label="Preñadas" n={counts.pregnant} color="var(--sage-deep)" />
       </div>
 
       <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5 mb-3.5">
-        Calving watch
-        <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>next 3 weeks</span>
+        Vigilancia de partos
+        <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>próximas 3 semanas</span>
       </h3>
 
       {watch.length === 0 ? (
         <div className="bg-white border rounded-xl2 text-center text-sm py-10" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          No cows are due to calve in the next three weeks.
+          Ninguna vaca tiene parto previsto en las próximas tres semanas.
         </div>
       ) : (
         <div className="flex flex-col gap-2.5">
@@ -86,7 +86,7 @@ function CalvingRow({ item, onOpen }: { item: CalvingItem; onOpen: () => void })
           <div className="flex-1 max-w-[260px] h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
             <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
           </div>
-          <span className="text-[12px] tabular-nums" style={{ color: "var(--muted)" }}>day {c.gestationDay}/{c.gestation}</span>
+          <span className="text-[12px] tabular-nums" style={{ color: "var(--muted)" }}>día {c.gestationDay}/{c.gestation}</span>
         </div>
       </div>
       </div>

@@ -76,12 +76,12 @@ export function FarmMapPreview() {
         className="absolute bottom-5 left-5 rounded-[18px] px-5 py-4"
         style={{ background: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)", boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}
       >
-        <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Health Index</div>
+        <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Índice de salud del rebaño</div>
         <div className="font-sora text-[30px] font-semibold mt-1">{index}%</div>
         <div className="flex gap-3.5 mt-3 text-[13px]" style={{ color: "var(--muted)" }}>
-          <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: "#588157" }} /> Healthy {healthy}</span>
-          <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: "#9a9a5e" }} /> Watch {watch}</span>
-          <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: "#8a4f32" }} /> Critical {critical}</span>
+          <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: "#588157" }} /> Sanos {healthy}</span>
+          <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: "#9a9a5e" }} /> En observación {watch}</span>
+          <span className="flex items-center gap-1.5"><span className="w-[9px] h-[9px] rounded-[3px]" style={{ background: "#8a4f32" }} /> Críticos {critical}</span>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export function FarmMapPreview() {
         className="absolute top-5 right-5 flex items-center gap-1.5 text-white text-[13px] font-medium rounded-[30px] px-4 py-2 transition-transform group-hover:translate-x-0.5"
         style={{ background: "rgba(58,90,64,0.92)" }}
       >
-        Explore the live map <ArrowUpRight size={15} strokeWidth={2} />
+        Explora el mapa en vivo <ArrowUpRight size={15} strokeWidth={2} />
       </div>
     </Link>
   );

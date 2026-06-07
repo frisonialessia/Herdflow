@@ -18,16 +18,16 @@ export function PredictivePanel({ forecast: f }: { forecast: CaseForecast | null
   let caption: string;
   if (f.alreadyCritical && f.hoursFlagToCritical && f.hoursFlagToCritical > 0) {
     value = fmtH(f.hoursFlagToCritical);
-    caption = "caught before it turned critical";
+    caption = "detectado antes de volverse crítico";
   } else if (!f.alreadyCritical && f.projectionHours) {
     value = `~${fmtH(f.projectionHours)}`;
-    caption = "to critical at the current trend";
+    caption = "para crítico a la tendencia actual";
   } else if (f.hoursSinceFlag && f.hoursSinceFlag > 0) {
     value = fmtH(f.hoursSinceFlag);
-    caption = "early-warning lead so far";
+    caption = "ventaja de aviso anticipado";
   } else {
-    value = "now";
-    caption = "detected on the latest reading";
+    value = "ahora";
+    caption = "detectado en la última lectura";
   }
 
   const TrendIcon = f.direction === "rising" ? TrendingUp : TrendingDown;
@@ -37,7 +37,7 @@ export function PredictivePanel({ forecast: f }: { forecast: CaseForecast | null
       <div className="flex items-center gap-2 mb-3">
         <Zap size={16} strokeWidth={2.4} color="#fff" />
         <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "#cdd6c7" }}>
-          Predictive early warning
+          Alerta temprana predictiva
         </span>
       </div>
 
@@ -49,7 +49,7 @@ export function PredictivePanel({ forecast: f }: { forecast: CaseForecast | null
       {!f.alreadyCritical && f.projectionHours && (
         <div className="flex items-center gap-1.5 mt-2.5 text-[13px]" style={{ color: "#dfe6da" }}>
           <TrendIcon size={15} strokeWidth={2.2} />
-          Trend → critical in ~{fmtH(f.projectionHours)} if nothing changes.
+          Tendencia → crítico en ~{fmtH(f.projectionHours)} si nada cambia.
         </div>
       )}
 
@@ -58,14 +58,14 @@ export function PredictivePanel({ forecast: f }: { forecast: CaseForecast | null
         <Node label="Normal" color="var(--sage-light)" filled />
         <Bar />
         <Node
-          label="Watch"
+          label="Vigilancia"
           sub={f.firstFlagAt ? timeAgo(f.firstFlagAt) : undefined}
           color="var(--watch)"
           filled={!!f.firstFlagAt}
         />
         <Bar />
         <Node
-          label="Critical"
+          label="Crítico"
           sub={
             f.becameCriticalAt
               ? timeAgo(f.becameCriticalAt)
@@ -107,7 +107,7 @@ function Node({
       />
       <span className="text-[11px] font-semibold leading-none">{label}</span>
       <span className="text-[10px] leading-none h-[10px]" style={{ color: "#cdd6c7" }}>
-        {projected ? `in ${sub}` : sub ?? ""}
+        {projected ? `en ${sub}` : sub ?? ""}
       </span>
     </div>
   );

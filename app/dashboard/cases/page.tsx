@@ -15,10 +15,10 @@ import { Check, ChevronRight, RotateCcw, Zap, ClipboardList } from "lucide-react
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 const CASE_LABEL: Record<CaseStatus, string> = {
-  open: "Open",
-  acknowledged: "Acknowledged",
-  treating: "Treating",
-  resolved: "Resolved",
+  open: "Abierto",
+  acknowledged: "Reconocido",
+  treating: "En tratamiento",
+  resolved: "Resuelto",
 };
 const CASE_COLOR: Record<CaseStatus, string> = {
   open: "var(--critical)",
@@ -27,19 +27,19 @@ const CASE_COLOR: Record<CaseStatus, string> = {
   resolved: "var(--healthy)",
 };
 const NEXT: Record<CaseStatus, { label: string; to: CaseStatus } | null> = {
-  open: { label: "Acknowledge", to: "acknowledged" },
-  acknowledged: { label: "Start treatment", to: "treating" },
-  treating: { label: "Resolve", to: "resolved" },
+  open: { label: "Reconocer", to: "acknowledged" },
+  acknowledged: { label: "Iniciar tratamiento", to: "treating" },
+  treating: { label: "Resolver", to: "resolved" },
   resolved: null,
 };
 
 const SEV = { critical: 0, watch: 1, healthy: 2 } as const;
 const TABS: { key: CaseStatus | "all"; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "open", label: "Open" },
-  { key: "acknowledged", label: "Acknowledged" },
-  { key: "treating", label: "Treating" },
-  { key: "resolved", label: "Resolved" },
+  { key: "all", label: "Todos" },
+  { key: "open", label: "Abierto" },
+  { key: "acknowledged", label: "Reconocido" },
+  { key: "treating", label: "En tratamiento" },
+  { key: "resolved", label: "Resuelto" },
 ];
 
 export default function CasesPage() {
@@ -65,10 +65,10 @@ export default function CasesPage() {
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[26px] font-semibold tracking-tight flex items-center gap-2.5">
-            <ClipboardList size={24} strokeWidth={2} color="var(--sage-deep)" /> Cases
+            <ClipboardList size={24} strokeWidth={2} color="var(--sage-deep)" /> Casos
           </h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {openCount} open · {all.length - openCount} resolved
+            {openCount} abiertos · {all.length - openCount} resueltos
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function CasesPage() {
         ))}
         {shown.length === 0 && (
           <div className="bg-white border rounded-xl2 text-center text-sm py-12" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-            No cases in this view — every animal here is handled.
+            Sin casos en esta vista — cada animal aquí está atendido.
           </div>
         )}
       </div>
@@ -131,8 +131,8 @@ function CaseRow({
   if (f) {
     if (f.alreadyCritical) {
       const h = f.hoursFlagToCritical && f.hoursFlagToCritical > 0 ? f.hoursFlagToCritical : f.hoursSinceFlag;
-      if (h && h > 0) lead = `${fmtH(h)} early`;
-    } else if (f.projectionHours) lead = `→ crit ~${fmtH(f.projectionHours)}`;
+      if (h && h > 0) lead = `${fmtH(h)} antes`;
+    } else if (f.projectionHours) lead = `→ crít ~${fmtH(f.projectionHours)}`;
   }
 
   return (
@@ -160,7 +160,7 @@ function CaseRow({
             )}
           </div>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {cond.label} · <span style={{ color: "var(--ink)" }}>{assignee ?? "Unassigned"}</span> · {timeAgo(a.latest.recorded_at)}
+            {cond.label} · <span style={{ color: "var(--ink)" }}>{assignee ?? "Sin asignar"}</span> · {timeAgo(a.latest.recorded_at)}
           </div>
         </div>
       </div>
@@ -179,7 +179,7 @@ function CaseRow({
           </button>
         ) : (
           <span className="flex items-center gap-1.5 text-[12.5px] font-medium whitespace-nowrap" style={{ color: "var(--healthy)" }}>
-            <Check size={15} strokeWidth={2.6} /> Resolved
+            <Check size={15} strokeWidth={2.6} /> Resuelto
           </span>
         )}
       </div>

@@ -8,12 +8,12 @@ import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
 import { Search } from "lucide-react";
 
 const FILTERS: { label: string; sp: Species | "all" }[] = [
-  { label: "All", sp: "all" },
-  { label: "Dairy", sp: "dairy" },
-  { label: "Beef", sp: "beef" },
-  { label: "Sheep", sp: "sheep" },
-  { label: "Horses", sp: "horse" },
-  { label: "Poultry", sp: "poultry" },
+  { label: "Todos", sp: "all" },
+  { label: "Vacas lecheras", sp: "dairy" },
+  { label: "Carne", sp: "beef" },
+  { label: "Ovejas", sp: "sheep" },
+  { label: "Caballos", sp: "horse" },
+  { label: "Aves", sp: "poultry" },
 ];
 
 export default function AnimalsPage() {
@@ -33,9 +33,9 @@ export default function AnimalsPage() {
     <section className="animate-fade">
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
-          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Animals</h2>
+          <h2 className="font-sora text-[26px] font-semibold tracking-tight">Animales</h2>
           <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-            {shown.length} of {herd.length} · {flagged} needing attention
+            {shown.length} de {herd.length} · {flagged} requieren atención
           </div>
         </div>
         <AddAnimalButton />
@@ -47,7 +47,7 @@ export default function AnimalsPage() {
                style={{ background: "var(--card-soft)", borderColor: "var(--border)" }}>
             <Search size={18} strokeWidth={2} color="var(--sage-deep)" />
             <input value={query} onChange={(e) => setQuery(e.target.value)}
-                   placeholder="Search by name or tag..."
+                   placeholder="Buscar por nombre o arete..."
                    className="border-0 bg-transparent outline-none text-sm w-full" style={{ color: "var(--ink)" }} />
           </div>
           <div className="flex gap-2 flex-wrap">
@@ -67,7 +67,7 @@ export default function AnimalsPage() {
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              {["Animal", "Group", "Status", "Temp", "Activity", "Z-score", "Last sync"].map((h) => (
+              {["Animal", "Grupo", "Estado", "Temp", "Actividad", "Z-score", "Última sinc."].map((h) => (
                 <th key={h} className="text-left text-[11.5px] uppercase tracking-wide font-semibold px-4 py-3 border-b"
                     style={{ color: "var(--faint)", borderColor: "var(--border)" }}>{h}</th>
               ))}
@@ -111,7 +111,7 @@ export default function AnimalsPage() {
 
         {shown.length === 0 && (
           <div className="text-center text-sm py-10" style={{ color: "var(--muted)" }}>
-            No animals match your search.
+            Ningún animal coincide con tu búsqueda.
           </div>
         )}
       </div>

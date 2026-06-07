@@ -7,25 +7,25 @@ const site = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${site}`),
-  title: "HerdFlow — Predictive livestock health",
+  title: "HerdFlow — Salud predictiva del ganado",
   description:
-    "Detect animal health anomalies — fever, lameness, off-feed — before they're visible to the eye, using per-animal z-score baselines.",
+    "Detecta anomalías de salud animal —fiebre, cojera, falta de apetito— antes de que se vean a simple vista, con líneas base de z-score por animal.",
   openGraph: {
-    title: "HerdFlow — Catch illness before it shows",
-    description: "Predictive livestock health: per-animal z-score anomaly detection for cattle, sheep, horses and poultry.",
+    title: "HerdFlow — Detecta enfermedades antes de que se vean",
+    description: "Salud predictiva del ganado: detección de anomalías por z-score, animal por animal, para bovinos, ovinos, equinos y aves.",
     type: "website",
     siteName: "HerdFlow",
   },
   twitter: {
     card: "summary_large_image",
-    title: "HerdFlow — Catch illness before it shows",
-    description: "Predictive livestock health with per-animal z-score anomaly detection.",
+    title: "HerdFlow — Detecta enfermedades antes de que se vean",
+    description: "Salud predictiva del ganado con detección de anomalías por z-score, animal por animal.",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="es-MX">
       <body>{children}</body>
     </html>
   );

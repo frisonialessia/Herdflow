@@ -35,12 +35,12 @@ export function BoardNav() {
     const lame = summarizeMobility(herd).lame.length;
     const offFeed = summarizeNutrition(herd).offFeed.filter((x) => x.n.status === "off_feed").length;
     return [
-      { href: "/dashboard/today", label: "Today", icon: Sun, color: "var(--sage-deep)" },
-      { href: "/dashboard/cases", label: "Cases", icon: ClipboardList, count: openCases, color: "var(--brown)" },
-      { href: "/dashboard/breeding", label: "Breeding", icon: HeartPulse, count: inHeat, color: "var(--sage-deep)" },
-      { href: "/dashboard/calving", label: "Calving", icon: Baby, count: calving, color: "var(--brown)" },
-      { href: "/dashboard/mobility", label: "Mobility", icon: Footprints, count: lame, color: "var(--brown)" },
-      { href: "/dashboard/nutrition", label: "Nutrition", icon: Wheat, count: offFeed, color: "var(--brown)" },
+      { href: "/dashboard/today", label: "Hoy", icon: Sun, color: "var(--sage-deep)" },
+      { href: "/dashboard/cases", label: "Casos", icon: ClipboardList, count: openCases, color: "var(--brown)" },
+      { href: "/dashboard/breeding", label: "Reproducción", icon: HeartPulse, count: inHeat, color: "var(--sage-deep)" },
+      { href: "/dashboard/calving", label: "Partos", icon: Baby, count: calving, color: "var(--brown)" },
+      { href: "/dashboard/mobility", label: "Movilidad", icon: Footprints, count: lame, color: "var(--brown)" },
+      { href: "/dashboard/nutrition", label: "Nutrición", icon: Wheat, count: offFeed, color: "var(--brown)" },
     ];
   }, [herd, cases, bred]); // eslint-disable-line react-hooks/exhaustive-deps
 

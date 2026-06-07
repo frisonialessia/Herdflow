@@ -11,20 +11,20 @@ import { timeAgo } from "@/lib/format";
 import { Check, ChevronRight, RotateCcw, ClipboardList } from "lucide-react";
 
 const STEPS: { key: CaseStatus; label: string }[] = [
-  { key: "open", label: "Open" },
-  { key: "acknowledged", label: "Acknowledged" },
-  { key: "treating", label: "Treating" },
-  { key: "resolved", label: "Resolved" },
+  { key: "open", label: "Abierto" },
+  { key: "acknowledged", label: "Reconocido" },
+  { key: "treating", label: "En tratamiento" },
+  { key: "resolved", label: "Resuelto" },
 ];
 
 const NEXT: Record<CaseStatus, { label: string; to: CaseStatus } | null> = {
-  open: { label: "Acknowledge", to: "acknowledged" },
-  acknowledged: { label: "Start treatment", to: "treating" },
-  treating: { label: "Mark resolved", to: "resolved" },
+  open: { label: "Reconocer", to: "acknowledged" },
+  acknowledged: { label: "Iniciar tratamiento", to: "treating" },
+  treating: { label: "Marcar resuelto", to: "resolved" },
   resolved: null,
 };
 
-const ASSIGNEES = ["Dr. Salas (vet)", "Dr. Romero (vet)", "Me (herdsman)"];
+const ASSIGNEES = ["Dra. Salas (veterinaria)", "Dr. Romero (veterinario)", "Yo (cuidador)"];
 
 export function CasePanel({ animalId }: { animalId: string }) {
   const { caseFor, advanceCase, assignCase } = useHerd();
@@ -37,7 +37,7 @@ export function CasePanel({ animalId }: { animalId: string }) {
     <div className="bg-white border rounded-xl2 p-[18px] mb-5" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-sora text-[15px] font-semibold flex items-center gap-2">
-          <ClipboardList size={16} strokeWidth={2} color="var(--sage-deep)" /> Case
+          <ClipboardList size={16} strokeWidth={2} color="var(--sage-deep)" /> Caso
         </h3>
         <span
           className="text-[11px] font-semibold px-2.5 py-[3px] rounded-[20px] uppercase tracking-wide"
@@ -87,7 +87,7 @@ export function CasePanel({ animalId }: { animalId: string }) {
 
       {/* Assignee */}
       <label className="text-[11px] uppercase tracking-wide font-semibold" style={{ color: "var(--faint)" }}>
-        Assigned to
+        Asignado a
       </label>
       <select
         value={c.assignee ?? ""}
@@ -95,7 +95,7 @@ export function CasePanel({ animalId }: { animalId: string }) {
         className="w-full border rounded-xl px-3 py-2.5 mt-1.5 mb-3 text-sm cursor-pointer outline-none"
         style={{ background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
       >
-        <option value="">Unassigned</option>
+        <option value="">Sin asignar</option>
         {ASSIGNEES.map((a) => (
           <option key={a} value={a}>
             {a}
@@ -118,7 +118,7 @@ export function CasePanel({ animalId }: { animalId: string }) {
           className="w-full flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-medium cursor-pointer border bg-transparent"
           style={{ borderColor: "var(--border)", color: "var(--muted)" }}
         >
-          <RotateCcw size={15} strokeWidth={2} /> Reopen case
+          <RotateCcw size={15} strokeWidth={2} /> Reabrir caso
         </button>
       )}
 
@@ -126,7 +126,7 @@ export function CasePanel({ animalId }: { animalId: string }) {
       {events.length > 0 && (
         <div className="mt-4 pt-3.5 border-t" style={{ borderColor: "var(--border)" }}>
           <div className="text-[11px] uppercase tracking-wide font-semibold mb-2" style={{ color: "var(--faint)" }}>
-            Activity
+            Actividad
           </div>
           <div className="flex flex-col gap-2">
             {events.map((e, i) => (

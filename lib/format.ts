@@ -7,18 +7,18 @@ export const STATUS_COLOR: Record<Severity, string> = {
 };
 
 export const STATUS_LABEL: Record<Severity, string> = {
-  healthy: "Healthy",
-  watch: "Watch",
-  critical: "Critical",
+  healthy: "Sano",
+  watch: "Vigilancia",
+  critical: "Crítico",
 };
 
 export const METRIC_LABEL: Record<MetricKey, string> = {
-  temperature_c: "Temperature",
-  activity_index: "Activity",
-  rumination_min: "Rumination",
-  intake_kg: "Intake",
-  heart_rate: "Heart rate",
-  respiration_rate: "Respiration",
+  temperature_c: "Temperatura",
+  activity_index: "Actividad",
+  rumination_min: "Rumia",
+  intake_kg: "Consumo",
+  heart_rate: "Frecuencia cardíaca",
+  respiration_rate: "Respiración",
 };
 
 export const METRIC_UNIT: Record<MetricKey, string> = {
@@ -34,11 +34,11 @@ export const METRIC_UNIT: Record<MetricKey, string> = {
 export function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.round(diff / 60000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
+  if (m < 1) return "ahora mismo";
+  if (m < 60) return `hace ${m}m`;
   const h = Math.round(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.round(h / 24)}d ago`;
+  if (h < 24) return `hace ${h}h`;
+  return `hace ${Math.round(h / 24)}d`;
 }
 
 export function fmtMetric(key: MetricKey, value: number): string {

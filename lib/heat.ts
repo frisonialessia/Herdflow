@@ -30,27 +30,27 @@ export interface BandInfo {
 export const BANDS: Record<HeatBand, BandInfo> = {
   none: {
     key: "none",
-    label: "No heat stress",
+    label: "Sin estrés calórico",
     color: "var(--healthy)",
-    advice: "Conditions are comfortable — normal grazing and handling.",
+    advice: "Las condiciones son cómodas — pastoreo y manejo normales.",
   },
   mild: {
     key: "mild",
-    label: "Mild heat stress",
+    label: "Estrés calórico leve",
     color: "var(--watch)",
-    advice: "Ensure shade and clean water are available; keep an eye on high-yield cows.",
+    advice: "Asegura sombra y agua limpia disponibles; mantén vigiladas a las vacas de alta producción.",
   },
   danger: {
     key: "danger",
-    label: "Heat danger",
+    label: "Peligro por calor",
     color: "var(--critical)",
-    advice: "Open all shade, add water troughs, run sprinklers + fans 11 AM–5 PM, and avoid handling or transport at peak.",
+    advice: "Abre toda la sombra, agrega bebederos, enciende aspersores + ventiladores de 11 AM a 5 PM y evita el manejo o transporte en el pico.",
   },
   emergency: {
     key: "emergency",
-    label: "Heat emergency",
+    label: "Emergencia por calor",
     color: "#6f3a22",
-    advice: "Emergency cooling now — sprinklers + forced air, cold drinking water, halt all handling, and check downers with the vet.",
+    advice: "Enfriamiento de emergencia ahora — aspersores + aire forzado, agua fría para beber, detén todo manejo y revisa a las caídas con el veterinario.",
   },
 };
 

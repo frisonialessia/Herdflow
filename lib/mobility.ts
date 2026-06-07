@@ -26,10 +26,10 @@ export interface Mobility {
 }
 
 export const MOB_META: Record<MobScore, { short: string; label: string; color: string; note: string }> = {
-  0: { short: "Good", label: "Good mobility", color: "var(--healthy)", note: "Walks evenly on all four feet." },
-  1: { short: "Imperfect", label: "Imperfect mobility", color: "var(--watch)", note: "Slightly uneven gait — monitor and check at the next trim." },
-  2: { short: "Impaired", label: "Impaired — lame", color: "var(--brown)", note: "Lame on one limb. Examine the foot and trim/treat soon." },
-  3: { short: "Severe", label: "Severely lame", color: "var(--critical)", note: "Severe lameness — urgent foot exam, pain relief and reduced walking." },
+  0: { short: "Buena", label: "Buena movilidad", color: "var(--healthy)", note: "Camina parejo en las cuatro patas." },
+  1: { short: "Imperfecta", label: "Movilidad imperfecta", color: "var(--watch)", note: "Andar ligeramente disparejo — vigilar y revisar en el próximo recorte." },
+  2: { short: "Comprometida", label: "Comprometida — coja", color: "var(--brown)", note: "Coja de un miembro. Revisar la pata y recortar/tratar pronto." },
+  3: { short: "Severa", label: "Cojera severa", color: "var(--critical)", note: "Cojera severa — revisión urgente de pata, analgesia y reducir caminata." },
 };
 
 export function mobilityOf(a: Animal): Mobility | null {

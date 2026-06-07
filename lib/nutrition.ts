@@ -30,9 +30,9 @@ export interface Nutrition {
 }
 
 export const FEED_META: Record<FeedStatus, { short: string; label: string; color: string; note: string }> = {
-  good: { short: "On feed", label: "On feed", color: "var(--healthy)", note: "Intake and rumination on target." },
-  watch: { short: "Dipping", label: "Intake dipping", color: "var(--watch)", note: "Slipping below target — check feed access, water and ration." },
-  off_feed: { short: "Off-feed", label: "Off-feed", color: "var(--critical)", note: "Well below target — check for illness, ketosis or a ration problem." },
+  good: { short: "Comiendo", label: "Comiendo", color: "var(--healthy)", note: "Consumo y rumia en objetivo." },
+  watch: { short: "Bajando", label: "Consumo bajando", color: "var(--watch)", note: "Cayendo por debajo del objetivo — revisa acceso al alimento, agua y ración." },
+  off_feed: { short: "Inapetente", label: "Inapetente", color: "var(--critical)", note: "Muy por debajo del objetivo — revisa enfermedad, cetosis o problema de ración." },
 };
 
 export function nutritionOf(a: Animal): Nutrition {
