@@ -9,6 +9,7 @@ import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
 import { detectOutbreaks } from "@/lib/outbreak";
 import { analyzeForecast } from "@/lib/forecast";
+import { summarizeRepro } from "@/lib/repro";
 import { PastureMap } from "@/components/PastureMap";
 import { OutbreakBanner } from "@/components/OutbreakBanner";
 import { HeatBanner } from "@/components/HeatBanner";
@@ -17,7 +18,7 @@ import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind, Zap } fr
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 export default function OverviewPage() {
-  const { herd, selectAnimal, addAnimal, caseFor } = useHerd();
+  const { herd, selectAnimal, addAnimal, caseFor, bred } = useHerd();
   const [group, setGroup] = useState<Species | "all">("all");
   const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
 
@@ -25,6 +26,7 @@ export default function OverviewPage() {
   const alerts = shown.filter((a) => a.status !== "healthy").slice(0, 3);
   const outbreaks = useMemo(() => detectOutbreaks(shown), [shown]);
   const openCases = shown.filter((a) => a.status !== "healthy" && caseFor(a.id).status !== "resolved").length;
+  const inHeat = useMemo(() => summarizeRepro(shown, bred).counts.inHeat, [shown, bred]);
 
   // per-group counts (from the full herd, so the selector shows real totals)
   const countFor = (sp: Species | "all") =>
@@ -61,6 +63,13 @@ export default function OverviewPage() {
             style={{ borderColor: "var(--border)", color: "var(--muted)" }}
           >
             Open cases <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--brown)" }}>{openCases}</span>
+          </Link>
+          <Link
+            href="/dashboard/breeding"
+            className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center cursor-pointer hover:shadow-sm transition-shadow"
+            style={{ borderColor: "var(--border)", color: "var(--muted)" }}
+          >
+            In heat <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: "var(--sage-deep)" }}>{inHeat}</span>
           </Link>
           <button onClick={() => addAnimal()}
                   className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"

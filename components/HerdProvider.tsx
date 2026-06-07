@@ -39,6 +39,9 @@ interface HerdContextValue {
   caseFor: (id: string) => CaseState;
   advanceCase: (id: string, status: CaseStatus) => void;
   assignCase: (id: string, who: string | null) => void;
+  // Reproduction: cows the user has marked inseminated this session (id → ISO).
+  bred: Record<string, string>;
+  markBred: (id: string) => void;
 }
 
 const HerdContext = createContext<HerdContextValue | null>(null);
@@ -49,6 +52,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
   const [cases, setCases] = useState<Record<string, CaseState>>({});
+  const [bred, setBred] = useState<Record<string, string>>({});
   const simulatedRef = useRef<Set<string>>(new Set());
   const addedRef = useRef(0);
 
@@ -71,6 +75,10 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
       const evt = { at: new Date().toISOString(), label };
       return { ...prev, [id]: { ...cur, assignee: who, status, events: [...cur.events, evt] } };
     });
+  }
+
+  function markBred(id: string) {
+    setBred((prev) => ({ ...prev, [id]: new Date().toISOString() }));
   }
 
   const selected = selectedId ? herd.find((a) => a.id === selectedId) ?? null : null;
@@ -113,6 +121,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     setLive(false);
     setSelectedId(null);
     setCases({});
+    setBred({});
     setHerd(generateHerd());
   }
 
@@ -127,7 +136,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, reset, cases, caseFor, advanceCase, assignCase }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred }}
     >
       {children}
     </HerdContext.Provider>
