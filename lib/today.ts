@@ -16,8 +16,9 @@ import { summarizeHeat } from "./heat";
 import { summarizeRepro, aiWindow } from "./repro";
 import { summarizeCalving, calvingLabel } from "./calving";
 import { mobilityOf, MOB_META } from "./mobility";
+import { nutritionOf } from "./nutrition";
 
-export type Domain = "health" | "biosecurity" | "heat" | "breeding" | "calving" | "welfare";
+export type Domain = "health" | "biosecurity" | "heat" | "breeding" | "calving" | "welfare" | "nutrition";
 export type Tier = "urgent" | "today" | "upcoming";
 
 export interface ActionItem {
@@ -173,9 +174,26 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
     });
   }
 
+  // ── Nutrition: off-feed animals the vitals pipeline doesn't already flag ──
+  for (const a of herd) {
+    if (a.status !== "healthy") continue;
+    const n = nutritionOf(a);
+    if (n.status !== "off_feed") continue;
+    items.push({
+      id: `nut-${a.id}`,
+      domain: "nutrition",
+      tier: "today",
+      rank: 38 + Math.round(n.drop * 12),
+      title: `Feed check · ${a.name}`,
+      detail: `Off-feed · intake ${n.intakePct}% of target`,
+      cta: "Open",
+      animalId: a.id,
+    });
+  }
+
   // ── Group + rank ─────────────────────────────────────────────────────────
   const byTier: Record<Tier, ActionItem[]> = { urgent: [], today: [], upcoming: [] };
-  const byDomain: Record<Domain, number> = { health: 0, biosecurity: 0, heat: 0, breeding: 0, calving: 0, welfare: 0 };
+  const byDomain: Record<Domain, number> = { health: 0, biosecurity: 0, heat: 0, breeding: 0, calving: 0, welfare: 0, nutrition: 0 };
   for (const it of items) {
     byTier[it.tier].push(it);
     byDomain[it.domain]++;

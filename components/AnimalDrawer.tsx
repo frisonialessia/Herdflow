@@ -12,6 +12,7 @@ import { PredictivePanel } from "@/components/PredictivePanel";
 import { CasePanel } from "@/components/CasePanel";
 import { ReproCard } from "@/components/ReproCard";
 import { MobilityCard } from "@/components/MobilityCard";
+import { NutritionCard } from "@/components/NutritionCard";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
@@ -101,6 +102,8 @@ export function AnimalDrawer() {
           <ReproCard animal={a} />
 
           <MobilityCard animal={a} />
+
+          <NutritionCard animal={a} />
 
           {a.status !== "healthy" && <CasePanel animalId={a.id} />}
 
