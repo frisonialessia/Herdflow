@@ -11,7 +11,7 @@
 // the UI (the dashboard renders client-side only, so wall-clock use is safe).
 
 import { Animal, Species } from "./types";
-import { isBreedable, reproOf } from "./repro";
+import { isBreedable, reproOf, hash01 } from "./repro";
 
 // Mean gestation length (days). Only the breedable ruminants calve here.
 export const GESTATION: Record<Species, number> = { dairy: 283, beef: 285, sheep: 147, horse: 340, poultry: 0 };
@@ -23,12 +23,6 @@ export interface Calving {
   gestationDay: number; // days carried so far
   daysToCalving: number; // may be negative (overdue)
   bucket: CalvingBucket;
-}
-
-function hash01(s: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
-  return (h >>> 0) / 4294967295;
 }
 
 export function calvingOf(a: Animal): Calving | null {

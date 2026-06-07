@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useHerd } from "@/components/HerdProvider";
 import { ReproTabs } from "@/components/ReproTabs";
 import { SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
-import { summarizeRepro, aiWindow, ReproItem } from "@/lib/repro";
+import { summarizeRepro, aiWindow, dimText, ReproItem } from "@/lib/repro";
 import { HeartPulse, Activity, CalendarDays, Syringe } from "lucide-react";
 
 export default function BreedingPage() {
@@ -108,7 +108,7 @@ function HeatCard({ item, onOpen, onBreed }: { item: ReproItem; onOpen: () => vo
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-semibold text-[15px]">{a.name}</span>
-            <span className="text-xs" style={{ color: "var(--faint)" }}>{a.tag_id} · {SPECIES_LABEL[a.species]} · {r.dim} DIM</span>
+            <span className="text-xs" style={{ color: "var(--faint)" }}>{a.tag_id} · {SPECIES_LABEL[a.species]} · {dimText(a.species, r.dim)}</span>
             <span className="inline-flex items-center gap-1 text-[10.5px] font-bold uppercase tracking-wider px-2 py-[2px] rounded-[20px] text-white" style={{ background: "var(--sage-deep)" }}>
               <HeartPulse size={11} strokeWidth={2.4} color="#fff" /> In heat
             </span>

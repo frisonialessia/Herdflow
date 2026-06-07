@@ -7,7 +7,7 @@
 
 import { useHerd } from "@/components/HerdProvider";
 import { Animal } from "@/lib/types";
-import { reproOf, aiWindow, isBreedable } from "@/lib/repro";
+import { reproOf, aiWindow, isBreedable, dimText } from "@/lib/repro";
 import { calvingOf, calvingLabel, BUCKET_COLOR } from "@/lib/calving";
 import { HeartPulse, Syringe, CalendarDays, Check, CircleDot } from "lucide-react";
 
@@ -23,7 +23,7 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
       <div className="flex items-center gap-2 mb-2">
         <HeartPulse size={16} strokeWidth={2} color="var(--sage-deep)" />
         <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Reproduction</h3>
-        <span className="ml-auto text-[12px]" style={{ color: "var(--faint)" }}>{r.dim} DIM</span>
+        <span className="ml-auto text-[12px]" style={{ color: "var(--faint)" }}>{dimText(a.species, r.dim)}</span>
       </div>
       {children}
     </div>

@@ -106,7 +106,6 @@ export function buildToday({ herd, caseFor, bred, now }: TodayParams): TodayBoar
       detail: `${heat.atRiskCount} at high risk${heat.topSpecies ? ` · ${SPECIES_LABEL[heat.topSpecies].toLowerCase()} most exposed` : ""} — shade, water & sprinklers at peak`,
       cta: "Plan",
       href: "/dashboard",
-      animalId: heat.risks[0]?.animal.id,
     });
   }
 

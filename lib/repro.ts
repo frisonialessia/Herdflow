@@ -42,10 +42,15 @@ export interface Repro {
   daysToHeat?: number; // approaching / open
 }
 
-function hash01(s: string): number {
+export function hash01(s: string): number {
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
   return (h >>> 0) / 4294967295;
+}
+
+/** Postpartum label: "days in milk" is dairy-specific; others show days since calving. */
+export function dimText(species: Species, dim: number): string {
+  return species === "dairy" ? `${dim} DIM` : `${dim}d since calving`;
 }
 
 /** Per-animal reproductive state. `bred` = user marked her inseminated this session. */
