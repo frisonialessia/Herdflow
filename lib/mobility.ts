@@ -40,15 +40,16 @@ export function mobilityOf(a: Animal): Mobility | null {
   const seeded = hash01(a.id + "mob");
   const chronic: MobScore = seeded < 0.7 ? 0 : seeded < 0.9 ? 1 : seeded < 0.97 ? 2 : 3;
 
-  // Acute: how far current activity sits below the animal's own baseline, plus a
-  // bump if its top deviation is a downward activity flag.
-  const ratio = a.latest.activity_index / Math.max(1, a.baseline.activity_index);
-  const drop = Math.max(0, 1 - ratio);
+  // Acute: a real, sustained downward activity flag. We key off the z-score
+  // deviation (which is measured against the animal's own series) rather than the
+  // raw latest/baseline ratio — activity is circadian, so a flat comparison would
+  // make every animal look lame at night. The drop% comes from the flagged values.
   let acute = 0;
+  let drop = 0;
   if (a.deviation.metric === "activity_index" && a.deviation.z_score < 0) {
     acute = a.status === "critical" ? 3 : a.status === "watch" ? 2 : 1;
+    if (a.deviation.baseline > 0) drop = Math.max(0, 1 - a.deviation.observed / a.deviation.baseline);
   }
-  acute = Math.max(acute, drop >= 0.25 ? 3 : drop >= 0.15 ? 2 : drop >= 0.08 ? 1 : 0);
 
   const score = Math.min(3, Math.max(chronic, acute)) as MobScore;
   return { score, drop, acute: acute >= 2 };
