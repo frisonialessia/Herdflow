@@ -35,12 +35,12 @@ export default function LivePage() {
         <div className="flex items-start justify-between mb-1.5 flex-wrap gap-3">
           <div>
             <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5">
-              Predictive Trend
+              Tendencia predictiva
               <span className="text-[11px] font-semibold px-2.5 py-[3px] rounded-[20px] uppercase tracking-wide"
-                    style={{ background: "var(--brown-soft)", color: "var(--brown)" }}>AI baseline</span>
+                    style={{ background: "var(--brown-soft)", color: "var(--brown)" }}>línea base IA</span>
             </h3>
             <p className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-              {METRIC_LABEL[metric]} vs. this animal's 14-day baseline · deviation band ±2σ
+              {METRIC_LABEL[metric]} vs. línea base de 14 días de este animal · banda de desviación ±2σ
             </p>
           </div>
           <div className="flex gap-2 items-center">
@@ -94,25 +94,25 @@ export default function LivePage() {
 
         <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between mb-[18px]">
-            <h3 className="font-sora text-base font-semibold">Sensor Health</h3>
+            <h3 className="font-sora text-base font-semibold">Estado de sensores</h3>
             <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center" style={{ background: "var(--card-soft)" }}>
               <CheckCircle2 size={18} strokeWidth={2} color="var(--sage-deep)" />
             </div>
           </div>
           <div className="flex flex-col gap-3.5">
-            <SensorRow icon={<BarChart3 size={18} strokeWidth={2} color="var(--brown)" />} t="Online" v={`${herd.length} / ${herd.length}`} />
-            <SensorRow icon={<BatteryMedium size={18} strokeWidth={2} color="var(--brown)" />} t="Avg Battery" v="86%" />
-            <SensorRow icon={<Activity size={18} strokeWidth={2} color="var(--brown)" />} t="Data Quality" v="Good" />
+            <SensorRow icon={<BarChart3 size={18} strokeWidth={2} color="var(--brown)" />} t="En línea" v={`${herd.length} / ${herd.length}`} />
+            <SensorRow icon={<BatteryMedium size={18} strokeWidth={2} color="var(--brown)" />} t="Batería prom." v="86%" />
+            <SensorRow icon={<Activity size={18} strokeWidth={2} color="var(--brown)" />} t="Calidad de datos" v="Buena" />
           </div>
           <div className="border-t mt-[18px] pt-4" style={{ borderColor: "var(--border)" }}>
-            <div className="text-xs uppercase tracking-wide mb-2.5" style={{ color: "var(--faint)" }}>Needs attention</div>
-            <NeedsRow t={`Tag ${herd[1].tag_id} · low battery`} v="14%" vColor="var(--watch)" />
-            <NeedsRow t={`Tag ${herd[2].tag_id} · weak signal`} v="2 bars" vColor="var(--muted)" />
+            <div className="text-xs uppercase tracking-wide mb-2.5" style={{ color: "var(--faint)" }}>Requieren atención</div>
+            <NeedsRow t={`Arete ${herd[1].tag_id} · batería baja`} v="14%" vColor="var(--watch)" />
+            <NeedsRow t={`Arete ${herd[2].tag_id} · señal débil`} v="2 barras" vColor="var(--muted)" />
           </div>
           <div className="border-t mt-4 pt-3.5 flex justify-between items-center text-[13px]" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-            <span>Next calibration</span><span className="font-semibold" style={{ color: "var(--ink)" }}>in 6 days</span>
+            <span>Próxima calibración</span><span className="font-semibold" style={{ color: "var(--ink)" }}>en 6 días</span>
           </div>
-          <div className="text-[11px] mt-3" style={{ color: "var(--faint)" }}>Sensor metrics are illustrative.</div>
+          <div className="text-[11px] mt-3" style={{ color: "var(--faint)" }}>Las métricas de sensores son ilustrativas.</div>
         </div>
       </div>
     </section>
