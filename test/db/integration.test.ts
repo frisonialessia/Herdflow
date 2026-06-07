@@ -1,0 +1,125 @@
+// Postgres integration tests — they codify the data-layer behaviour we used to
+// verify by hand: tenant provisioning, the animal write/read round-trip, tenant
+// isolation, the operational state (cases / breeding / history) and sample-herd
+// seeding. They run only when DATABASE_URL points at a (local) Postgres with the
+// schema applied; otherwise the whole block is skipped, so `npm test` is green
+// anywhere. Each run uses unique emails and cleans up after itself.
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { getPool } from "@/server/db";
+import { findOrCreateUser, seedSampleHerd } from "@/lib/db/onboarding";
+import { getUserRole } from "@/lib/db/access";
+import { createAnimal, updateAnimal, removeAnimal, advanceCase, assignCase, markBred } from "@/lib/db/mutations";
+import { loadHerd, loadOperationalState } from "@/lib/db/herd";
+
+const HAS_DB = !!process.env.DATABASE_URL;
+const stamp = Date.now();
+
+describe.skipIf(!HAS_DB)("db integration", () => {
+  let userA: string; // primary tenant
+  let userB: string; // a second, isolated tenant
+  let userC: string; // a fresh tenant used for sample-herd seeding
+  const orgIds: string[] = [];
+  const userIds: string[] = [];
+
+  beforeAll(async () => {
+    userA = await findOrCreateUser(`test-a-${stamp}@herdflow.test`);
+    userB = await findOrCreateUser(`test-b-${stamp}@herdflow.test`);
+    userC = await findOrCreateUser(`test-c-${stamp}@herdflow.test`);
+    userIds.push(userA, userB, userC);
+
+    // Remember each tenant's org so we can tear it all down afterwards.
+    const pool = getPool();
+    const rows = await pool.query<{ org_id: string }>(`select org_id from memberships where user_id = any($1::uuid[])`, [userIds]);
+    for (const r of rows.rows) orgIds.push(r.org_id);
+  });
+
+  afterAll(async () => {
+    const pool = getPool();
+    try {
+      if (orgIds.length) await pool.query(`delete from organizations where id = any($1::uuid[])`, [orgIds]);
+      if (userIds.length) await pool.query(`delete from users where id = any($1::uuid[])`, [userIds]);
+    } finally {
+      await pool.end();
+    }
+  });
+
+  it("provisions a brand-new email as the owner of its own farm", async () => {
+    expect(await getUserRole(userA)).toBe("owner");
+
+    // Re-login with the same email is idempotent — same user, no second org.
+    const again = await findOrCreateUser(`test-a-${stamp}@herdflow.test`);
+    expect(again).toBe(userA);
+
+    const pool = getPool();
+    const org = await pool.query<{ name: string }>(
+      `select o.name from organizations o join memberships m on m.org_id = o.id where m.user_id = $1`,
+      [userA]
+    );
+    expect(org.rows[0].name).toMatch(/^Rancho de /);
+  });
+
+  it("a fresh tenant starts with an empty herd", async () => {
+    expect(await loadHerd(userA)).toHaveLength(0);
+  });
+
+  it("createAnimal persists and loadHerd reads it back", async () => {
+    const created = await createAnimal(userA, { name: "Lola", species: "dairy", tag_id: "TST-1" });
+    expect(created).not.toBeNull();
+
+    const herd = await loadHerd(userA);
+    const found = herd.find((a) => a.id === created!.id);
+    expect(found).toBeDefined();
+    expect(found!.name).toBe("Lola");
+    expect(found!.species).toBe("dairy");
+    expect(found!.series.length).toBeGreaterThan(3);
+  });
+
+  it("isolates tenants: B cannot see A's animals", async () => {
+    const herdB = await loadHerd(userB);
+    expect(herdB).toHaveLength(0);
+  });
+
+  it("rejects cross-tenant writes at the data layer", async () => {
+    const [a] = await loadHerd(userA);
+    expect(a).toBeDefined();
+
+    // B has no claim on A's animal: both calls must be silent no-ops.
+    await removeAnimal(userB, a.id);
+    await updateAnimal(userB, a.id, { name: "Secuestrada" });
+
+    const afterA = await loadHerd(userA);
+    const still = afterA.find((x) => x.id === a.id);
+    expect(still).toBeDefined();
+    expect(still!.name).toBe("Lola");
+  });
+
+  it("lets the owner edit an animal's ficha", async () => {
+    const [a] = await loadHerd(userA);
+    await updateAnimal(userA, a.id, { name: "Lola II", profile: { breed: "Jersey" } });
+
+    const [updated] = await loadHerd(userA);
+    expect(updated.name).toBe("Lola II");
+    expect(updated.profile?.breed).toBe("Jersey");
+  });
+
+  it("persists the operational state (case workflow, breeding, history)", async () => {
+    const [a] = await loadHerd(userA);
+    await advanceCase(userA, a.id, "acknowledged");
+    await assignCase(userA, a.id, "Dr. Veterinaria");
+    await markBred(userA, a.id);
+
+    const ops = await loadOperationalState(userA);
+    expect(ops.cases[a.id]?.status).toBe("acknowledged");
+    expect(ops.cases[a.id]?.assignee).toBe("Dr. Veterinaria");
+    expect(ops.bred[a.id]).toBeTruthy();
+    // history accumulates: enrollment + edit + case events + breeding
+    expect((ops.log[a.id] ?? []).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("seeds a sample herd into an empty org exactly once", async () => {
+    expect(await seedSampleHerd(userC)).toBe(40);
+    expect(await loadHerd(userC)).toHaveLength(40);
+    // idempotent: the org already has animals, so a second call is a no-op
+    expect(await seedSampleHerd(userC)).toBe(0);
+  });
+});
