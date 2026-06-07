@@ -4,8 +4,25 @@ import { AnimalDrawer } from "@/components/AnimalDrawer";
 import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
 import { DemoAutoplay } from "@/components/DemoAutoplay";
+import { loadHerd } from "@/lib/db/herd";
+import type { Animal } from "@/lib/types";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+// Dual mode: with DATABASE_URL set, the dashboard reads the real herd from
+// Postgres; without it (the public demo), HerdProvider falls back to the
+// synthetic generator. force-dynamic so real mode queries per request.
+export const dynamic = "force-dynamic";
+
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  let initialHerd: Animal[] | null = null;
+  if (process.env.DATABASE_URL) {
+    try {
+      initialHerd = await loadHerd();
+    } catch (e) {
+      console.error("loadHerd failed, falling back to synthetic:", e);
+      initialHerd = null;
+    }
+  }
+
   return (
     <div className="max-w-[1280px] mx-auto p-5">
       <div
@@ -16,7 +33,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           boxShadow: "0 30px 60px -30px rgba(58,90,64,0.28)",
         }}
       >
-        <HerdProvider>
+        <HerdProvider initialHerd={initialHerd}>
           <TopNav />
           <DashboardShell>{children}</DashboardShell>
           <AnimalDrawer />

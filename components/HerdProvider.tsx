@@ -29,8 +29,9 @@ interface HerdContextValue {
 
 const HerdContext = createContext<HerdContextValue | null>(null);
 
-export function HerdProvider({ children }: { children: React.ReactNode }) {
-  const [herd, setHerd] = useState<Animal[]>(() => generateHerd());
+export function HerdProvider({ children, initialHerd }: { children: React.ReactNode; initialHerd?: Animal[] | null }) {
+  // Real data from the server (DB) when provided; synthetic fallback otherwise.
+  const [herd, setHerd] = useState<Animal[]>(() => initialHerd ?? generateHerd());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
   const simulatedRef = useRef<Set<string>>(new Set());
