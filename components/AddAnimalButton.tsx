@@ -26,7 +26,7 @@ export function AddAnimalButton() {
         className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
         style={{ background: "var(--sage-deep)" }}
       >
-        <Plus size={16} strokeWidth={2} color="#fff" /> Add Animal
+        <Plus size={16} strokeWidth={2} color="#fff" /> Agregar animal
       </button>
 
       {open && (

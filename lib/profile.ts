@@ -100,9 +100,12 @@ export function generateProfile(sp: Species, rnd: () => number): AnimalProfile {
 export function animalAge(birthDate: string): string {
   const days = (Date.now() - new Date(birthDate).getTime()) / 86_400_000;
   if (!birthDate || isNaN(days)) return "—";
-  if (days < 365) return `${Math.max(1, Math.round(days / 30))} mo`;
+  if (days < 365) {
+    const m = Math.max(1, Math.round(days / 30));
+    return `${m} ${m === 1 ? "mes" : "meses"}`;
+  }
   const y = days / 365.25;
-  return `${y < 3 ? y.toFixed(1) : Math.round(y)} yr`;
+  return `${y < 3 ? y.toFixed(1) : Math.round(y)} años`;
 }
 
 export const SEX_LABEL: Record<Sex, string> = { female: "Hembra", male: "Macho" };

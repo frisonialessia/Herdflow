@@ -92,11 +92,11 @@ export interface CaseState {
 }
 
 export const SPECIES_LABEL: Record<Species, string> = {
-  dairy: "Dairy Cow",
-  beef: "Beef",
-  sheep: "Sheep",
-  horse: "Horse",
-  poultry: "Poultry",
+  dairy: "Vaca lechera",
+  beef: "Ganado de carne",
+  sheep: "Oveja",
+  horse: "Caballo",
+  poultry: "Ave",
 };
 
 export const SPECIES_EMOJI: Record<Species, string> = {

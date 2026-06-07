@@ -17,10 +17,10 @@ import { injectAnomaly, appendTick } from "@/lib/herd_sim";
 import { LogEntry } from "@/lib/history";
 
 const CASE_EVENT_LABEL: Record<CaseStatus, string> = {
-  open: "Reopened",
-  acknowledged: "Acknowledged",
-  treating: "Treatment started",
-  resolved: "Resolved",
+  open: "Reabierto",
+  acknowledged: "Reconocido",
+  treating: "Tratamiento iniciado",
+  resolved: "Resuelto",
 };
 const EMPTY_CASE: CaseState = { status: "open", assignee: null, events: [] };
 
@@ -98,7 +98,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
       const cur = prev[id] ?? EMPTY_CASE;
       // Assigning a still-open case implies you've acknowledged it.
       const status: CaseStatus = who && cur.status === "open" ? "acknowledged" : cur.status;
-      const label = who ? `Assigned to ${who}` : "Unassigned";
+      const label = who ? `Asignado a ${who}` : "Sin asignar";
       const evt = { at: new Date().toISOString(), label };
       return { ...prev, [id]: { ...cur, assignee: who, status, events: [...cur.events, evt] } };
     });
