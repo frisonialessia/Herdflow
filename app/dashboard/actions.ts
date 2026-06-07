@@ -10,6 +10,7 @@ import { getSessionUserId } from "@/lib/auth/session";
 import { getUserRole } from "@/lib/db/access";
 import { can, type Capability } from "@/lib/roles";
 import * as db from "@/lib/db/mutations";
+import { seedSampleHerd } from "@/lib/db/onboarding";
 import type { Animal, CaseStatus } from "@/lib/types";
 
 /** Resolve the session user and verify they hold `cap`; null = denied/demo. */
@@ -49,4 +50,10 @@ export async function assignCaseAction(id: string, who: string | null): Promise<
 export async function markBredAction(id: string): Promise<void> {
   const u = await authed("manageBreeding");
   if (u) await db.markBred(u, id);
+}
+
+/** Bootstrap a fresh tenant with a sample herd. Returns the count created. */
+export async function seedSampleHerdAction(): Promise<number> {
+  const u = await authed("addAnimal");
+  return u ? seedSampleHerd(u) : 0;
 }

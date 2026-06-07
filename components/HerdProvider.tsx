@@ -59,6 +59,8 @@ interface HerdContextValue {
   markBred: (id: string) => void;
   // Persisted per-animal history log (enrollment, edits, …), kept for the session.
   log: Record<string, LogEntry[]>;
+  // True when changes are written to the DB (real mode), false in the demo.
+  persisted: boolean;
 }
 
 export type AnimalInput = { name?: string; tag_id?: string; species?: Species; profile?: Partial<AnimalProfile> };
@@ -241,7 +243,7 @@ export function HerdProvider({
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred, log }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred, log, persisted }}
     >
       {children}
     </HerdContext.Provider>

@@ -13,12 +13,13 @@ import { OutbreakBanner } from "@/components/OutbreakBanner";
 import { HeatBanner } from "@/components/HeatBanner";
 import { TodayBar } from "@/components/TodayBar";
 import { AddAnimalButton } from "@/components/AddAnimalButton";
+import { EmptyHerd } from "@/components/EmptyHerd";
 import { Thermometer, Activity, Wheat, Beef, Layers, Heart, Wind, Zap } from "lucide-react";
 
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 export default function OverviewPage() {
-  const { herd, selectAnimal } = useHerd();
+  const { herd, selectAnimal, persisted } = useHerd();
   const [group, setGroup] = useState<Species | "all">("all");
   const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
 
@@ -44,6 +45,9 @@ export default function OverviewPage() {
     const xs = shown.map((a) => a.latest[key]).filter((v) => v > 0);
     return xs.length ? xs.reduce((p, c) => p + c, 0) / xs.length / f : 0;
   };
+
+  // Fresh tenant (real mode) with no animals yet → onboarding screen.
+  if (persisted && herd.length === 0) return <EmptyHerd />;
 
   return (
     <section className="animate-fade">
