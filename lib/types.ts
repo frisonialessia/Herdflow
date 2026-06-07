@@ -54,6 +54,21 @@ export interface Animal {
   status: Severity;
 }
 
+// Case workflow: the operational loop on top of an alert. A non-healthy animal
+// has a case that moves open → acknowledged → treating → resolved.
+export type CaseStatus = "open" | "acknowledged" | "treating" | "resolved";
+
+export interface CaseEvent {
+  at: string; // ISO
+  label: string;
+}
+
+export interface CaseState {
+  status: CaseStatus;
+  assignee: string | null;
+  events: CaseEvent[];
+}
+
 export const SPECIES_LABEL: Record<Species, string> = {
   dairy: "Dairy Cow",
   beef: "Beef",

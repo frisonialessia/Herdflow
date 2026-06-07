@@ -11,9 +11,17 @@
 // flagged for the duration of the demo.
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Animal, MetricKey } from "@/lib/types";
+import { Animal, MetricKey, CaseStatus, CaseState } from "@/lib/types";
 import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
+
+const CASE_EVENT_LABEL: Record<CaseStatus, string> = {
+  open: "Reopened",
+  acknowledged: "Acknowledged",
+  treating: "Treatment started",
+  resolved: "Resolved",
+};
+const EMPTY_CASE: CaseState = { status: "open", assignee: null, events: [] };
 
 interface HerdContextValue {
   herd: Animal[];
@@ -26,6 +34,11 @@ interface HerdContextValue {
   simulateOutbreak: (metric?: MetricKey) => string[];
   addAnimal: () => void;
   reset: () => void;
+  // Case workflow (operational loop on top of an alert).
+  cases: Record<string, CaseState>;
+  caseFor: (id: string) => CaseState;
+  advanceCase: (id: string, status: CaseStatus) => void;
+  assignCase: (id: string, who: string | null) => void;
 }
 
 const HerdContext = createContext<HerdContextValue | null>(null);
@@ -35,8 +48,30 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
   const [herd, setHerd] = useState<Animal[]>(() => initialHerd ?? generateHerd());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [live, setLive] = useState(false);
+  const [cases, setCases] = useState<Record<string, CaseState>>({});
   const simulatedRef = useRef<Set<string>>(new Set());
   const addedRef = useRef(0);
+
+  const caseFor = (id: string): CaseState => cases[id] ?? EMPTY_CASE;
+
+  function advanceCase(id: string, status: CaseStatus) {
+    setCases((prev) => {
+      const cur = prev[id] ?? EMPTY_CASE;
+      const evt = { at: new Date().toISOString(), label: CASE_EVENT_LABEL[status] };
+      return { ...prev, [id]: { ...cur, status, events: [...cur.events, evt] } };
+    });
+  }
+
+  function assignCase(id: string, who: string | null) {
+    setCases((prev) => {
+      const cur = prev[id] ?? EMPTY_CASE;
+      // Assigning a still-open case implies you've acknowledged it.
+      const status: CaseStatus = who && cur.status === "open" ? "acknowledged" : cur.status;
+      const label = who ? `Assigned to ${who}` : "Unassigned";
+      const evt = { at: new Date().toISOString(), label };
+      return { ...prev, [id]: { ...cur, assignee: who, status, events: [...cur.events, evt] } };
+    });
+  }
 
   const selected = selectedId ? herd.find((a) => a.id === selectedId) ?? null : null;
 
@@ -77,6 +112,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     addedRef.current = 0;
     setLive(false);
     setSelectedId(null);
+    setCases({});
     setHerd(generateHerd());
   }
 
@@ -91,7 +127,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, reset }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, reset, cases, caseFor, advanceCase, assignCase }}
     >
       {children}
     </HerdContext.Provider>

@@ -15,13 +15,14 @@ import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind, Zap } fr
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 export default function OverviewPage() {
-  const { herd, selectAnimal, addAnimal } = useHerd();
+  const { herd, selectAnimal, addAnimal, caseFor } = useHerd();
   const [group, setGroup] = useState<Species | "all">("all");
   const shown = group === "all" ? herd : herd.filter((a) => a.species === group);
 
   const s = herdSummary(shown);
   const alerts = shown.filter((a) => a.status !== "healthy").slice(0, 3);
   const outbreaks = useMemo(() => detectOutbreaks(shown), [shown]);
+  const openCases = shown.filter((a) => a.status !== "healthy" && caseFor(a.id).status !== "resolved").length;
 
   // per-group counts (from the full herd, so the selector shows real totals)
   const countFor = (sp: Species | "all") =>
@@ -52,6 +53,7 @@ export default function OverviewPage() {
         <div className="flex gap-2.5 items-center">
           <Chip label="Healthy" n={s.healthy} color="var(--healthy)" />
           <Chip label="Under watch" n={s.watch} color="var(--watch)" />
+          <Chip label="Open cases" n={openCases} color="var(--brown)" />
           <button onClick={() => addAnimal()}
                   className="text-white border-0 rounded-[30px] px-5 py-[11px] text-sm font-medium cursor-pointer flex gap-2 items-center"
                   style={{ background: "var(--sage-deep)" }}>

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { TrendChart } from "@/components/TrendChart";
 import { PredictivePanel } from "@/components/PredictivePanel";
+import { CasePanel } from "@/components/CasePanel";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
@@ -94,6 +95,8 @@ export function AnimalDrawer() {
           )}
 
           <PredictivePanel forecast={forecast} />
+
+          {a.status !== "healthy" && <CasePanel animalId={a.id} />}
 
           <div className="grid grid-cols-2 gap-3 mb-5">
             {metrics.map((m) => {
