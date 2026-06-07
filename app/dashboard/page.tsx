@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { herdSummary } from "@/lib/mock_data_generator";
 import { SPECIES_EMOJI, SPECIES_LABEL, Species } from "@/lib/types";
 import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
+import { detectOutbreaks } from "@/lib/outbreak";
 import { PastureMap } from "@/components/PastureMap";
+import { OutbreakBanner } from "@/components/OutbreakBanner";
 import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind } from "lucide-react";
 
 export default function OverviewPage() {
@@ -16,6 +18,7 @@ export default function OverviewPage() {
 
   const s = herdSummary(shown);
   const alerts = shown.filter((a) => a.status !== "healthy").slice(0, 3);
+  const outbreaks = useMemo(() => detectOutbreaks(shown), [shown]);
 
   // per-group counts (from the full herd, so the selector shows real totals)
   const countFor = (sp: Species | "all") =>
@@ -54,9 +57,11 @@ export default function OverviewPage() {
         </div>
       </div>
 
+      <OutbreakBanner outbreaks={outbreaks} onSelect={selectAnimal} />
+
       <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-[18px]">
         <div className="relative">
-          <PastureMap herd={shown} onSelect={selectAnimal} />
+          <PastureMap herd={shown} onSelect={selectAnimal} outbreaks={outbreaks} />
           <div className="absolute bottom-5 left-5 z-[3] rounded-[18px] px-5 py-4"
                style={{ background: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)", boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}>
             <div className="text-xs uppercase tracking-wide" style={{ color: "var(--muted)" }}>Herd Health Index</div>

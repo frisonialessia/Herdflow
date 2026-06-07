@@ -2,9 +2,18 @@
 
 import { useState } from "react";
 import { Animal } from "@/lib/types";
+import type { Outbreak } from "@/lib/outbreak";
 import { Plus, Minus, Maximize2 } from "lucide-react";
 
-export function PastureMap({ herd, onSelect }: { herd: Animal[]; onSelect?: (id: string) => void }) {
+export function PastureMap({
+  herd,
+  onSelect,
+  outbreaks = [],
+}: {
+  herd: Animal[];
+  onSelect?: (id: string) => void;
+  outbreaks?: Outbreak[];
+}) {
   const [zoom, setZoom] = useState(1);
 
   return (
@@ -24,6 +33,11 @@ export function PastureMap({ herd, onSelect }: { herd: Animal[]; onSelect?: (id:
             <rect width="18" height="18" fill="#869a6b" />
             <line x1="0" y1="0" x2="0" y2="18" stroke="#7d9162" strokeWidth="5" />
           </pattern>
+          <radialGradient id="outbreakGlow">
+            <stop offset="0%" stopColor="#8a4f32" stopOpacity="0.6" />
+            <stop offset="70%" stopColor="#8a4f32" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#8a4f32" stopOpacity="0" />
+          </radialGradient>
         </defs>
         <rect x="0" y="0" width="600" height="440" fill="#7c9163" />
         <polygon points="0,0 340,0 300,210 0,250" fill="url(#field)" />
@@ -35,6 +49,37 @@ export function PastureMap({ herd, onSelect }: { herd: Animal[]; onSelect?: (id:
         <circle cx="120" cy="120" r="13" fill="#46603a" />
         <circle cx="520" cy="80" r="12" fill="#46603a" />
         <circle cx="80" cy="360" r="11" fill="#46603a" />
+
+        {/* Outbreak hot zones — drawn before the pins so the herd sits on top. */}
+        {outbreaks.map((o) => {
+          const X = (o.cx / 100) * 600;
+          const Y = (o.cy / 100) * 440;
+          const rx = (o.radius / 100) * 600;
+          const ry = (o.radius / 100) * 440;
+          const badge = `${o.short} · ${o.size}`;
+          const bw = 22 + badge.length * 6.4;
+          const by = Math.max(16, Y - ry - 12);
+          return (
+            <g key={o.id} style={{ pointerEvents: "none" }}>
+              <ellipse cx={X} cy={Y} rx={rx} ry={ry} fill="url(#outbreakGlow)">
+                <animate attributeName="opacity" values="0.45;0.75;0.45" dur="2.6s" repeatCount="indefinite" />
+              </ellipse>
+              <ellipse cx={X} cy={Y} rx={rx} ry={ry} fill="none" stroke="#8a4f32" strokeWidth="2" strokeDasharray="6 5" opacity="0.85" />
+              {/* radar ping */}
+              <ellipse cx={X} cy={Y} fill="none" stroke="#8a4f32" strokeWidth="2">
+                <animate attributeName="rx" values={`${rx * 0.72};${rx * 1.18}`} dur="2.6s" repeatCount="indefinite" />
+                <animate attributeName="ry" values={`${ry * 0.72};${ry * 1.18}`} dur="2.6s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.7;0" dur="2.6s" repeatCount="indefinite" />
+              </ellipse>
+              <g transform={`translate(${X}, ${by})`}>
+                <rect x={-bw / 2} y={-12} width={bw} height={22} rx={11} fill="#8a4f32" />
+                <text x={0} y={3} textAnchor="middle" fontSize="11.5" fontWeight="700" fill="#fff" fontFamily="Outfit, sans-serif">
+                  {badge}
+                </text>
+              </g>
+            </g>
+          );
+        })}
 
         {herd.map((a) => {
           const cx = (a.x / 100) * 600;

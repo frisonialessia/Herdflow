@@ -23,6 +23,7 @@ interface HerdContextValue {
   live: boolean;
   setLive: (v: boolean) => void;
   simulate: (id: string, metric?: MetricKey) => void;
+  simulateOutbreak: (metric?: MetricKey) => string[];
   addAnimal: () => void;
   reset: () => void;
 }
@@ -42,6 +43,25 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
   function simulate(id: string, metric?: MetricKey) {
     simulatedRef.current.add(id);
     setHerd((prev) => prev.map((a) => (a.id === id ? injectAnomaly(a, metric) : a)));
+  }
+
+  // Flip a healthy seed animal plus its nearest healthy neighbors on the same
+  // metric, so a tight spatial cluster forms and detectOutbreaks lights up a hot
+  // zone on the map. Returns the affected ids (so a caller can react if needed).
+  function simulateOutbreak(metric: MetricKey = "temperature_c"): string[] {
+    const eligible = herd.filter(
+      (a) => a.status === "healthy" && (metric !== "rumination_min" || a.baseline.rumination_min > 0)
+    );
+    if (eligible.length < 3) return [];
+    const seed = eligible[Math.floor(Math.random() * eligible.length)];
+    const near = eligible
+      .filter((a) => a.id !== seed.id)
+      .sort((a, b) => Math.hypot(a.x - seed.x, a.y - seed.y) - Math.hypot(b.x - seed.x, b.y - seed.y))
+      .slice(0, 3);
+    const ids = [seed.id, ...near.map((a) => a.id)];
+    ids.forEach((id) => simulatedRef.current.add(id));
+    setHerd((prev) => prev.map((a) => (ids.includes(a.id) ? injectAnomaly(a, metric) : a)));
+    return ids;
   }
 
   function addAnimal() {
@@ -71,7 +91,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, addAnimal, reset }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, reset }}
     >
       {children}
     </HerdContext.Provider>

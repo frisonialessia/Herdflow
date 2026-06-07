@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { MetricKey } from "@/lib/types";
-import { FlaskConical, Play, Pause, RotateCcw, Zap, X } from "lucide-react";
+import { FlaskConical, Play, Pause, RotateCcw, Zap, X, ShieldAlert } from "lucide-react";
 
 const ANOMALY_TYPES: { label: string; metric: MetricKey }[] = [
   { label: "Fever", metric: "temperature_c" },
@@ -16,10 +16,11 @@ const ANOMALY_TYPES: { label: string; metric: MetricKey }[] = [
 ];
 
 export function DemoControls() {
-  const { herd, live, setLive, simulate, reset, selectAnimal } = useHerd();
+  const { herd, live, setLive, simulate, simulateOutbreak, reset, selectAnimal } = useHerd();
   const [open, setOpen] = useState(false);
   const [metric, setMetric] = useState<MetricKey>("temperature_c");
   const [lastName, setLastName] = useState<string | null>(null);
+  const [obNote, setObNote] = useState<string | null>(null);
 
   const flagged = herd.filter((a) => a.status !== "healthy").length;
 
@@ -32,6 +33,17 @@ export function DemoControls() {
     simulate(pick.id, metric);
     selectAnimal(pick.id); // open the drawer so the breach is visible immediately
     setLastName(pick.name);
+    setObNote(null);
+  }
+
+  function triggerOutbreak() {
+    const ids = simulateOutbreak(metric);
+    setLastName(null);
+    setObNote(
+      ids.length
+        ? `Outbreak simulated — ${ids.length} nearby animals clustered. Watch the map.`
+        : "Not enough healthy animals to cluster."
+    );
   }
 
   return (
@@ -92,6 +104,17 @@ export function DemoControls() {
             <div className="text-[12px] mt-2" style={{ color: "var(--muted)" }}>
               Flagged <span className="font-semibold" style={{ color: "var(--ink)" }}>{lastName}</span> — opened in the panel.
             </div>
+          )}
+
+          <button
+            onClick={triggerOutbreak}
+            className="w-full flex items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-[13px] font-medium cursor-pointer border mt-2"
+            style={{ background: "var(--card-soft)", borderColor: "var(--critical)", color: "var(--critical)" }}
+          >
+            <ShieldAlert size={15} strokeWidth={2} color="var(--critical)" /> Simulate outbreak (cluster)
+          </button>
+          {obNote && (
+            <div className="text-[12px] mt-2" style={{ color: "var(--muted)" }}>{obNote}</div>
           )}
 
           <div className="border-t mt-3 pt-3 flex items-center justify-between" style={{ borderColor: "var(--border)" }}>

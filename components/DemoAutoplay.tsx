@@ -5,6 +5,7 @@
 //   ?play=fever      -> simulate a fever on a healthy animal and open its drawer
 //   ?play=live       -> turn on live telemetry
 //   ?play=live+fever -> both
+//   ?play=outbreak   -> simulate a contagion cluster and light up a map hot zone
 // Uses window.location (not useSearchParams) to avoid a Suspense boundary and
 // keep the dashboard statically prerendered.
 
@@ -12,7 +13,7 @@ import { useEffect, useRef } from "react";
 import { useHerd } from "@/components/HerdProvider";
 
 export function DemoAutoplay() {
-  const { herd, simulate, selectAnimal, setLive } = useHerd();
+  const { herd, simulate, simulateOutbreak, selectAnimal, setLive } = useHerd();
   const done = useRef(false);
 
   useEffect(() => {
@@ -27,6 +28,10 @@ export function DemoAutoplay() {
         setLive(true);
         return;
       }
+      if (play === "outbreak") {
+        simulateOutbreak("temperature_c");
+        return;
+      }
       const pool = herd.filter((a) => a.status === "healthy");
       const pick = pool[Math.floor(Math.random() * pool.length)] ?? herd[0];
       if (pick) {
@@ -37,7 +42,7 @@ export function DemoAutoplay() {
     }, 1000);
 
     return () => clearTimeout(t);
-  }, [herd, simulate, selectAnimal, setLive]);
+  }, [herd, simulate, simulateOutbreak, selectAnimal, setLive]);
 
   return null;
 }
