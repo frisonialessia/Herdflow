@@ -10,6 +10,7 @@ export type Role = "owner" | "caretaker" | "vet";
 
 export type Capability =
   | "finance" // Impact + Reports (business numbers)
+  | "integrations" // connect devices / manage API keys
   | "addAnimal"
   | "deleteAnimal"
   | "editAnimal" // identity / husbandry
@@ -28,7 +29,7 @@ export const ROLE_DESC: Record<Role, string> = {
 export const ROLE_COLOR: Record<Role, string> = { owner: "var(--sage-deep)", caretaker: "var(--brown)", vet: "var(--critical)" };
 
 const MATRIX: Record<Role, Capability[]> = {
-  owner: ["finance", "addAnimal", "deleteAnimal", "editAnimal", "editMedical", "manageCases", "manageBreeding"],
+  owner: ["finance", "integrations", "addAnimal", "deleteAnimal", "editAnimal", "editMedical", "manageCases", "manageBreeding"],
   caretaker: ["addAnimal", "editAnimal", "manageCases", "manageBreeding"],
   vet: ["editAnimal", "editMedical", "manageCases", "manageBreeding"],
 };
