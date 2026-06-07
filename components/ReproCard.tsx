@@ -8,6 +8,7 @@
 import { useHerd } from "@/components/HerdProvider";
 import { Animal } from "@/lib/types";
 import { reproOf, aiWindow, isBreedable } from "@/lib/repro";
+import { calvingOf, calvingLabel, BUCKET_COLOR } from "@/lib/calving";
 import { HeartPulse, Syringe, CalendarDays, Check, CircleDot } from "lucide-react";
 
 export function ReproCard({ animal: a }: { animal: Animal }) {
@@ -85,12 +86,27 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
   }
 
   if (r.status === "pregnant") {
+    const c = calvingOf(a);
     return (
       <Shell accent="var(--brown-soft)">
         <div className="flex items-center gap-2 text-[14px] font-semibold">
           <Check size={16} strokeWidth={2.4} color="var(--healthy)" /> Confirmed pregnant
         </div>
-        <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>No action — not expected to cycle.</div>
+        {c ? (
+          <>
+            <div className="flex items-center gap-2.5 mt-2.5">
+              <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                <div className="h-full rounded-full" style={{ width: `${Math.round((c.gestationDay / c.gestation) * 100)}%`, background: BUCKET_COLOR[c.bucket] }} />
+              </div>
+              <span className="text-[12px] tabular-nums" style={{ color: "var(--muted)" }}>day {c.gestationDay}/{c.gestation}</span>
+            </div>
+            <div className="text-[12.5px] mt-1.5" style={{ color: "var(--muted)" }}>
+              <span style={{ color: BUCKET_COLOR[c.bucket], fontWeight: 600 }}>{calvingLabel(c.daysToCalving)}</span> · expected calving
+            </div>
+          </>
+        ) : (
+          <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>No action — not expected to cycle.</div>
+        )}
       </Shell>
     );
   }

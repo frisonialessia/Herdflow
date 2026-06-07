@@ -5,7 +5,9 @@
 // approaching heat in the next 48 h, and the herd's reproductive status mix.
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { useHerd } from "@/components/HerdProvider";
+import { ReproTabs } from "@/components/ReproTabs";
 import { SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { summarizeRepro, aiWindow, ReproItem } from "@/lib/repro";
 import { HeartPulse, Activity, CalendarDays, Syringe } from "lucide-react";
@@ -28,12 +30,19 @@ export default function BreedingPage() {
         </div>
       </div>
 
+      <ReproTabs />
+
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <Stat label="In heat now" n={counts.inHeat} color="var(--sage-deep)" />
         <Stat label="Approaching 48 h" n={counts.approaching} color="var(--watch)" />
         <Stat label="Open" n={counts.open} color="var(--faint)" />
         <Stat label="Bred" n={counts.bred} color="var(--brown)" />
-        <Stat label="Pregnant" n={counts.pregnant} color="var(--healthy)" />
+        <Link href="/dashboard/calving" className="bg-white border rounded-[14px] p-3.5 cursor-pointer hover:shadow-sm transition-shadow block" style={{ borderColor: "var(--border)" }}>
+          <div className="font-sora text-[24px] font-semibold" style={{ color: "var(--healthy)" }}>{counts.pregnant}</div>
+          <div className="text-[12px] mt-0.5 flex items-center gap-1 flex-wrap" style={{ color: "var(--muted)" }}>
+            Pregnant <span style={{ color: "var(--sage-deep)", fontWeight: 600 }}>· calving →</span>
+          </div>
+        </Link>
       </div>
 
       <h3 className="font-sora text-[17px] font-semibold flex items-center gap-2.5 mb-3.5">
