@@ -5,7 +5,7 @@
 // current vitals vs baseline, the trend of its most-deviated metric (with the
 // ±2σ band + z-score readout from TrendChart) and a short reading history.
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { TrendChart } from "@/components/TrendChart";
 import { PredictivePanel } from "@/components/PredictivePanel";
@@ -13,21 +13,24 @@ import { CasePanel } from "@/components/CasePanel";
 import { ReproCard } from "@/components/ReproCard";
 import { MobilityCard } from "@/components/MobilityCard";
 import { NutritionCard } from "@/components/NutritionCard";
+import { ProfileCard } from "@/components/ProfileCard";
+import { EditAnimalModal } from "@/components/EditAnimalModal";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
 import { analyzeForecast } from "@/lib/forecast";
-import { X, Stethoscope } from "lucide-react";
+import { X, Stethoscope, Pencil } from "lucide-react";
 
 const METRIC_ORDER: MetricKey[] = ["temperature_c", "heart_rate", "respiration_rate", "activity_index", "rumination_min", "intake_kg"];
 
 export function AnimalDrawer() {
   const { selected, selectAnimal } = useHerd();
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") selectAnimal(null);
+      if (e.key === "Escape" && !editing) selectAnimal(null);
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -35,7 +38,7 @@ export function AnimalDrawer() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [selected, selectAnimal]);
+  }, [selected, selectAnimal, editing]);
 
   if (!selected) return null;
 
@@ -69,14 +72,24 @@ export function AnimalDrawer() {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => selectAnimal(null)}
-              title="Close"
-              className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer shrink-0"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <X size={18} strokeWidth={2} color="var(--sage-deep)" />
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setEditing(true)}
+                title="Editar ficha"
+                className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <Pencil size={16} strokeWidth={2} color="var(--sage-deep)" />
+              </button>
+              <button
+                onClick={() => selectAnimal(null)}
+                title="Cerrar"
+                className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer"
+                style={{ borderColor: "var(--border)" }}
+              >
+                <X size={18} strokeWidth={2} color="var(--sage-deep)" />
+              </button>
+            </div>
           </div>
 
           <span
@@ -85,6 +98,8 @@ export function AnimalDrawer() {
           >
             {STATUS_LABEL[a.status]}
           </span>
+
+          <ProfileCard animal={a} />
 
           {a.status !== "healthy" && (
             <div className="rounded-[14px] p-3.5 mb-5 flex gap-3" style={{ background: "#f3ece3", border: "1px solid var(--brown-soft)" }}>
@@ -144,6 +159,8 @@ export function AnimalDrawer() {
           </div>
         </div>
       </div>
+
+      {editing && <EditAnimalModal animal={a} onClose={() => setEditing(false)} />}
     </div>
   );
 }

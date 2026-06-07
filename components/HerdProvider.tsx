@@ -11,7 +11,7 @@
 // flagged for the duration of the demo.
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Animal, MetricKey, CaseStatus, CaseState, Species } from "@/lib/types";
+import { Animal, MetricKey, CaseStatus, CaseState, Species, AnimalProfile } from "@/lib/types";
 import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
 
@@ -32,7 +32,9 @@ interface HerdContextValue {
   setLive: (v: boolean) => void;
   simulate: (id: string, metric?: MetricKey) => void;
   simulateOutbreak: (metric?: MetricKey) => string[];
-  addAnimal: (spec?: { name?: string; species?: Species }) => void;
+  addAnimal: (input?: AnimalInput) => void;
+  updateAnimal: (id: string, patch: AnimalPatch) => void;
+  removeAnimal: (id: string) => void;
   reset: () => void;
   // Case workflow (operational loop on top of an alert).
   cases: Record<string, CaseState>;
@@ -43,6 +45,9 @@ interface HerdContextValue {
   bred: Record<string, string>;
   markBred: (id: string) => void;
 }
+
+export type AnimalInput = { name?: string; tag_id?: string; species?: Species; profile?: Partial<AnimalProfile> };
+export type AnimalPatch = { name?: string; tag_id?: string; profile?: Partial<AnimalProfile> };
 
 const HerdContext = createContext<HerdContextValue | null>(null);
 
@@ -107,12 +112,44 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     return ids;
   }
 
-  function addAnimal(spec?: { name?: string; species?: Species }) {
+  function addAnimal(input?: AnimalInput) {
     const n = addedRef.current++;
-    const a = generateAnimal(herd.length + n, Date.now() + n, spec);
+    const a = generateAnimal(herd.length + n, Date.now() + n, { name: input?.name, species: input?.species });
     a.id = `an-new-${n}`;
+    if (input?.tag_id) a.tag_id = input.tag_id;
+    if (input?.profile && a.profile) a.profile = { ...a.profile, ...input.profile };
     setHerd((prev) => [a, ...prev]);
     setSelectedId(a.id);
+  }
+
+  function updateAnimal(id: string, patch: AnimalPatch) {
+    setHerd((prev) =>
+      prev.map((a) =>
+        a.id === id
+          ? {
+              ...a,
+              ...(patch.name !== undefined ? { name: patch.name } : {}),
+              ...(patch.tag_id !== undefined ? { tag_id: patch.tag_id } : {}),
+              profile: patch.profile && a.profile ? { ...a.profile, ...patch.profile } : a.profile,
+            }
+          : a
+      )
+    );
+  }
+
+  function removeAnimal(id: string) {
+    setHerd((prev) => prev.filter((a) => a.id !== id));
+    setSelectedId((cur) => (cur === id ? null : cur));
+    setCases((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    setBred((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   function reset() {
@@ -136,7 +173,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred }}
     >
       {children}
     </HerdContext.Provider>

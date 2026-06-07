@@ -52,6 +52,28 @@ export interface Animal {
   latest: MetricPoint;
   deviation: Deviation;
   status: Severity;
+  profile?: AnimalProfile; // editable record (optional so DB-mode rows still type-check)
+}
+
+export type Sex = "female" | "male";
+
+export interface VaccineRecord {
+  name: string;
+  date: string; // yyyy-mm-dd
+}
+
+// Editable husbandry record for an animal — set on creation, edited in the drawer.
+export interface AnimalProfile {
+  sex: Sex;
+  breed: string;
+  birthDate: string; // yyyy-mm-dd (age is derived)
+  origin: string; // born on farm / purchased from…
+  location: string; // ranch / site
+  diet: string; // ration / feed notes
+  feedingTimes: string; // e.g. "06:00, 16:00"
+  waterIntakeL: number; // approx L/day
+  vaccines: VaccineRecord[];
+  medicalHistory: string; // past illnesses / notes
 }
 
 // Case workflow: the operational loop on top of an alert. A non-healthy animal

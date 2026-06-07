@@ -10,6 +10,7 @@ import {
   SPECIES_NORMS, SPECIES_LABEL,
 } from "./types";
 import { computeBaseline, detectAnomaly } from "./anomaly";
+import { generateProfile } from "./profile";
 
 // --- deterministic RNG so the demo renders the same on server & client ---
 function mulberry32(seed: number) {
@@ -125,6 +126,7 @@ function makeAnimal(
     latest,
     deviation,
     status: deviation.severity,
+    profile: generateProfile(sp, rnd),
   };
 }
 

@@ -55,7 +55,7 @@ export function dimText(species: Species, dim: number): string {
 
 /** Per-animal reproductive state. `bred` = user marked her inseminated this session. */
 export function reproOf(a: Animal, bred = false): Repro | null {
-  if (!isBreedable(a)) return null;
+  if (!isBreedable(a) || a.profile?.sex === "male") return null;
 
   const dim = Math.round(5 + hash01(a.id + "dim") * 295); // 5..300
   const cycleDay = Math.floor(hash01(a.id + "cyc") * CYCLE_DAYS);
