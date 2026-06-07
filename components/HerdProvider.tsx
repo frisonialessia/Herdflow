@@ -14,6 +14,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Animal, MetricKey, CaseStatus, CaseState, Species, AnimalProfile } from "@/lib/types";
 import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
+import { LogEntry } from "@/lib/history";
 
 const CASE_EVENT_LABEL: Record<CaseStatus, string> = {
   open: "Reopened",
@@ -22,6 +23,17 @@ const CASE_EVENT_LABEL: Record<CaseStatus, string> = {
   resolved: "Resolved",
 };
 const EMPTY_CASE: CaseState = { status: "open", assignee: null, events: [] };
+
+// Every animal starts with an enrollment entry, dated to when its monitoring
+// began (the first reading), so the history always goes back to platform entry.
+function seedEnrollment(herd: Animal[]): Record<string, LogEntry[]> {
+  const out: Record<string, LogEntry[]> = {};
+  for (const a of herd) {
+    const at = a.series[0]?.recorded_at ?? new Date().toISOString();
+    out[a.id] = [{ at, kind: "enrolled", title: "Alta en la plataforma", detail: "Monitoreo iniciado" }];
+  }
+  return out;
+}
 
 interface HerdContextValue {
   herd: Animal[];
@@ -44,6 +56,8 @@ interface HerdContextValue {
   // Reproduction: cows the user has marked inseminated this session (id → ISO).
   bred: Record<string, string>;
   markBred: (id: string) => void;
+  // Persisted per-animal history log (enrollment, edits, …), kept for the session.
+  log: Record<string, LogEntry[]>;
 }
 
 export type AnimalInput = { name?: string; tag_id?: string; species?: Species; profile?: Partial<AnimalProfile> };
@@ -58,7 +72,15 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
   const [live, setLive] = useState(false);
   const [cases, setCases] = useState<Record<string, CaseState>>({});
   const [bred, setBred] = useState<Record<string, string>>({});
+  const [log, setLog] = useState<Record<string, LogEntry[]>>(() => seedEnrollment(initialHerd ?? herd));
   const simulatedRef = useRef<Set<string>>(new Set());
+
+  function logEvent(id: string, entry: Omit<LogEntry, "at"> & { at?: string }) {
+    setLog((prev) => ({
+      ...prev,
+      [id]: [...(prev[id] ?? []), { at: entry.at ?? new Date().toISOString(), kind: entry.kind, title: entry.title, detail: entry.detail }],
+    }));
+  }
   const addedRef = useRef(0);
 
   const caseFor = (id: string): CaseState => cases[id] ?? EMPTY_CASE;
@@ -120,6 +142,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     if (input?.profile && a.profile) a.profile = { ...a.profile, ...input.profile };
     setHerd((prev) => [a, ...prev]);
     setSelectedId(a.id);
+    logEvent(a.id, { kind: "enrolled", title: "Alta en la plataforma", detail: "Animal agregado al hato" });
   }
 
   function updateAnimal(id: string, patch: AnimalPatch) {
@@ -135,6 +158,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
           : a
       )
     );
+    logEvent(id, { kind: "edit", title: "Ficha actualizada" });
   }
 
   function removeAnimal(id: string) {
@@ -150,6 +174,11 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
       delete next[id];
       return next;
     });
+    setLog((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   function reset() {
@@ -159,7 +188,9 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
     setSelectedId(null);
     setCases({});
     setBred({});
-    setHerd(generateHerd());
+    const fresh = generateHerd();
+    setHerd(fresh);
+    setLog(seedEnrollment(fresh));
   }
 
   // Live telemetry: append a reading to every non-simulated animal on an interval.
@@ -173,7 +204,7 @@ export function HerdProvider({ children, initialHerd }: { children: React.ReactN
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred, log }}
     >
       {children}
     </HerdContext.Provider>

@@ -14,6 +14,7 @@ import { ReproCard } from "@/components/ReproCard";
 import { MobilityCard } from "@/components/MobilityCard";
 import { NutritionCard } from "@/components/NutritionCard";
 import { ProfileCard } from "@/components/ProfileCard";
+import { HistoryTimeline } from "@/components/HistoryTimeline";
 import { EditAnimalModal } from "@/components/EditAnimalModal";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
@@ -100,6 +101,8 @@ export function AnimalDrawer() {
           </span>
 
           <ProfileCard animal={a} />
+
+          <HistoryTimeline animal={a} />
 
           {a.status !== "healthy" && (
             <div className="rounded-[14px] p-3.5 mb-5 flex gap-3" style={{ background: "#f3ece3", border: "1px solid var(--brown-soft)" }}>
