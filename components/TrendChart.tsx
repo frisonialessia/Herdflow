@@ -7,21 +7,39 @@ import { fmtMetric, fmtZ, METRIC_LABEL } from "@/lib/format";
 const W = 720;
 const H = 240;
 
-export function TrendChart({ animal, metric }: { animal: Animal; metric: MetricKey }) {
+export function TrendChart({
+  animal,
+  metric,
+  forecast = [],
+}: {
+  animal: Animal;
+  metric: MetricKey;
+  forecast?: number[];
+}) {
   const vals = animal.series.map((p) => p[metric]);
   const window = vals.slice(0, -1);
   const { mean, lower, upper } = normalBand(window);
 
-  // y-domain with padding so the band + curve fit comfortably
+  // y-domain with padding so the band + curve fit comfortably (from history +
+  // band only — the forecast is clamped into view so a steep slope can't blow
+  // up the scale).
   const lo = Math.min(lower, ...vals);
   const hi = Math.max(upper, ...vals);
   const pad = (hi - lo) * 0.15 || 1;
   const yMin = lo - pad;
   const yMax = hi + pad;
   const y = (v: number) => H - ((v - yMin) / (yMax - yMin)) * H;
-  const x = (i: number) => (i / (vals.length - 1)) * W;
+  const yC = (v: number) => Math.max(2, Math.min(H - 2, y(v)));
+  const total = vals.length + forecast.length;
+  const x = (i: number) => (i / (total - 1)) * W;
 
   const line = vals.map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+
+  const nowX = x(vals.length - 1);
+  const projPath = forecast.length
+    ? `M${nowX.toFixed(1)},${yC(vals[vals.length - 1]).toFixed(1)} ` +
+      forecast.map((v, j) => `L${x(vals.length + j).toFixed(1)},${yC(v).toFixed(1)}`).join(" ")
+    : "";
 
   // first index where the reading breaks the band (the "breach")
   const breachIdx = vals.findIndex((v, i) => i > window.length * 0.5 && (v > upper || v < lower));
@@ -46,6 +64,14 @@ export function TrendChart({ animal, metric }: { animal: Animal; metric: MetricK
           <line x1="0" y1={y(mean)} x2={W} y2={y(mean)} stroke="#588157" strokeWidth="2" strokeDasharray="6 6" />
           {/* actual reading */}
           <path d={line} fill="none" stroke="#8a4f32" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+          {/* projection: where the trend is heading */}
+          {forecast.length > 0 && (
+            <>
+              <line x1={nowX} y1="0" x2={nowX} y2={H} stroke="#9aa091" strokeWidth="1" strokeDasharray="4 4" opacity="0.7" />
+              <path d={projPath} fill="none" stroke="#8a4f32" strokeWidth="2.4" strokeDasharray="2 6" strokeLinecap="round" opacity="0.85" />
+              <text x={Math.min(W - 60, nowX + 6)} y="15" fontFamily="Outfit" fontSize="11" fill="#8a4f32">projected</text>
+            </>
+          )}
           {/* breach marker */}
           {breachIdx > -1 && (
             <>
@@ -71,6 +97,11 @@ export function TrendChart({ animal, metric }: { animal: Animal; metric: MetricK
           <span className="flex items-center gap-[7px]">
             <span className="w-[14px] h-[11px] rounded-[3px]" style={{ background: "rgba(88,129,87,0.16)" }} /> Normal range ±2σ
           </span>
+          {forecast.length > 0 && (
+            <span className="flex items-center gap-[7px]">
+              <span className="w-[18px]" style={{ borderTop: "2.4px dotted var(--critical)" }} /> Projected trend
+            </span>
+          )}
         </div>
       </div>
 

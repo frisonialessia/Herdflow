@@ -3,13 +3,16 @@
 import { useMemo, useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { herdSummary } from "@/lib/mock_data_generator";
-import { SPECIES_EMOJI, SPECIES_LABEL, Species } from "@/lib/types";
+import { SPECIES_EMOJI, SPECIES_LABEL, Species, Animal } from "@/lib/types";
 import { STATUS_LABEL, fmtZ, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
 import { detectOutbreaks } from "@/lib/outbreak";
+import { analyzeForecast } from "@/lib/forecast";
 import { PastureMap } from "@/components/PastureMap";
 import { OutbreakBanner } from "@/components/OutbreakBanner";
-import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind } from "lucide-react";
+import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind, Zap } from "lucide-react";
+
+const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
 
 export default function OverviewPage() {
   const { herd, selectAnimal, addAnimal } = useHerd();
@@ -141,6 +144,7 @@ export default function OverviewPage() {
                   </span>
                 </div>
                 <div className="text-sm mb-2">{inferCondition(a).label}</div>
+                <LeadChip animal={a} />
                 <div className="flex justify-between text-[12.5px]" style={{ color: "var(--muted)" }}>
                   <span>z-score <span className="font-semibold" style={{ color: "var(--ink)" }}>{fmtZ(a.deviation.z_score)}</span></span>
                   <span>{timeAgo(a.latest.recorded_at)}</span>
@@ -151,6 +155,26 @@ export default function OverviewPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+// Small predictive badge on an alert card: how early we flagged it, or — if not
+// yet critical — the projected time-to-critical at the current trend.
+function LeadChip({ animal }: { animal: Animal }) {
+  const f = analyzeForecast(animal);
+  if (!f) return null;
+  let text: string | null = null;
+  if (f.alreadyCritical) {
+    const h = f.hoursFlagToCritical && f.hoursFlagToCritical > 0 ? f.hoursFlagToCritical : f.hoursSinceFlag;
+    if (h && h > 0) text = `${fmtH(h)} early warning`;
+  } else if (f.projectionHours) {
+    text = `→ critical in ~${fmtH(f.projectionHours)}`;
+  }
+  if (!text) return null;
+  return (
+    <div className="inline-flex items-center gap-1 text-[11.5px] font-semibold px-2 py-[3px] rounded-[20px] mb-2" style={{ background: "var(--sage-deep)", color: "#fff" }}>
+      <Zap size={12} strokeWidth={2.4} color="#fff" /> {text}
+    </div>
   );
 }
 

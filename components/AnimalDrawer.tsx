@@ -8,9 +8,11 @@
 import { useEffect } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { TrendChart } from "@/components/TrendChart";
+import { PredictivePanel } from "@/components/PredictivePanel";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
 import { STATUS_LABEL, METRIC_LABEL, fmtMetric, timeAgo } from "@/lib/format";
 import { inferCondition } from "@/lib/conditions";
+import { analyzeForecast } from "@/lib/forecast";
 import { X, Stethoscope } from "lucide-react";
 
 const METRIC_ORDER: MetricKey[] = ["temperature_c", "heart_rate", "respiration_rate", "activity_index", "rumination_min", "intake_kg"];
@@ -39,6 +41,7 @@ export function AnimalDrawer() {
   const metrics = METRIC_ORDER.filter((m) => m !== "rumination_min" || a.baseline.rumination_min > 0);
   const dev = a.deviation;
   const cond = inferCondition(a);
+  const forecast = a.status !== "healthy" ? analyzeForecast(a) : null;
   const history = a.series.slice(-7).reverse(); // most recent first
 
   return (
@@ -90,6 +93,8 @@ export function AnimalDrawer() {
             </div>
           )}
 
+          <PredictivePanel forecast={forecast} />
+
           <div className="grid grid-cols-2 gap-3 mb-5">
             {metrics.map((m) => {
               const isDev = m === dev.metric && a.status !== "healthy";
@@ -111,7 +116,7 @@ export function AnimalDrawer() {
               <span className="text-[11px] font-semibold px-2.5 py-[3px] rounded-[20px] uppercase tracking-wide"
                     style={{ background: "var(--brown-soft)", color: "var(--brown)" }}>14-day baseline</span>
             </div>
-            <TrendChart animal={a} metric={dev.metric} />
+            <TrendChart animal={a} metric={dev.metric} forecast={forecast?.projectionValues} />
           </div>
 
           <div className="bg-white border rounded-xl2 p-[18px]" style={{ borderColor: "var(--border)" }}>
