@@ -13,6 +13,7 @@ import { summarizeRepro } from "@/lib/repro";
 import { PastureMap } from "@/components/PastureMap";
 import { OutbreakBanner } from "@/components/OutbreakBanner";
 import { HeatBanner } from "@/components/HeatBanner";
+import { TodayBar } from "@/components/TodayBar";
 import { Thermometer, Activity, Wheat, Beef, Plus, Layers, Heart, Wind, Zap } from "lucide-react";
 
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
@@ -79,6 +80,7 @@ export default function OverviewPage() {
         </div>
       </div>
 
+      <TodayBar />
       <OutbreakBanner outbreaks={outbreaks} onSelect={selectAnimal} />
       <HeatBanner herd={shown} onSelect={selectAnimal} />
 
