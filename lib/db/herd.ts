@@ -6,7 +6,9 @@
 // Do NOT import this from a client component (it uses `pg`).
 import { getPool } from "@/server/db";
 import { computeBaseline, detectAnomaly } from "@/lib/anomaly";
-import { SPECIES_LABEL, type Animal, type MetricKey, type MetricPoint, type Species } from "@/lib/types";
+import { SPECIES_LABEL, type Animal, type AnimalProfile, type MetricKey, type MetricPoint, type Species, type VaccineRecord } from "@/lib/types";
+
+const isoDate = (d: Date) => new Date(d).toISOString().slice(0, 10);
 
 const CORE: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg"];
 const metricsFor = (hasRumination: boolean): MetricKey[] =>
@@ -35,13 +37,33 @@ const ACCESSIBLE_ORGS = `
 
 export async function loadHerd(userId: string): Promise<Animal[]> {
   const pool = getPool();
-  const animals = await pool.query<{ id: string; tag_id: string; name: string | null; species: Species; site_name: string }>(
-    `select a.id, a.tag_id, a.name, a.species, s.name as site_name
+  const animals = await pool.query<{
+    id: string; tag_id: string; name: string | null; species: Species; site_name: string;
+    sex: string | null; breed: string | null; birth_date: Date | null; origin: string | null; location: string | null;
+    diet: string | null; feeding_times: string | null; water_l: string | null; medical_history: string | null;
+  }>(
+    `select a.id, a.tag_id, a.name, a.species, s.name as site_name,
+            a.sex, a.breed, a.birth_date, a.origin, a.location, a.diet, a.feeding_times, a.water_l, a.medical_history
        from animals a
        join sites s on s.id = a.site_id
       where a.status = 'active' and ${ACCESSIBLE_ORGS}`,
     [userId]
   );
+
+  // Batch the vaccination cards for the whole herd (one query, not N).
+  const ids = animals.rows.map((r) => r.id);
+  const vaxByAnimal = new Map<string, VaccineRecord[]>();
+  if (ids.length) {
+    const vax = await pool.query<{ animal_id: string; name: string; applied_on: Date | null }>(
+      `select animal_id, name, applied_on from vaccinations where animal_id = any($1::uuid[]) order by applied_on desc nulls last`,
+      [ids]
+    );
+    for (const v of vax.rows) {
+      const arr = vaxByAnimal.get(v.animal_id) ?? [];
+      arr.push({ name: v.name, date: v.applied_on ? isoDate(v.applied_on) : "" });
+      vaxByAnimal.set(v.animal_id, arr);
+    }
+  }
 
   const herd: Animal[] = [];
   for (const a of animals.rows) {
@@ -68,6 +90,22 @@ export async function loadHerd(userId: string): Promise<Animal[]> {
     const deviation = detectAnomaly(series, metricsFor(baseline.rumination_min > 0));
     const { x, y } = position(a.id);
 
+    const hasFicha = a.sex != null || a.breed != null || a.birth_date != null;
+    const profile: AnimalProfile | undefined = hasFicha
+      ? {
+          sex: a.sex === "male" ? "male" : "female",
+          breed: a.breed ?? "",
+          birthDate: a.birth_date ? isoDate(a.birth_date) : "",
+          origin: a.origin ?? "",
+          location: a.location ?? "",
+          diet: a.diet ?? "",
+          feedingTimes: a.feeding_times ?? "",
+          waterIntakeL: a.water_l != null ? Number(a.water_l) : 0,
+          vaccines: vaxByAnimal.get(a.id) ?? [],
+          medicalHistory: a.medical_history ?? "Sin antecedentes",
+        }
+      : undefined;
+
     herd.push({
       id: a.id,
       tag_id: a.tag_id,
@@ -82,6 +120,7 @@ export async function loadHerd(userId: string): Promise<Animal[]> {
       latest: series[series.length - 1],
       deviation,
       status: deviation.severity,
+      profile,
     });
   }
 

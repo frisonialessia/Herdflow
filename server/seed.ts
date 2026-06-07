@@ -54,10 +54,26 @@ async function main() {
     let readingCount = 0;
     for (const a of herd) {
       const animalId = randomUUID();
+      const p = a.profile!;
       await client.query(
-        `insert into animals (id, org_id, site_id, zone_id, tag_id, species, name)
-         values ($1,$2,$3,$4,$5,$6,$7)`,
-        [animalId, orgId, siteId, zoneId, a.tag_id, a.species, a.name]
+        `insert into animals (id, org_id, site_id, zone_id, tag_id, species, name,
+                              sex, breed, birth_date, origin, location, diet, feeding_times, water_l, medical_history)
+         values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
+        [animalId, orgId, siteId, zoneId, a.tag_id, a.species, a.name,
+         p.sex, p.breed, p.birthDate, p.origin, p.location, p.diet, p.feedingTimes, p.waterIntakeL, p.medicalHistory]
+      );
+
+      // Vaccination card + the enrollment event (history starts at platform entry).
+      for (const v of p.vaccines) {
+        await client.query(
+          `insert into vaccinations (animal_id, org_id, name, applied_on) values ($1,$2,$3,$4)`,
+          [animalId, orgId, v.name, v.date || null]
+        );
+      }
+      await client.query(
+        `insert into animal_events (animal_id, org_id, at, kind, title, detail)
+         values ($1,$2,$3,'enrolled','Alta en la plataforma','Monitoreo iniciado')`,
+        [animalId, orgId, a.series[0].recorded_at]
       );
 
       const ts: string[] = [];
