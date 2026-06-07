@@ -84,9 +84,10 @@ function FeedRow({ item, onOpen }: { item: NutritionItem; onOpen: () => void }) 
   return (
     <div
       onClick={onOpen}
-      className="bg-white border rounded-[16px] p-4 flex items-center gap-3.5 cursor-pointer transition-shadow hover:shadow-md"
+      className="bg-white border rounded-[16px] p-4 flex flex-col sm:flex-row sm:items-center gap-3 cursor-pointer transition-shadow hover:shadow-md"
       style={{ borderColor: n.status === "off_feed" ? meta.color : "var(--border)" }}
     >
+      <div className="flex items-start gap-3.5 flex-1 min-w-0">
       <div className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center text-[21px] shrink-0" style={{ background: "var(--card-soft)" }}>
         {SPECIES_EMOJI[a.species]}
       </div>
@@ -98,7 +99,8 @@ function FeedRow({ item, onOpen }: { item: NutritionItem; onOpen: () => void }) 
         </div>
         <div className="text-[12.5px] mt-1" style={{ color: "var(--muted)" }}>{meta.note}</div>
       </div>
-      <div className="shrink-0 w-[150px] flex flex-col gap-1.5">
+      </div>
+      <div className="shrink-0 w-full sm:w-[150px] flex flex-col gap-1.5 pl-[56px] sm:pl-0">
         <Meter label="Intake" pct={n.intakePct} small />
         {n.rumPct !== null && <Meter label="Rumination" pct={n.rumPct} small />}
       </div>

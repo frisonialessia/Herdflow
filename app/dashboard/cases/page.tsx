@@ -138,49 +138,51 @@ function CaseRow({
   return (
     <div
       onClick={onOpen}
-      className="bg-white border rounded-[16px] p-3.5 flex items-center gap-3.5 cursor-pointer transition-shadow hover:shadow-md"
+      className="bg-white border rounded-[16px] p-3.5 flex flex-col sm:flex-row sm:items-center gap-3 cursor-pointer transition-shadow hover:shadow-md"
       style={{ borderColor: "var(--border)" }}
     >
-      <span className="w-1 h-10 rounded-full shrink-0" style={{ background: sevColor }} />
-      <div className="w-[40px] h-[40px] rounded-[11px] flex items-center justify-center text-[20px] shrink-0" style={{ background: "var(--card-soft)" }}>
-        {SPECIES_EMOJI[a.species]}
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-[15px]">{a.name}</span>
-          <span className="text-xs" style={{ color: "var(--faint)" }}>{a.tag_id} · {SPECIES_LABEL[a.species]}</span>
-          <span className="text-[10.5px] font-semibold px-2 py-[2px] rounded-[20px] uppercase tracking-wide text-white" style={{ background: sevColor }}>
-            {STATUS_LABEL[a.status]}
-          </span>
-          {lead && (
-            <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold px-2 py-[2px] rounded-[20px] text-white" style={{ background: "var(--sage-deep)" }}>
-              <Zap size={11} strokeWidth={2.4} color="#fff" /> {lead}
+      <div className="flex items-start gap-3 flex-1 min-w-0">
+        <span className="w-1 self-stretch min-h-[38px] rounded-full shrink-0" style={{ background: sevColor }} />
+        <div className="w-[40px] h-[40px] rounded-[11px] flex items-center justify-center text-[20px] shrink-0" style={{ background: "var(--card-soft)" }}>
+          {SPECIES_EMOJI[a.species]}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-[15px]">{a.name}</span>
+            <span className="text-xs" style={{ color: "var(--faint)" }}>{a.tag_id} · {SPECIES_LABEL[a.species]}</span>
+            <span className="text-[10.5px] font-semibold px-2 py-[2px] rounded-[20px] uppercase tracking-wide text-white" style={{ background: sevColor }}>
+              {STATUS_LABEL[a.status]}
             </span>
-          )}
-        </div>
-        <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
-          {cond.label} · <span style={{ color: "var(--ink)" }}>{assignee ?? "Unassigned"}</span> · {timeAgo(a.latest.recorded_at)}
+            {lead && (
+              <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold px-2 py-[2px] rounded-[20px] text-white" style={{ background: "var(--sage-deep)" }}>
+                <Zap size={11} strokeWidth={2.4} color="#fff" /> {lead}
+              </span>
+            )}
+          </div>
+          <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>
+            {cond.label} · <span style={{ color: "var(--ink)" }}>{assignee ?? "Unassigned"}</span> · {timeAgo(a.latest.recorded_at)}
+          </div>
         </div>
       </div>
 
-      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-[20px] shrink-0" style={{ background: "var(--card-soft)", color: CASE_COLOR[status], border: `1px solid ${CASE_COLOR[status]}` }}>
-        {CASE_LABEL[status]}
-      </span>
-
-      {next ? (
-        <button
-          onClick={(e) => { e.stopPropagation(); onAdvance(a.id, next.to); }}
-          className="flex items-center gap-1.5 text-white border-0 rounded-[20px] px-3.5 py-2 text-[12.5px] font-medium cursor-pointer shrink-0"
-          style={{ background: "var(--sage-deep)" }}
-        >
-          {next.label} <ChevronRight size={14} strokeWidth={2.4} color="#fff" />
-        </button>
-      ) : (
-        <span className="flex items-center gap-1.5 text-[12.5px] font-medium shrink-0" style={{ color: "var(--healthy)" }}>
-          <Check size={15} strokeWidth={2.6} /> Resolved
+      <div className="flex items-center gap-2 shrink-0 pl-[52px] sm:pl-0">
+        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-[20px] whitespace-nowrap" style={{ background: "var(--card-soft)", color: CASE_COLOR[status], border: `1px solid ${CASE_COLOR[status]}` }}>
+          {CASE_LABEL[status]}
         </span>
-      )}
+        {next ? (
+          <button
+            onClick={(e) => { e.stopPropagation(); onAdvance(a.id, next.to); }}
+            className="flex items-center gap-1.5 text-white border-0 rounded-[20px] px-3.5 py-2 text-[12.5px] font-medium cursor-pointer whitespace-nowrap"
+            style={{ background: "var(--sage-deep)" }}
+          >
+            {next.label} <ChevronRight size={14} strokeWidth={2.4} color="#fff" />
+          </button>
+        ) : (
+          <span className="flex items-center gap-1.5 text-[12.5px] font-medium whitespace-nowrap" style={{ color: "var(--healthy)" }}>
+            <Check size={15} strokeWidth={2.6} /> Resolved
+          </span>
+        )}
+      </div>
     </div>
   );
 }

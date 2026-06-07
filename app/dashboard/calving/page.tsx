@@ -66,9 +66,10 @@ function CalvingRow({ item, onOpen }: { item: CalvingItem; onOpen: () => void })
   return (
     <div
       onClick={onOpen}
-      className="bg-white border rounded-[16px] p-4 flex items-center gap-3.5 cursor-pointer transition-shadow hover:shadow-md"
+      className="bg-white border rounded-[16px] p-4 flex flex-col sm:flex-row sm:items-center gap-3 cursor-pointer transition-shadow hover:shadow-md"
       style={{ borderColor: c.bucket === "overdue" || c.bucket === "imminent" ? color : "var(--border)" }}
     >
+      <div className="flex items-start gap-3.5 flex-1 min-w-0">
       <div className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center text-[21px] shrink-0" style={{ background: "var(--card-soft)" }}>
         {SPECIES_EMOJI[a.species]}
       </div>
@@ -88,8 +89,9 @@ function CalvingRow({ item, onOpen }: { item: CalvingItem; onOpen: () => void })
           <span className="text-[12px] tabular-nums" style={{ color: "var(--muted)" }}>day {c.gestationDay}/{c.gestation}</span>
         </div>
       </div>
+      </div>
 
-      <div className="shrink-0 text-right">
+      <div className="shrink-0 text-left sm:text-right pl-[56px] sm:pl-0">
         <div className="font-sora text-[14px] font-semibold" style={{ color }}>{calvingLabel(c.daysToCalving)}</div>
         <div className="inline-flex items-center gap-1 text-[12px] mt-0.5" style={{ color: "var(--faint)" }}>
           <CalendarDays size={12} strokeWidth={2.2} /> ≈ {fmtDate(c.daysToCalving)}

@@ -98,7 +98,8 @@ function HeatCard({ item, onOpen, onBreed }: { item: ReproItem; onOpen: () => vo
       className="bg-white border rounded-[16px] p-4 cursor-pointer transition-shadow hover:shadow-md"
       style={{ borderColor: win.state === "open" ? "var(--sage)" : "var(--border)" }}
     >
-      <div className="flex items-center gap-3.5">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex items-start gap-3.5 flex-1 min-w-0">
         <div className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center text-[21px] shrink-0" style={{ background: "var(--card-soft)" }}>
           {SPECIES_EMOJI[a.species]}
         </div>
@@ -117,8 +118,9 @@ function HeatCard({ item, onOpen, onBreed }: { item: ReproItem; onOpen: () => vo
             Onset ~{r.onsetHoursAgo} h ago · <span style={{ color: win.color, fontWeight: 600 }}>{win.label}</span>
           </div>
         </div>
+        </div>
 
-        <div className="shrink-0 flex flex-col items-end gap-2">
+        <div className="shrink-0 flex items-center gap-3 sm:flex-col sm:items-end sm:gap-2 pl-[56px] sm:pl-0">
           <Intensity v={r.intensity ?? 0} />
           <button
             onClick={(e) => { e.stopPropagation(); onBreed(); }}
