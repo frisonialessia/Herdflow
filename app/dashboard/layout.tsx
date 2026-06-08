@@ -8,9 +8,12 @@ import { AnimalDrawer } from "@/components/AnimalDrawer";
 import { DemoControls } from "@/components/DemoControls";
 import { DashboardShell } from "@/components/DashboardShell";
 import { DemoAutoplay } from "@/components/DemoAutoplay";
+import { EntitlementsProvider } from "@/components/EntitlementsProvider";
 import { loadHerd, loadOperationalState, type OperationalState } from "@/lib/db/herd";
 import { getUserRole } from "@/lib/db/access";
+import { entitlementsForUser } from "@/lib/db/entitlements";
 import { getSessionUserId } from "@/lib/auth/session";
+import { PLANS, type Plan } from "@/lib/plans";
 import type { Animal } from "@/lib/types";
 import type { Role } from "@/lib/roles";
 
@@ -23,6 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   let initialHerd: Animal[] | null = null;
   let initialOps: OperationalState | null = null;
   let serverRole: Role | null = null;
+  let plan: Plan = PLANS.business; // demo / fallback: unlimited (never capped)
   if (process.env.DATABASE_URL) {
     // Real mode requires a session; the herd is scoped to that user's orgs.
     const userId = getSessionUserId();
@@ -31,6 +35,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
       initialHerd = await loadHerd(userId);
       initialOps = await loadOperationalState(userId);
       serverRole = await getUserRole(userId);
+      const ent = await entitlementsForUser(userId);
+      if (ent) plan = ent.plan;
     } catch (e) {
       console.error("loadHerd failed, falling back to synthetic:", e);
       initialHerd = null;
@@ -53,12 +59,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <RoleProvider serverRole={persisted ? serverRole : null} locked={persisted}>
           <CurrencyProvider>
             <HerdProvider initialHerd={initialHerd} initialOps={initialOps} persisted={persisted}>
-              <TopNav />
-              <BoardNav />
-              <DashboardShell>{children}</DashboardShell>
-              <AnimalDrawer />
-              <DemoControls />
-              <DemoAutoplay />
+              <EntitlementsProvider plan={plan}>
+                <TopNav />
+                <BoardNav />
+                <DashboardShell>{children}</DashboardShell>
+                <AnimalDrawer />
+                <DemoControls />
+                <DemoAutoplay />
+              </EntitlementsProvider>
             </HerdProvider>
           </CurrencyProvider>
         </RoleProvider>

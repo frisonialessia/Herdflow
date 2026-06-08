@@ -6,6 +6,7 @@
 // actions in app/dashboard/actions.ts.
 import { getPool } from "@/server/db";
 import { generateAnimal } from "@/lib/mock_data_generator";
+import { entitlementsForOrg, syncActiveAnimals } from "@/lib/db/entitlements";
 import { SPECIES_LABEL, type Animal, type AnimalProfile, type CaseStatus, type MetricKey, type Species } from "@/lib/types";
 
 const METRICS: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg", "heart_rate", "respiration_rate"];
@@ -66,6 +67,11 @@ export async function createAnimal(userId: string, input: AnimalInput): Promise<
   const loc = await userOrgSite(userId);
   if (!loc) return null;
 
+  // Plan limit — server-enforced (the client also guards, cosmetically). At the
+  // cap we refuse; null is surfaced the same way a denied write is.
+  const { atLimit } = await entitlementsForOrg(loc.org_id);
+  if (atLimit) return null;
+
   const a = generateAnimal(Date.now() % 100000, Date.now(), { name: input.name, species: input.species });
   const profile: AnimalProfile = { ...(a.profile as AnimalProfile), ...input.profile };
   const tag = (input.tag_id || "").trim() || `ES${Date.now().toString().slice(-6)}`;
@@ -98,6 +104,7 @@ export async function createAnimal(userId: string, input: AnimalInput): Promise<
     );
     await client.query("commit");
 
+    await syncActiveAnimals(loc.org_id);
     return { ...a, id, tag_id: tag, name: a.name, lot: SPECIES_LABEL[a.species], paddock: loc.site_name, profile, status: a.deviation.severity };
   } catch (e) {
     await client.query("rollback");
@@ -132,8 +139,11 @@ export async function updateAnimal(userId: string, id: string, patch: AnimalPatc
 }
 
 export async function removeAnimal(userId: string, id: string): Promise<void> {
-  const pool = getPool();
-  await pool.query(`delete from animals where id = $2 and ${ACCESSIBLE}`, [userId, id]);
+  // animalOrg enforces the same access scoping as the old inline predicate.
+  const org = await animalOrg(userId, id);
+  if (!org) return;
+  await getPool().query(`delete from animals where id = $1`, [id]);
+  await syncActiveAnimals(org);
 }
 
 async function upsertCase(userId: string, id: string, set: string, params: unknown[], label: string): Promise<void> {

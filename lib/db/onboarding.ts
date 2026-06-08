@@ -4,6 +4,7 @@
 // starter herd so the first screen isn't a dead end.
 import { getPool } from "@/server/db";
 import { generateHerd } from "@/lib/mock_data_generator";
+import { entitlementsForOrg, syncActiveAnimals } from "@/lib/db/entitlements";
 import type { MetricKey } from "@/lib/types";
 
 const METRICS: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg", "heart_rate", "respiration_rate"];
@@ -27,6 +28,8 @@ export async function findOrCreateUser(email: string): Promise<string> {
     await client.query(`insert into memberships (user_id, org_id, role) values ($1,$2,'owner')`, [userId, orgId]);
     const site = await client.query<{ id: string }>(`insert into sites (org_id, name) values ($1,'Sitio principal') returning id`, [orgId]);
     await client.query(`insert into zones (site_id, name) values ($1,'Lote 1')`, [site.rows[0].id]);
+    // Every farm starts on the free plan — the billing row exists from day one.
+    await client.query(`insert into subscriptions (org_id, plan, active_animals) values ($1,'free',0)`, [orgId]);
     await client.query("commit");
     return userId;
   } catch (e) {
@@ -54,7 +57,12 @@ export async function seedSampleHerd(userId: string): Promise<number> {
   const cnt = await pool.query<{ n: string }>(`select count(*) n from animals where org_id = $1`, [org_id]);
   if (Number(cnt.rows[0].n) > 0) return 0;
 
-  const herd = generateHerd(40);
+  // Respect the plan's animal limit (the org is empty here, so room === the cap).
+  const { remaining } = await entitlementsForOrg(org_id);
+  const n = remaining === null ? 40 : Math.min(40, remaining);
+  if (n <= 0) return 0;
+
+  const herd = generateHerd(n);
   const client = await pool.connect();
   try {
     await client.query("begin");
@@ -82,6 +90,7 @@ export async function seedSampleHerd(userId: string): Promise<number> {
       );
     }
     await client.query("commit");
+    await syncActiveAnimals(org_id);
     return herd.length;
   } catch (e) {
     await client.query("rollback");

@@ -10,6 +10,7 @@ import { findOrCreateUser, seedSampleHerd } from "@/lib/db/onboarding";
 import { getUserRole } from "@/lib/db/access";
 import { createAnimal, updateAnimal, removeAnimal, advanceCase, assignCase, markBred } from "@/lib/db/mutations";
 import { loadHerd, loadOperationalState } from "@/lib/db/herd";
+import { entitlementsForUser } from "@/lib/db/entitlements";
 
 const HAS_DB = !!process.env.DATABASE_URL;
 const stamp = Date.now();
@@ -18,6 +19,7 @@ describe.skipIf(!HAS_DB)("db integration", () => {
   let userA: string; // primary tenant
   let userB: string; // a second, isolated tenant
   let userC: string; // a fresh tenant used for sample-herd seeding
+  let userD: string; // a fresh tenant used for plan/limit (entitlements) tests
   const orgIds: string[] = [];
   const userIds: string[] = [];
 
@@ -25,7 +27,8 @@ describe.skipIf(!HAS_DB)("db integration", () => {
     userA = await findOrCreateUser(`test-a-${stamp}@herdflow.test`);
     userB = await findOrCreateUser(`test-b-${stamp}@herdflow.test`);
     userC = await findOrCreateUser(`test-c-${stamp}@herdflow.test`);
-    userIds.push(userA, userB, userC);
+    userD = await findOrCreateUser(`test-d-${stamp}@herdflow.test`);
+    userIds.push(userA, userB, userC, userD);
 
     // Remember each tenant's org so we can tear it all down afterwards.
     const pool = getPool();
@@ -148,7 +151,65 @@ describe.skipIf(!HAS_DB)("db integration", () => {
   it("seeds a sample herd into an empty org exactly once", async () => {
     expect(await seedSampleHerd(userC)).toBe(40);
     expect(await loadHerd(userC)).toHaveLength(40);
+    // usage is now synced and the org is still on the default free plan
+    const ent = (await entitlementsForUser(userC))!;
+    expect(ent.used).toBe(40);
+    expect(ent.plan.id).toBe("free");
     // idempotent: the org already has animals, so a second call is a no-op
     expect(await seedSampleHerd(userC)).toBe(0);
+  });
+
+  it("a new tenant is on the free plan with full headroom", async () => {
+    const ent = (await entitlementsForUser(userD))!;
+    expect(ent.plan.id).toBe("free");
+    expect(ent.used).toBe(0);
+    expect(ent.limit).toBe(50);
+    expect(ent.remaining).toBe(50);
+    expect(ent.atLimit).toBe(false);
+  });
+
+  it("counts active animals and enforces the cap in createAnimal", async () => {
+    const pool = getPool();
+    const loc = await pool.query<{ org_id: string; site_id: string }>(
+      `select m.org_id, s.id site_id from memberships m join sites s on s.org_id = m.org_id
+        where m.user_id = $1 order by m.created_at asc limit 1`,
+      [userD]
+    );
+    const { org_id, site_id } = loc.rows[0];
+
+    // Fill the org to the free cap with bare active rows — the limit is count-
+    // based, so no readings are needed and the insert is a single fast query.
+    await pool.query(
+      `insert into animals (org_id, site_id, tag_id, species, name, status)
+       select $1,$2,'CAP-'||g,'dairy','Tope '||g,'active' from generate_series(1,50) g`,
+      [org_id, site_id]
+    );
+
+    const ent = (await entitlementsForUser(userD))!;
+    expect(ent.used).toBe(50);
+    expect(ent.remaining).toBe(0);
+    expect(ent.atLimit).toBe(true);
+
+    // The server refuses the 51st animal.
+    expect(await createAnimal(userD, { name: "Excedente", species: "dairy" })).toBeNull();
+  });
+
+  it("an upgrade lifts the cap and unblocks creation", async () => {
+    const pool = getPool();
+    const orgRow = await pool.query<{ org_id: string }>(`select org_id from memberships where user_id = $1`, [userD]);
+    const orgId = orgRow.rows[0].org_id;
+    await pool.query(
+      `insert into subscriptions (org_id, plan) values ($1,'pro')
+       on conflict (org_id) do update set plan = excluded.plan`,
+      [orgId]
+    );
+
+    const ent = (await entitlementsForUser(userD))!;
+    expect(ent.plan.id).toBe("pro");
+    expect(ent.limit).toBe(500);
+    expect(ent.atLimit).toBe(false);
+
+    // The previously-refused create now succeeds.
+    expect(await createAnimal(userD, { name: "Permitida", species: "dairy" })).not.toBeNull();
   });
 });
