@@ -116,6 +116,35 @@ describe.skipIf(!HAS_DB)("db integration", () => {
     expect((ops.log[a.id] ?? []).length).toBeGreaterThanOrEqual(2);
   });
 
+  it("prefers the worker's baselines/anomalies over a live recompute", async () => {
+    const pool = getPool();
+    const created = await createAnimal(userA, { name: "Centinela", species: "dairy", tag_id: "TST-AN" });
+    const orgRow = await pool.query<{ org_id: string }>(`select org_id from animals where id = $1`, [created!.id]);
+    const orgId = orgRow.rows[0].org_id;
+
+    // Materialise a worker baseline mean and an OPEN critical anomaly by hand,
+    // then confirm loadHerd surfaces them instead of re-scoring the series.
+    await pool.query(
+      `insert into baselines (animal_id, org_id, metric, mean, stddev, window_days)
+       values ($1,$2,'temperature_c',39.99,0.2,14)
+       on conflict (animal_id, metric) do update set mean = excluded.mean`,
+      [created!.id, orgId]
+    );
+    await pool.query(
+      `insert into anomalies (animal_id, org_id, metric, severity, z_score, baseline, observed, condition)
+       values ($1,$2,'temperature_c','critical',4.2,39.99,42.5,'Fiebre')`,
+      [created!.id, orgId]
+    );
+
+    const herd = await loadHerd(userA);
+    const a = herd.find((x) => x.id === created!.id)!;
+    expect(a.status).toBe("critical");
+    expect(a.deviation.metric).toBe("temperature_c");
+    expect(a.deviation.z_score).toBeCloseTo(4.2, 2);
+    expect(a.deviation.observed).toBeCloseTo(42.5, 2);
+    expect(a.baseline.temperature_c).toBeCloseTo(39.99, 2);
+  });
+
   it("seeds a sample herd into an empty org exactly once", async () => {
     expect(await seedSampleHerd(userC)).toBe(40);
     expect(await loadHerd(userC)).toHaveLength(40);

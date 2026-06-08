@@ -1,16 +1,38 @@
 // Server-only loader: reads the herd from Postgres and returns it in the exact
-// `Animal` shape the dashboard already expects. Reuses the same z-score engine
-// (computeBaseline / detectAnomaly) the demo and the worker use, so status,
-// baseline and deviation are computed identically — just from real rows.
+// `Animal` shape the dashboard already expects.
+//
+// Two design choices worth calling out:
+//   • No N+1 — every per-animal concern (readings, vaccines, baselines,
+//     anomalies) is fetched in a single batched query keyed by animal_id, then
+//     assembled in memory. One page load = a handful of queries, not O(herd).
+//   • Single source of truth — when the detection worker (server/detect.ts) has
+//     run, we use the baselines/anomalies it materialised (the same numbers that
+//     drove the alerts), so the dashboard and the notifications never disagree.
+//     Before the worker runs (a freshly-seeded tenant), we fall back to the live
+//     z-score engine so the herd still scores correctly on first load.
 //
 // Do NOT import this from a client component (it uses `pg`).
 import { getPool } from "@/server/db";
 import { computeBaseline, detectAnomaly } from "@/lib/anomaly";
-import { SPECIES_LABEL, type Animal, type AnimalProfile, type CaseState, type CaseStatus, type MetricKey, type MetricPoint, type Species, type VaccineRecord } from "@/lib/types";
+import {
+  SPECIES_LABEL,
+  type Animal,
+  type AnimalProfile,
+  type Baseline,
+  type CaseState,
+  type CaseStatus,
+  type Deviation,
+  type MetricKey,
+  type MetricPoint,
+  type Severity,
+  type Species,
+  type VaccineRecord,
+} from "@/lib/types";
 import type { LogEntry, HistoryKind } from "@/lib/history";
 
 const isoDate = (d: Date) => new Date(d).toISOString().slice(0, 10);
 
+const ALL_METRICS: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg", "heart_rate", "respiration_rate"];
 const CORE: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg"];
 const metricsFor = (hasRumination: boolean): MetricKey[] =>
   hasRumination ? CORE : CORE.filter((m) => m !== "rumination_min");
@@ -36,6 +58,96 @@ const ACCESSIBLE_ORGS = `
      where m.user_id = $1 and g.status = 'active'
   )`;
 
+// ── Batched sub-loaders (each is one query for the whole herd) ───────────────
+
+async function loadVaccinations(ids: string[]): Promise<Map<string, VaccineRecord[]>> {
+  const map = new Map<string, VaccineRecord[]>();
+  if (!ids.length) return map;
+  const vax = await getPool().query<{ animal_id: string; name: string; applied_on: Date | null }>(
+    `select animal_id, name, applied_on from vaccinations
+      where animal_id = any($1::uuid[]) order by applied_on desc nulls last`,
+    [ids]
+  );
+  for (const v of vax.rows) {
+    const arr = map.get(v.animal_id) ?? [];
+    arr.push({ name: v.name, date: v.applied_on ? isoDate(v.applied_on) : "" });
+    map.set(v.animal_id, arr);
+  }
+  return map;
+}
+
+/** All readings for the herd, pivoted long → wide into a MetricPoint series per animal. */
+async function loadSeriesByAnimal(ids: string[]): Promise<Map<string, MetricPoint[]>> {
+  const out = new Map<string, MetricPoint[]>();
+  if (!ids.length) return out;
+  const rows = await getPool().query<{ animal_id: string; recorded_at: Date; metric: string; value: string }>(
+    `select animal_id, recorded_at, metric, value from readings
+      where animal_id = any($1::uuid[]) order by animal_id, recorded_at asc`,
+    [ids]
+  );
+  const byAnimalTime = new Map<string, Map<string, MetricPoint>>();
+  for (const r of rows.rows) {
+    let times = byAnimalTime.get(r.animal_id);
+    if (!times) {
+      times = new Map();
+      byAnimalTime.set(r.animal_id, times);
+    }
+    const key = r.recorded_at.toISOString();
+    let p = times.get(key);
+    if (!p) {
+      p = { recorded_at: key, temperature_c: 0, activity_index: 0, rumination_min: 0, intake_kg: 0, heart_rate: 0, respiration_rate: 0 };
+      times.set(key, p);
+    }
+    (p as unknown as Record<string, number>)[r.metric] = Number(r.value);
+  }
+  for (const [animalId, times] of byAnimalTime) out.set(animalId, Array.from(times.values()));
+  return out;
+}
+
+/** The worker's materialised per-metric baseline means, keyed by animal. */
+async function loadDbBaselines(ids: string[]): Promise<Map<string, Partial<Baseline>>> {
+  const map = new Map<string, Partial<Baseline>>();
+  if (!ids.length) return map;
+  const rows = await getPool().query<{ animal_id: string; metric: string; mean: string }>(
+    `select animal_id, metric, mean from baselines where animal_id = any($1::uuid[])`,
+    [ids]
+  );
+  for (const r of rows.rows) {
+    if (!(ALL_METRICS as string[]).includes(r.metric)) continue;
+    const b = map.get(r.animal_id) ?? {};
+    (b as Record<string, number>)[r.metric] = Number(r.mean);
+    map.set(r.animal_id, b);
+  }
+  return map;
+}
+
+/** The single most-severe OPEN anomaly per animal, as a ready-to-use Deviation. */
+async function loadOpenAnomalies(ids: string[]): Promise<Map<string, Deviation>> {
+  const map = new Map<string, Deviation>();
+  if (!ids.length) return map;
+  const rows = await getPool().query<{
+    animal_id: string; metric: string; severity: Severity; z_score: string; baseline: string | null; observed: string | null;
+  }>(
+    `select distinct on (animal_id) animal_id, metric, severity, z_score, baseline, observed
+       from anomalies
+      where resolved = false and animal_id = any($1::uuid[])
+      order by animal_id,
+        case severity when 'critical' then 0 when 'watch' then 1 else 2 end,
+        abs(z_score) desc`,
+    [ids]
+  );
+  for (const r of rows.rows) {
+    map.set(r.animal_id, {
+      metric: r.metric as MetricKey,
+      z_score: Number(r.z_score),
+      baseline: r.baseline != null ? Number(r.baseline) : 0,
+      observed: r.observed != null ? Number(r.observed) : 0,
+      severity: r.severity,
+    });
+  }
+  return map;
+}
+
 export async function loadHerd(userId: string): Promise<Animal[]> {
   const pool = getPool();
   const animals = await pool.query<{
@@ -50,47 +162,32 @@ export async function loadHerd(userId: string): Promise<Animal[]> {
       where a.status = 'active' and ${ACCESSIBLE_ORGS}`,
     [userId]
   );
-
-  // Batch the vaccination cards for the whole herd (one query, not N).
   const ids = animals.rows.map((r) => r.id);
-  const vaxByAnimal = new Map<string, VaccineRecord[]>();
-  if (ids.length) {
-    const vax = await pool.query<{ animal_id: string; name: string; applied_on: Date | null }>(
-      `select animal_id, name, applied_on from vaccinations where animal_id = any($1::uuid[]) order by applied_on desc nulls last`,
-      [ids]
-    );
-    for (const v of vax.rows) {
-      const arr = vaxByAnimal.get(v.animal_id) ?? [];
-      arr.push({ name: v.name, date: v.applied_on ? isoDate(v.applied_on) : "" });
-      vaxByAnimal.set(v.animal_id, arr);
-    }
-  }
+  if (ids.length === 0) return [];
+
+  // One batched query per concern — no N+1 over the herd.
+  const [vaxByAnimal, seriesByAnimal, dbBaselineByAnimal, openAnomalyByAnimal] = await Promise.all([
+    loadVaccinations(ids),
+    loadSeriesByAnimal(ids),
+    loadDbBaselines(ids),
+    loadOpenAnomalies(ids),
+  ]);
 
   const herd: Animal[] = [];
   for (const a of animals.rows) {
-    const rows = await pool.query<{ recorded_at: Date; metric: string; value: string }>(
-      `select recorded_at, metric, value from readings where animal_id = $1 order by recorded_at asc`,
-      [a.id]
-    );
-    if (rows.rowCount === 0) continue;
+    const series = seriesByAnimal.get(a.id);
+    if (!series || series.length < 3) continue;
 
-    const byTime = new Map<string, MetricPoint>();
-    for (const r of rows.rows) {
-      const key = r.recorded_at.toISOString();
-      let p = byTime.get(key);
-      if (!p) {
-        p = { recorded_at: key, temperature_c: 0, activity_index: 0, rumination_min: 0, intake_kg: 0, heart_rate: 0, respiration_rate: 0 };
-        byTime.set(key, p);
-      }
-      (p as unknown as Record<string, number>)[r.metric] = Number(r.value);
-    }
-    const series = Array.from(byTime.values());
-    if (series.length < 3) continue;
+    const computedBaseline = computeBaseline(series.slice(0, -1));
+    const metrics = metricsFor(computedBaseline.rumination_min > 0);
 
-    const baseline = computeBaseline(series.slice(0, -1));
-    const deviation = detectAnomaly(series, metricsFor(baseline.rumination_min > 0));
+    // Prefer the worker's outputs (consistent with the dispatched alerts); fall
+    // back to the live z-score engine when the worker hasn't scored this animal.
+    const dbMeans = dbBaselineByAnimal.get(a.id);
+    const baseline: Baseline = dbMeans ? { ...computedBaseline, ...dbMeans } : computedBaseline;
+    const deviation: Deviation = openAnomalyByAnimal.get(a.id) ?? detectAnomaly(series, metrics);
+
     const { x, y } = position(a.id);
-
     const hasFicha = a.sex != null || a.breed != null || a.birth_date != null;
     const profile: AnimalProfile | undefined = hasFicha
       ? {
