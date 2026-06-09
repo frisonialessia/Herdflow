@@ -4,6 +4,7 @@ import { HeroDemo } from "@/components/HeroDemo";
 import { ZScoreExplainer } from "@/components/ZScoreExplainer";
 import { FarmMapPreview } from "@/components/FarmMapPreview";
 import { BrandMark } from "@/components/BrandMark";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 export default function LandingPage() {
   return (
@@ -49,16 +50,18 @@ export default function LandingPage() {
               <Thermometer size={16} strokeWidth={2} /> Míralo detectar una fiebre
             </Link>
             <a
-              href="https://github.com/frisonialessia/Herdflow"
-              target="_blank"
-              rel="noreferrer"
+              href="#como-funciona"
               className="rounded-[30px] px-6 py-3 text-sm font-medium flex items-center gap-2 border bg-white"
               style={{ borderColor: "var(--border)", color: "var(--ink)" }}
             >
-              <Github size={16} strokeWidth={2} /> Ver código
+              <LineChart size={16} strokeWidth={2} /> Cómo funciona
             </a>
           </div>
-          <div className="text-[12.5px] mt-4" style={{ color: "var(--faint)" }}>Demo · datos sintéticos · sin registro</div>
+          <div className="flex items-start gap-2 mt-5 text-[13px] max-w-[520px] mx-auto lg:mx-0" style={{ color: "var(--muted)" }}>
+            <Radio size={15} strokeWidth={2} color="var(--sage-deep)" className="mt-0.5 shrink-0" />
+            <span><b style={{ color: "var(--ink)" }}>Sin cambiar tu equipo:</b> funciona con los collares y sensores que ya usas — o empieza capturando los datos a mano.</span>
+          </div>
+          <div className="text-[12.5px] mt-3" style={{ color: "var(--faint)" }}>Demo · datos sintéticos · sin registro</div>
         </div>
 
         <HeroDemo />
@@ -74,7 +77,7 @@ export default function LandingPage() {
         <FarmMapPreview />
       </section>
 
-      <section className="max-w-[1100px] mx-auto px-6 py-8">
+      <section id="como-funciona" className="max-w-[1100px] mx-auto px-6 py-8 scroll-mt-6">
         <div className="text-center mb-8">
           <h2 className="font-sora text-[26px] font-semibold tracking-tight">Cómo funciona</h2>
           <p className="text-[15px] mt-2" style={{ color: "var(--muted)" }}>De la telemetría en bruto a una alerta explicable — en tres pasos.</p>
@@ -114,13 +117,28 @@ export default function LandingPage() {
         />
       </section>
 
+      <section className="max-w-[1100px] mx-auto px-6 pb-20">
+        <div className="rounded-[28px] border p-8 md:p-10 text-center" style={{ borderColor: "var(--border)", background: "linear-gradient(160deg,#f5f6ee,#eef0e6)" }}>
+          <h2 className="font-sora text-[24px] font-semibold tracking-tight">Cuando esté listo para tu rancho</h2>
+          <p className="text-[14.5px] mt-2 mb-6 max-w-[520px] mx-auto" style={{ color: "var(--muted)" }}>
+            HerdFlow está en construcción. Déjanos tu correo y te avisamos en cuanto puedas conectar tu hato de verdad.
+          </p>
+          <WaitlistForm />
+        </div>
+      </section>
+
       <footer className="border-t" style={{ borderColor: "var(--border)" }}>
         <div
           className="max-w-[1100px] mx-auto px-6 py-8 flex items-center justify-between flex-wrap gap-3 text-[13px]"
           style={{ color: "var(--muted)" }}
         >
           <span>HerdFlow — salud predictiva del ganado · Building in Public</span>
-          <span>Todos los datos son sintéticos · solo para demostración</span>
+          <div className="flex items-center gap-4">
+            <a href="https://github.com/frisonialessia/Herdflow" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:underline">
+              <Github size={14} strokeWidth={2} /> Ver código
+            </a>
+            <span>Datos sintéticos · demostración</span>
+          </div>
         </div>
       </footer>
     </main>
