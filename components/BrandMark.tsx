@@ -1,39 +1,37 @@
-// The HerdFlow brand mark — a folk-art bovine with a sentinel bird perched on its
-// back: the little bird that watches over the herd (the oxpecker that keeps cattle
-// healthy) = HerdFlow. White on the brand green. Used as both the site logo (nav +
-// landing) and the favicon (app/icon.svg mirrors this), so the brand is consistent.
+// The HerdFlow brand mark — a clean, symmetric bull's head seen head-on with a
+// sentinel bird perched on its brow: the little bird that watches over the herd =
+// HerdFlow. White on the brand green, optically centered. Used as both the site
+// logo (nav + landing) and the favicon (app/icon.svg mirrors this exactly).
 
 export function BrandMark({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" style={{ display: "block", flexShrink: 0 }}>
       <rect width="48" height="48" rx="12" fill="#3a5a40" />
-      <g fill="#f4f4ec">
-        {/* tail */}
-        <path d="M35 23 Q41 22 41.5 28 Q41.5 32.5 38 33.5 Q40.2 30 38.5 27 Q37 24.5 35 25.5 Z" />
-        {/* legs */}
-        <rect x="15" y="31" width="3.4" height="10" rx="1.6" />
-        <rect x="20" y="31" width="3.4" height="10" rx="1.6" />
-        <rect x="27" y="31" width="3.4" height="10" rx="1.6" />
-        <rect x="31.5" y="31" width="3.4" height="10" rx="1.6" />
-        {/* body, neck, head, muzzle */}
-        <rect x="12" y="22" width="24" height="10" rx="4" />
-        <rect x="12" y="16" width="8" height="9" rx="3" />
-        <rect x="7" y="14" width="10" height="9" rx="4" />
-        <rect x="4.5" y="16.5" width="4.5" height="5.5" rx="2.2" />
-        {/* horns */}
-        <path d="M9.6 14.6 Q7 8.4 4.9 7 Q9 9.6 11.8 14.6 Z" />
-        <path d="M14.4 14.6 Q17 8.4 19.1 7 Q15 9.6 12.2 14.6 Z" />
-        {/* sentinel bird: body, head, beak, tail, legs */}
-        <ellipse cx="25" cy="14.8" rx="5" ry="3.8" />
-        <circle cx="20.6" cy="11.6" r="2.8" />
-        <path d="M18.1 10.8 L14 10.4 L18.1 13.4 Z" />
-        <path d="M29.6 16 L34.8 13.8 L30 18 Z" />
-        <rect x="23" y="18" width="1.2" height="3.4" />
-        <rect x="26" y="18" width="1.2" height="3.4" />
+      <g transform="translate(2.4,6.7) scale(0.9)">
+        <g fill="#f4f4ec">
+          {/* horns */}
+          <path d="M30 13.5 C34 12 38 9.8 41 5.5 C39.6 11 35.5 14 31 16.5 Z" />
+          <path d="M18 13.5 C14 12 10 9.8 7 5.5 C8.4 11 12.5 14 17 16.5 Z" />
+          {/* ears */}
+          <path d="M30.5 19 C34.5 18 38.8 19.3 39.8 23.5 C36 23.5 32.5 22.5 30 20.5 Z" />
+          <path d="M17.5 19 C13.5 18 9.2 19.3 8.2 23.5 C12 23.5 15.5 22.5 18 20.5 Z" />
+          {/* face */}
+          <path d="M24 12 C31 12 32.5 15 32 18 C31.5 23 31 27 29 30 C27.5 33.5 25.5 34 24 34 C22.5 34 20.5 33.5 19 30 C17 27 16.5 23 16 18 C15.5 15 17 12 24 12 Z" />
+          {/* sentinel bird on the brow */}
+          <ellipse cx="24" cy="9" rx="2.9" ry="2.2" />
+          <circle cx="24" cy="6.3" r="1.8" />
+          <path d="M25.4 5.3 L27.5 4.9 L25.6 6.7 Z" />
+          <path d="M21.5 9.3 L19.3 8.5 L21.7 10.4 Z" />
+          <rect x="23.05" y="10.9" width="0.85" height="2" />
+          <rect x="24.4" y="10.9" width="0.85" height="2" />
+        </g>
+        {/* knockouts: eyes, nostrils, bird eye */}
+        <circle cx="20.5" cy="20" r="1.5" fill="#3a5a40" />
+        <circle cx="27.5" cy="20" r="1.5" fill="#3a5a40" />
+        <ellipse cx="22" cy="30" rx="1.1" ry="1.45" fill="#3a5a40" />
+        <ellipse cx="26" cy="30" rx="1.1" ry="1.45" fill="#3a5a40" />
+        <circle cx="24.4" cy="6.1" r="0.55" fill="#3a5a40" />
       </g>
-      {/* eyes (knockout) */}
-      <circle cx="10" cy="18" r="1.15" fill="#3a5a40" />
-      <circle cx="20.6" cy="11.4" r="0.85" fill="#3a5a40" />
     </svg>
   );
 }
