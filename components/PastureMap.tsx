@@ -17,7 +17,7 @@ export function PastureMap({
   const [zoom, setZoom] = useState(1);
 
   return (
-    <div className="relative rounded-xl2 overflow-hidden min-h-[440px]" style={{ background: "#7c9163" }}>
+    <div className="relative rounded-xl2 overflow-hidden min-h-[440px] h-full" style={{ background: "#7c9163" }}>
       <svg
         className="absolute inset-0 w-full h-full"
         viewBox="0 0 600 440"

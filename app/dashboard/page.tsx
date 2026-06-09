@@ -67,8 +67,8 @@ export default function OverviewPage() {
       <OutbreakBanner outbreaks={outbreaks} onSelect={selectAnimal} />
       <HeatBanner herd={shown} onSelect={selectAnimal} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-[18px]">
-        <div className="relative">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-[18px] items-stretch">
+        <div className="relative h-full">
           <PastureMap herd={shown} onSelect={selectAnimal} outbreaks={outbreaks} />
           <div className="absolute bottom-5 left-5 z-[3] rounded-[18px] px-5 py-4"
                style={{ background: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)", boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}>
