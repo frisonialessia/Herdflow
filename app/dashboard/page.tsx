@@ -130,7 +130,7 @@ export default function OverviewPage() {
           ) : (
             alerts.map((a) => (
               <div key={a.id} onClick={() => selectAnimal(a.id)}
-                   className="relative overflow-hidden rounded-[18px] p-[18px] border bg-white cursor-pointer transition-shadow hover:shadow-lg"
+                   className="relative overflow-hidden rounded-[18px] p-[18px] border bg-white cursor-pointer shadow-[0_8px_24px_-18px_rgba(58,90,64,0.14)] transition-all duration-200 hover:shadow-[0_18px_40px_-20px_rgba(58,90,64,0.3)] hover:-translate-y-[2px]"
                    style={{ borderColor: "var(--border)" }}>
                 <span className="absolute left-0 top-0 bottom-0 w-1"
                       style={{ background: a.status === "critical" ? "var(--critical)" : "var(--watch)" }} />
@@ -189,7 +189,7 @@ function Legend({ c, t }: { c: string; t: string }) {
 
 function Panel({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="bg-white border rounded-xl2 p-[22px]" style={{ borderColor: "var(--border)" }}>
+    <div className="bg-white border rounded-xl2 p-[22px] shadow-[0_8px_24px_-18px_rgba(58,90,64,0.16)]" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-[18px]">
         <h3 className="font-sora text-base font-semibold">{title}</h3>
         <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center" style={{ background: "var(--card-soft)" }}>{icon}</div>

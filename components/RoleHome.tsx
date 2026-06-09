@@ -23,7 +23,7 @@ export function RoleHome() {
   const Icon = ROLE_ICON[role];
 
   return (
-    <div className="bg-white border rounded-xl2 p-5 mb-[18px]" style={{ borderColor: "var(--border)" }}>
+    <div className="bg-white border rounded-xl2 p-5 mb-[18px] shadow-[0_10px_30px_-20px_rgba(58,90,64,0.22)]" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-[13px] flex items-center justify-center shrink-0" style={{ background: accent }}>
@@ -39,7 +39,7 @@ export function RoleHome() {
             <Link
               key={a.href}
               href={a.href}
-              className="rounded-[30px] px-4 py-2 text-[13px] font-medium border whitespace-nowrap"
+              className="rounded-[30px] px-4 py-2 text-[13px] font-medium border whitespace-nowrap transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_8px_18px_-10px_rgba(58,90,64,0.45)]"
               style={i === 0 ? { background: accent, color: "#fff", borderColor: accent } : { background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
             >
               {a.label}
