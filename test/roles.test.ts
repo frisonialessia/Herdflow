@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   can,
   isRole,
+  capabilitiesOf,
+  CAPABILITY_LABEL,
   ROLE_ORDER,
   ROLE_LABEL,
   ROLE_DESC,
@@ -13,6 +15,7 @@ import {
 const ALL_CAPS: Capability[] = [
   "finance",
   "integrations",
+  "manageTeam",
   "addAnimal",
   "deleteAnimal",
   "editAnimal",
@@ -54,6 +57,13 @@ describe("roles: capability matrix", () => {
     expect(can("vet", "finance")).toBe(false);
   });
 
+  it("only the owner can manage the team", () => {
+    expect(can("owner", "manageTeam")).toBe(true);
+    for (const role of ["manager", "herdsman", "vet", "viewer"] as Role[]) {
+      expect(can(role, "manageTeam")).toBe(false);
+    }
+  });
+
   it("owner is a superset of every other role", () => {
     for (const role of ROLE_ORDER) {
       for (const cap of ALL_CAPS) {
@@ -74,6 +84,14 @@ describe("roles: metadata is complete", () => {
       expect(ROLE_LABEL[role]).toBeTruthy();
       expect(ROLE_DESC[role]).toBeTruthy();
       expect(ROLE_COLOR[role]).toBeTruthy();
+    }
+  });
+
+  it("every capability a role holds has a human label (for the catalog)", () => {
+    for (const role of ROLE_ORDER) {
+      for (const cap of capabilitiesOf(role)) {
+        expect(CAPABILITY_LABEL[cap]).toBeTruthy();
+      }
     }
   });
 });

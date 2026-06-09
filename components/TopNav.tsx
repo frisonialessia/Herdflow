@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, User, Menu, X, Settings, LogOut, Cable } from "lucide-react";
+import { Search, User, Menu, X, Settings, LogOut, Cable, Users } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 import { SettingsModal } from "@/components/SettingsModal";
 import { NotificationsBell } from "@/components/NotificationsBell";
@@ -76,6 +76,11 @@ export function TopNav() {
                   className="absolute right-0 top-full mt-2 z-30 rounded-2xl border bg-white p-2 min-w-[190px]"
                   style={{ borderColor: "var(--border)", boxShadow: "0 20px 40px -16px rgba(58,90,64,0.35)" }}
                 >
+                  {can(role, "manageTeam") && (
+                    <Link href="/dashboard/settings" onClick={() => setUserOpen(false)} className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[var(--card-soft)] transition-colors" style={{ color: "var(--ink)" }}>
+                      <Users size={16} strokeWidth={2} /> Equipo y roles
+                    </Link>
+                  )}
                   {can(role, "integrations") && (
                     <Link href="/dashboard/integrations" onClick={() => setUserOpen(false)} className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[var(--card-soft)] transition-colors" style={{ color: "var(--ink)" }}>
                       <Cable size={16} strokeWidth={2} /> Integraciones
@@ -134,6 +139,11 @@ export function TopNav() {
               </Link>
             ))}
             <div className="border-t my-1.5" style={{ borderColor: "var(--border)" }} />
+            {can(role, "manageTeam") && (
+              <Link href="/dashboard/settings" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[var(--card-soft)] transition-colors" style={{ color: "var(--ink)" }}>
+                <Users size={16} strokeWidth={2} /> Equipo y roles
+              </Link>
+            )}
             {can(role, "integrations") && (
               <Link href="/dashboard/integrations" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[var(--card-soft)] transition-colors" style={{ color: "var(--ink)" }}>
                 <Cable size={16} strokeWidth={2} /> Integraciones

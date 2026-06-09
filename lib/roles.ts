@@ -14,6 +14,7 @@ export type Role = "owner" | "manager" | "herdsman" | "vet" | "viewer";
 export type Capability =
   | "finance" // Impact + Reports (business numbers)
   | "integrations" // connect devices / manage API keys
+  | "manageTeam" // invite users, assign roles (owner only)
   | "addAnimal"
   | "deleteAnimal"
   | "editAnimal" // identity / husbandry
@@ -46,7 +47,7 @@ export const ROLE_COLOR: Record<Role, string> = {
 };
 
 const MATRIX: Record<Role, Capability[]> = {
-  owner: ["finance", "integrations", "addAnimal", "deleteAnimal", "editAnimal", "editMedical", "manageCases", "manageBreeding"],
+  owner: ["finance", "integrations", "manageTeam", "addAnimal", "deleteAnimal", "editAnimal", "editMedical", "manageCases", "manageBreeding"],
   manager: ["finance", "addAnimal", "deleteAnimal", "editAnimal", "editMedical", "manageCases", "manageBreeding"],
   herdsman: ["addAnimal", "editAnimal", "manageCases", "manageBreeding"],
   vet: ["editAnimal", "editMedical", "manageCases", "manageBreeding"],
@@ -56,6 +57,24 @@ const MATRIX: Record<Role, Capability[]> = {
 export function can(role: Role, cap: Capability): boolean {
   return MATRIX[role].includes(cap);
 }
+
+/** Everything a role can do — for the role catalog in Settings. */
+export function capabilitiesOf(role: Role): Capability[] {
+  return MATRIX[role];
+}
+
+// Human labels for the permissions, shown in the role catalog.
+export const CAPABILITY_LABEL: Record<Capability, string> = {
+  finance: "Finanzas y reportes",
+  integrations: "Integraciones y API",
+  manageTeam: "Gestionar equipo",
+  addAnimal: "Agregar animales",
+  deleteAnimal: "Eliminar animales",
+  editAnimal: "Editar ficha",
+  editMedical: "Expediente médico",
+  manageCases: "Casos y monitoreo",
+  manageBreeding: "Reproducción",
+};
 
 export function isRole(v: string | null | undefined): v is Role {
   return v === "owner" || v === "manager" || v === "herdsman" || v === "vet" || v === "viewer";
