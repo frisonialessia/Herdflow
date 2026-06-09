@@ -27,6 +27,28 @@ function gaussian(rnd: () => number, m: number, sd: number): number {
   return m + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
+// Pin a healthy animal's most-recent reading onto its own baseline (latest ≈
+// window mean), so it scores cleanly healthy. Without this, ~1 in 5 calm animals
+// trips a z>2 false positive on sensor noise and the demo herd looks alarmingly
+// sick (40% "enfermo"). With it, only animals carrying an injected anomaly show
+// up — the herd reads ~90% healthy, like a real one.
+function calmLatest(rnd: () => number, series: MetricPoint[]) {
+  const w = series.slice(0, -1);
+  const last = series[series.length - 1];
+  const keys: MetricKey[] = ["temperature_c", "activity_index", "rumination_min", "intake_kg", "heart_rate", "respiration_rate"];
+  for (const k of keys) {
+    const mean = w.reduce((s, p) => s + p[k], 0) / w.length;
+    const sd = Math.sqrt(w.reduce((s, p) => s + (p[k] - mean) ** 2, 0) / w.length) || 1;
+    last[k] = mean + gaussian(rnd, 0, sd * 0.25); // comfortably within ±1σ → healthy
+  }
+  last.temperature_c = +last.temperature_c.toFixed(1);
+  last.intake_kg = +Math.max(0, last.intake_kg).toFixed(2);
+  last.activity_index = Math.round(Math.max(0, last.activity_index));
+  last.rumination_min = Math.round(Math.max(0, last.rumination_min));
+  last.heart_rate = Math.round(Math.max(0, last.heart_rate));
+  last.respiration_rate = Math.round(Math.max(0, last.respiration_rate));
+}
+
 // circadian factor 0..1 (peaks midday)
 function circadian(d: Date): number {
   const h = d.getHours() + d.getMinutes() / 60;
@@ -34,7 +56,7 @@ function circadian(d: Date): number {
 }
 
 const FIRST = ["Lola", "Trueno", "Estrella", "Nube", "Bruno", "Coral", "Sauco", "Rocío", "Duna", "Tomillo"];
-const PADDOCKS = ["Pasture A", "Pasture B", "Paddock 2", "North Field", "Barn 1"];
+const PADDOCKS = ["Potrero A", "Potrero B", "Corral 2", "Potrero Norte", "Granero 1"];
 const SPECIES_POOL: Species[] = ["dairy", "dairy", "dairy", "beef", "beef", "sheep", "sheep", "horse", "poultry"];
 
 // which metrics matter per species (horses/poultry don't ruminate)
@@ -77,25 +99,27 @@ function buildSeries(
   return pts;
 }
 
-// Build one animal from a seeded RNG. `anomalyChance` is the probability it
-// carries an injected anomaly (0 = always healthy, used by "Add animal").
+// Build one animal from a seeded RNG. `kind` injects an anomaly:
+//   "mild"   → a slight fever that reads as vigilancia,
+//   "strong" → an acute fever / off-feed that reads as crítico,
+//   null     → healthy (calmLatest below keeps the latest reading clearly normal).
 function makeAnimal(
   i: number,
   rnd: () => number,
-  anomalyChance: number,
+  kind: "mild" | "strong" | null,
   override?: { id?: string; name?: string; species?: Species }
 ): Animal {
   const sp = override?.species ?? SPECIES_POOL[Math.floor(rnd() * SPECIES_POOL.length)];
   const norm = SPECIES_NORMS[sp];
   const metrics = metricsFor(sp);
 
-  const hasAnomaly = rnd() < anomalyChance;
-  const anomaly = hasAnomaly
-    ? {
-        metric: (rnd() < 0.55 ? "temperature_c" : metrics.includes("rumination_min") && rnd() < 0.5 ? "rumination_min" : "activity_index") as MetricKey,
-        intensity: gaussian(rnd, 2.6, 0.6),
-      }
-    : null;
+  let anomaly: { metric: MetricKey; intensity: number } | null = null;
+  if (kind === "mild") {
+    anomaly = { metric: "temperature_c", intensity: gaussian(rnd, 0.85, 0.05) }; // slight fever → vigilancia
+  } else if (kind === "strong") {
+    const metric = (rnd() < 0.6 ? "temperature_c" : metrics.includes("rumination_min") && rnd() < 0.5 ? "rumination_min" : "activity_index") as MetricKey;
+    anomaly = { metric, intensity: gaussian(rnd, 2.6, 0.5) }; // acute → crítico
+  }
 
   // individualised baseline (each animal slightly different)
   const personal = {
@@ -108,6 +132,7 @@ function makeAnimal(
   };
 
   const series = buildSeries(rnd, sp, personal, anomaly);
+  if (!anomaly) calmLatest(rnd, series); // calm animals read cleanly healthy
   const baseline = computeBaseline(series.slice(0, -1));
   const deviation = detectAnomaly(series, metrics);
   const latest = series[series.length - 1];
@@ -133,7 +158,15 @@ function makeAnimal(
 export function generateHerd(count = 40, seed = 99): Animal[] {
   const rnd = mulberry32(seed);
   const herd: Animal[] = [];
-  for (let i = 0; i < count; i++) herd.push(makeAnimal(i, rnd, 0.07));
+  // Deterministic, realistic mix: ~87% sano, a few "vigilancia" and 1–2 "crítico"
+  // — a well-managed ranch, not a crisis. (Outbreaks are shown on demand via the
+  // live demo, not forced into the resting state.)
+  const sick = Math.max(2, Math.round(count * 0.13));
+  const criticals = Math.max(1, Math.round(sick * 0.3));
+  for (let i = 0; i < count; i++) {
+    const kind = i < criticals ? "strong" : i < sick ? "mild" : null;
+    herd.push(makeAnimal(i, rnd, kind));
+  }
 
   // sort so critical/watch float to the top of lists
   const order = { critical: 0, watch: 1, healthy: 2 };
@@ -147,7 +180,7 @@ export function generateAnimal(
   seed = Date.now(),
   override?: { id?: string; name?: string; species?: Species }
 ): Animal {
-  return makeAnimal(i, mulberry32(seed), 0, override);
+  return makeAnimal(i, mulberry32(seed), null, override);
 }
 
 // Convenience aggregate for the Overview header.

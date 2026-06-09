@@ -55,18 +55,13 @@ export default function OverviewPage() {
       <div className="flex items-end justify-between mb-[22px] flex-wrap gap-3">
         <div>
           <h2 className="font-sora text-[32px] font-semibold tracking-tight">Tu hato</h2>
-          <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Potrero A · sincronizado ahora</div>
+          <div className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>Vista general del hato</div>
         </div>
-        <div className="flex gap-2.5 items-center">
-          <Chip label="Sano" n={s.healthy} color="var(--healthy)" />
-          <Chip label="En vigilancia" n={s.watch} color="var(--watch)" />
-          <AddAnimalButton />
-        </div>
+        <AddAnimalButton />
       </div>
 
       <RoleHome />
 
-      <TodayBar />
       <OutbreakBanner outbreaks={outbreaks} onSelect={selectAnimal} />
       <HeatBanner herd={shown} onSelect={selectAnimal} />
 
@@ -115,6 +110,8 @@ export default function OverviewPage() {
           </Panel>
         </div>
       </div>
+
+      <TodayBar />
 
       <div className="mt-[18px]">
         <div className="flex items-center justify-between mb-3.5">
@@ -182,15 +179,6 @@ function LeadChip({ animal }: { animal: Animal }) {
   return (
     <div className="inline-flex items-center gap-1 text-[11.5px] font-semibold px-2 py-[3px] rounded-[20px] mb-2" style={{ background: "var(--sage-deep)", color: "#fff" }}>
       <Zap size={12} strokeWidth={2.4} color="#fff" /> {text}
-    </div>
-  );
-}
-
-function Chip({ label, n, color }: { label: string; n: number; color: string }) {
-  return (
-    <div className="bg-white border rounded-[30px] px-4 py-[9px] text-[13px] flex gap-2 items-center"
-         style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-      {label} <span className="rounded-[20px] px-2.5 font-semibold text-white" style={{ background: color }}>{n}</span>
     </div>
   );
 }
