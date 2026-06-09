@@ -32,7 +32,7 @@ export function HistoryTimeline({ animal: a }: { animal: Animal }) {
   if (events.length === 0) return null;
 
   return (
-    <div className="bg-white border rounded-[14px] p-4 mb-5" style={{ borderColor: "var(--border)" }}>
+    <div className="bg-white border rounded-[14px] p-4 mb-5 shadow-[0_6px_20px_-14px_rgba(58,90,64,0.16)]" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center gap-2 mb-3.5">
         <History size={16} strokeWidth={2} color="var(--sage-deep)" />
         <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Historial</h3>

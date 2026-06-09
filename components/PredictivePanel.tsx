@@ -33,7 +33,7 @@ export function PredictivePanel({ forecast: f }: { forecast: CaseForecast | null
   const TrendIcon = f.direction === "rising" ? TrendingUp : TrendingDown;
 
   return (
-    <div className="rounded-[14px] p-4 mb-5" style={{ background: "var(--sage-deep)", color: "#fff" }}>
+    <div className="rounded-[14px] p-4 mb-5 shadow-[0_12px_28px_-14px_rgba(58,90,64,0.45)]" style={{ background: "var(--sage-deep)", color: "#fff" }}>
       <div className="flex items-center gap-2 mb-3">
         <Zap size={16} strokeWidth={2.4} color="#fff" />
         <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "#cdd6c7" }}>

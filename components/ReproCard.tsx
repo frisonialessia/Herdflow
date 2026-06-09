@@ -19,7 +19,7 @@ export function ReproCard({ animal: a }: { animal: Animal }) {
   if (!r) return null;
 
   const Shell = ({ accent, children }: { accent: string; children: React.ReactNode }) => (
-    <div className="rounded-[14px] p-4 mb-5" style={{ background: "var(--card)", border: `1px solid ${accent}` }}>
+    <div className="rounded-[14px] p-4 mb-5 shadow-[0_6px_20px_-14px_rgba(58,90,64,0.16)]" style={{ background: "var(--card)", border: `1px solid ${accent}` }}>
       <div className="flex items-center gap-2 mb-2">
         <HeartPulse size={16} strokeWidth={2} color="var(--sage-deep)" />
         <h3 className="font-sora text-[13px] font-semibold uppercase tracking-wide" style={{ color: "var(--sage-deep)" }}>Reproducción</h3>

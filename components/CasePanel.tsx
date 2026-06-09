@@ -34,7 +34,7 @@ export function CasePanel({ animalId }: { animalId: string }) {
   const events = [...c.events].reverse();
 
   return (
-    <div className="bg-white border rounded-xl2 p-[18px] mb-5" style={{ borderColor: "var(--border)" }}>
+    <div className="bg-white border rounded-xl2 p-[18px] mb-5 shadow-[0_6px_20px_-14px_rgba(58,90,64,0.16)]" style={{ borderColor: "var(--border)" }}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-sora text-[15px] font-semibold flex items-center gap-2">
           <ClipboardList size={16} strokeWidth={2} color="var(--sage-deep)" /> Caso

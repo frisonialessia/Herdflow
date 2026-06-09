@@ -61,15 +61,26 @@ export function AnimalDrawer() {
         className="relative h-full w-full max-w-[480px] overflow-y-auto animate-slide"
         style={{ background: "var(--bg)", boxShadow: "-20px 0 50px -20px rgba(58,90,64,0.45)" }}
       >
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-[14px] flex items-center justify-center text-[26px]" style={{ background: "var(--card-soft)" }}>
+        <div
+          className="sticky top-0 z-10 px-6 py-4 border-b backdrop-blur-md"
+          style={{ background: "rgba(240,240,232,0.88)", borderColor: "var(--border)" }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-11 h-11 rounded-[13px] flex items-center justify-center text-[24px] shrink-0" style={{ background: "var(--card-soft)" }}>
                 {SPECIES_EMOJI[a.species]}
               </div>
-              <div>
-                <div className="font-sora text-[20px] font-semibold leading-tight">{a.name}</div>
-                <div className="text-[13px]" style={{ color: "var(--muted)" }}>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-sora text-[18px] font-semibold leading-tight truncate">{a.name}</span>
+                  <span
+                    className="text-[10px] font-semibold px-2 py-[2px] rounded-[20px] uppercase tracking-wide text-white shrink-0"
+                    style={{ background: statusColor }}
+                  >
+                    {STATUS_LABEL[a.status]}
+                  </span>
+                </div>
+                <div className="text-[12.5px] truncate" style={{ color: "var(--muted)" }}>
                   {a.tag_id} · {SPECIES_LABEL[a.species]} · {a.paddock}
                 </div>
               </div>
@@ -78,7 +89,7 @@ export function AnimalDrawer() {
               <button
                 onClick={() => setEditing(true)}
                 title="Editar ficha"
-                className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer"
+                className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:shadow-sm"
                 style={{ borderColor: "var(--border)" }}
               >
                 <Pencil size={16} strokeWidth={2} color="var(--sage-deep)" />
@@ -86,20 +97,16 @@ export function AnimalDrawer() {
               <button
                 onClick={() => selectAnimal(null)}
                 title="Cerrar"
-                className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer"
+                className="w-9 h-9 rounded-full bg-white border flex items-center justify-center cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:shadow-sm"
                 style={{ borderColor: "var(--border)" }}
               >
                 <X size={18} strokeWidth={2} color="var(--sage-deep)" />
               </button>
             </div>
           </div>
+        </div>
 
-          <span
-            className="text-[11px] font-semibold px-2.5 py-[3px] rounded-[20px] uppercase tracking-wide text-white inline-block mb-5"
-            style={{ background: statusColor }}
-          >
-            {STATUS_LABEL[a.status]}
-          </span>
+        <div className="px-6 py-5">
 
           <ProfileCard animal={a} />
 
@@ -108,7 +115,7 @@ export function AnimalDrawer() {
           <HistoryTimeline animal={a} />
 
           {a.status !== "healthy" && (
-            <div className="rounded-[14px] p-3.5 mb-5 flex gap-3" style={{ background: "#f3ece3", border: "1px solid var(--brown-soft)" }}>
+            <div className="rounded-[14px] p-3.5 mb-5 flex gap-3 shadow-[0_6px_20px_-14px_rgba(58,90,64,0.18)]" style={{ background: "#f3ece3", border: "1px solid var(--brown-soft)" }}>
               <Stethoscope size={18} strokeWidth={2} color="var(--brown)" className="shrink-0 mt-0.5" />
               <div>
                 <div className="text-[11px] uppercase tracking-wide font-semibold" style={{ color: "var(--brown)" }}>Sospecha</div>
@@ -132,7 +139,7 @@ export function AnimalDrawer() {
             {metrics.map((m) => {
               const isDev = m === dev.metric && a.status !== "healthy";
               return (
-                <div key={m} className="bg-white border rounded-[14px] p-3.5" style={{ borderColor: isDev ? statusColor : "var(--border)" }}>
+                <div key={m} className="bg-white border rounded-[14px] p-3.5 shadow-[0_6px_20px_-14px_rgba(58,90,64,0.16)]" style={{ borderColor: isDev ? statusColor : "var(--border)" }}>
                   <div className="text-[11px] uppercase tracking-wide" style={{ color: "var(--faint)" }}>{METRIC_LABEL[m]}</div>
                   <div className="font-sora text-[19px] font-semibold mt-0.5" style={{ color: isDev ? statusColor : "var(--ink)" }}>
                     {fmtMetric(m, a.latest[m])}
@@ -143,7 +150,7 @@ export function AnimalDrawer() {
             })}
           </div>
 
-          <div className="bg-white border rounded-xl2 p-[18px] mb-5" style={{ borderColor: "var(--border)" }}>
+          <div className="bg-white border rounded-xl2 p-[18px] mb-5 shadow-[0_6px_20px_-14px_rgba(58,90,64,0.16)]" style={{ borderColor: "var(--border)" }}>
             <div className="flex items-center justify-between">
               <h3 className="font-sora text-[15px] font-semibold">Tendencia de {METRIC_LABEL[dev.metric]}</h3>
               <span className="text-[11px] font-semibold px-2.5 py-[3px] rounded-[20px] uppercase tracking-wide"
@@ -152,7 +159,7 @@ export function AnimalDrawer() {
             <TrendChart animal={a} metric={dev.metric} forecast={forecast?.projectionValues} />
           </div>
 
-          <div className="bg-white border rounded-xl2 p-[18px]" style={{ borderColor: "var(--border)" }}>
+          <div className="bg-white border rounded-xl2 p-[18px] shadow-[0_6px_20px_-14px_rgba(58,90,64,0.16)]" style={{ borderColor: "var(--border)" }}>
             <h3 className="font-sora text-[15px] font-semibold mb-3">Lecturas recientes de {METRIC_LABEL[dev.metric].toLowerCase()}</h3>
             <div className="flex flex-col gap-2">
               {history.map((p, i) => (
