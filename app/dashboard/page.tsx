@@ -14,6 +14,7 @@ import { HeatBanner } from "@/components/HeatBanner";
 import { TodayBar } from "@/components/TodayBar";
 import { AddAnimalButton } from "@/components/AddAnimalButton";
 import { EmptyHerd } from "@/components/EmptyHerd";
+import { RoleHome } from "@/components/RoleHome";
 import { Thermometer, Activity, Wheat, Beef, Layers, Heart, Wind, Zap } from "lucide-react";
 
 const fmtH = (h: number) => (h >= 48 ? `${Math.round(h / 24)}d` : `${h}h`);
@@ -62,6 +63,8 @@ export default function OverviewPage() {
           <AddAnimalButton />
         </div>
       </div>
+
+      <RoleHome />
 
       <TodayBar />
       <OutbreakBanner outbreaks={outbreaks} onSelect={selectAnimal} />
