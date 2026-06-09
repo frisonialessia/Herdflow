@@ -8,7 +8,7 @@
 import { Animal } from "@/lib/types";
 import { useHerd } from "@/components/HerdProvider";
 import { buildHistory, HISTORY_COLOR, HistoryKind } from "@/lib/history";
-import { Sparkles, Syringe, Stethoscope, AlertTriangle, ClipboardList, HeartPulse, History, Pencil, LucideIcon } from "lucide-react";
+import { Sparkles, Syringe, Stethoscope, AlertTriangle, ClipboardList, HeartPulse, History, Pencil, Camera, ScanSearch, LucideIcon } from "lucide-react";
 
 const ICON: Record<HistoryKind, LucideIcon> = {
   enrolled: History,
@@ -20,6 +20,8 @@ const ICON: Record<HistoryKind, LucideIcon> = {
   critical: AlertTriangle,
   case: ClipboardList,
   bred: HeartPulse,
+  media: Camera,
+  ai: ScanSearch,
 };
 
 const fmtDate = (at: string | null) => (at ? new Date(at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "—");

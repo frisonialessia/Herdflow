@@ -10,7 +10,7 @@ import { profileFor, SEX_LABEL } from "./profile";
 import { analyzeForecast } from "./forecast";
 import { METRIC_LABEL } from "./format";
 
-export type HistoryKind = "enrolled" | "edit" | "birth" | "vaccine" | "medical" | "watch" | "critical" | "case" | "bred";
+export type HistoryKind = "enrolled" | "edit" | "birth" | "vaccine" | "medical" | "watch" | "critical" | "case" | "bred" | "media" | "ai";
 
 export interface HistoryEvent {
   at: string | null; // ISO date, or null if undated
@@ -38,6 +38,8 @@ export const HISTORY_COLOR: Record<HistoryKind, string> = {
   critical: "var(--critical)",
   case: "var(--brown)",
   bred: "var(--sage-deep)",
+  media: "var(--olive)",
+  ai: "var(--sage-deep)",
 };
 
 export function buildHistory(a: Animal, caseEvents: CaseEvent[], bredAt: string | null, log: LogEntry[] = []): HistoryEvent[] {

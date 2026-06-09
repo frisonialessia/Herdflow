@@ -14,6 +14,7 @@ import { ReproCard } from "@/components/ReproCard";
 import { MobilityCard } from "@/components/MobilityCard";
 import { NutritionCard } from "@/components/NutritionCard";
 import { ProfileCard } from "@/components/ProfileCard";
+import { AnimalMedia } from "@/components/AnimalMedia";
 import { HistoryTimeline } from "@/components/HistoryTimeline";
 import { EditAnimalModal } from "@/components/EditAnimalModal";
 import { MetricKey, SPECIES_EMOJI, SPECIES_LABEL } from "@/lib/types";
@@ -101,6 +102,8 @@ export function AnimalDrawer() {
           </span>
 
           <ProfileCard animal={a} />
+
+          <AnimalMedia animal={a} />
 
           <HistoryTimeline animal={a} />
 

@@ -15,6 +15,7 @@ import { Animal, MetricKey, CaseStatus, CaseState, Species, AnimalProfile } from
 import { generateHerd, generateAnimal } from "@/lib/mock_data_generator";
 import { injectAnomaly, appendTick } from "@/lib/herd_sim";
 import { LogEntry } from "@/lib/history";
+import { analyzeAnimalImage, type VisionFinding } from "@/lib/vision_demo";
 import { createAnimalAction, updateAnimalAction, removeAnimalAction, advanceCaseAction, assignCaseAction, markBredAction } from "@/app/dashboard/actions";
 
 const CASE_EVENT_LABEL: Record<CaseStatus, string> = {
@@ -59,12 +60,27 @@ interface HerdContextValue {
   markBred: (id: string) => void;
   // Persisted per-animal history log (enrollment, edits, …), kept for the session.
   log: Record<string, LogEntry[]>;
+  // Per-animal media (photos / short video) with an optional simulated AI image
+  // diagnosis. Demo-only: in-memory object URLs, not uploaded anywhere yet.
+  media: Record<string, MediaItem[]>;
+  mediaFor: (id: string) => MediaItem[];
+  addMedia: (id: string, input: { kind: "image" | "video"; url: string; name: string }) => void;
+  analyzeMedia: (id: string, mediaId: string) => void;
   // True when changes are written to the DB (real mode), false in the demo.
   persisted: boolean;
 }
 
 export type AnimalInput = { name?: string; tag_id?: string; species?: Species; profile?: Partial<AnimalProfile> };
 export type AnimalPatch = { name?: string; tag_id?: string; profile?: Partial<AnimalProfile> };
+
+export interface MediaItem {
+  id: string;
+  kind: "image" | "video";
+  url: string; // object URL (in-memory, demo)
+  name: string;
+  addedAt: string; // ISO
+  ai?: VisionFinding; // attached after a simulated AI analysis
+}
 
 const HerdContext = createContext<HerdContextValue | null>(null);
 
@@ -92,6 +108,7 @@ export function HerdProvider({
   const [cases, setCases] = useState<Record<string, CaseState>>(() => initialOps?.cases ?? {});
   const [bred, setBred] = useState<Record<string, string>>(() => initialOps?.bred ?? {});
   const [log, setLog] = useState<Record<string, LogEntry[]>>(() => initialOps?.log ?? seedEnrollment(initialHerd ?? herd));
+  const [media, setMedia] = useState<Record<string, MediaItem[]>>({});
   const simulatedRef = useRef<Set<string>>(new Set());
 
   function logEvent(id: string, entry: Omit<LogEntry, "at"> & { at?: string }) {
@@ -128,6 +145,27 @@ export function HerdProvider({
   function markBred(id: string) {
     setBred((prev) => ({ ...prev, [id]: new Date().toISOString() }));
     if (persisted) void markBredAction(id).catch((e) => console.error(e));
+  }
+
+  const mediaFor = (id: string): MediaItem[] => media[id] ?? [];
+
+  function addMedia(id: string, input: { kind: "image" | "video"; url: string; name: string }) {
+    const item: MediaItem = { id: `m-${Date.now()}-${Math.round(Math.random() * 1e6)}`, addedAt: new Date().toISOString(), ...input };
+    setMedia((prev) => ({ ...prev, [id]: [item, ...(prev[id] ?? [])] }));
+    logEvent(id, { kind: "media", title: input.kind === "image" ? "Foto agregada" : "Video agregado", detail: input.name });
+  }
+
+  // Simulated AI image diagnosis (see lib/vision_demo). Deterministic from the
+  // media id and biased to the animal's sensor status, so the demo stays coherent.
+  function analyzeMedia(id: string, mediaId: string) {
+    const animal = herd.find((a) => a.id === id);
+    if (!animal) return;
+    const finding = analyzeAnimalImage(animal.species, animal.status, mediaId);
+    setMedia((prev) => ({
+      ...prev,
+      [id]: (prev[id] ?? []).map((m) => (m.id === mediaId ? { ...m, ai: finding } : m)),
+    }));
+    logEvent(id, { kind: "ai", title: `IA · ${finding.condition}`, detail: `${finding.confidence}% de confianza · zona: ${finding.area}` });
   }
 
   const selected = selectedId ? herd.find((a) => a.id === selectedId) ?? null : null;
@@ -218,6 +256,11 @@ export function HerdProvider({
       delete next[id];
       return next;
     });
+    setMedia((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   }
 
   function reset() {
@@ -227,6 +270,7 @@ export function HerdProvider({
     setSelectedId(null);
     setCases({});
     setBred({});
+    setMedia({});
     const fresh = generateHerd();
     setHerd(fresh);
     setLog(seedEnrollment(fresh));
@@ -243,7 +287,7 @@ export function HerdProvider({
 
   return (
     <HerdContext.Provider
-      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred, log, persisted }}
+      value={{ herd, selectedId, selected, selectAnimal: setSelectedId, live, setLive, simulate, simulateOutbreak, addAnimal, updateAnimal, removeAnimal, reset, cases, caseFor, advanceCase, assignCase, bred, markBred, log, media, mediaFor, addMedia, analyzeMedia, persisted }}
     >
       {children}
     </HerdContext.Provider>
