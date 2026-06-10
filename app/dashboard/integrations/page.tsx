@@ -11,7 +11,7 @@ import { can } from "@/lib/roles";
 import { NoAccess } from "@/components/NoAccess";
 import { MetricKey } from "@/lib/types";
 import { METRIC_LABEL } from "@/lib/format";
-import { Cable, KeyRound, Copy, Check, RefreshCw, Eye, EyeOff, Terminal, Radio, Scale, CloudSun, ScanLine, Milk, Droplets, LucideIcon } from "lucide-react";
+import { Cable, KeyRound, Copy, Check, RefreshCw, Eye, EyeOff, Terminal, Radio, Scale, CloudSun, ScanLine, Milk, Droplets, Thermometer, Stethoscope, Camera, FlaskConical, Footprints, Baby, MapPin, Wheat, Database, LucideIcon } from "lucide-react";
 
 interface Device {
   id: string;
@@ -30,6 +30,17 @@ const CATALOG: Device[] = [
   { id: "milk", name: "Medidor de leche", vendor: "DeLaval · GEA", desc: "Producción por ordeño y conductividad (mastitis).", metrics: ["intake_kg"], icon: Milk },
   { id: "rfid", name: "Lector RFID / EID", vendor: "ISO 11784/85", desc: "Identifica animales por arete electrónico al pasar.", metrics: [], feeds: "Identificación (tag_id)", icon: ScanLine },
   { id: "water", name: "Bebedero inteligente", vendor: "Genérico", desc: "Consumo de agua por grupo.", metrics: ["intake_kg"], icon: Droplets },
+  // ── Clínico / veterinario ──────────────────────────────────────────────
+  { id: "bolus", name: "Bolo ruminal de temperatura y pH", vendor: "smaXtec · Moonsyst", desc: "Cápsula intrarruminal: temperatura corporal interna y pH del rumen, en continuo 24/7.", metrics: ["temperature_c"], feeds: "Temperatura interna · pH ruminal", icon: Thermometer },
+  { id: "vetthermo", name: "Termómetro veterinario Bluetooth", vendor: "Genérico BT", desc: "Cada temperatura rectal que toma el veterinario se sincroniza al expediente del animal.", metrics: ["temperature_c"], icon: Stethoscope },
+  { id: "thermal", name: "Cámara termográfica (IR)", vendor: "FLIR · Genérico", desc: "Imagen térmica para fiebre, inflamación de ubre o pezuña — sin contacto.", metrics: [], feeds: "Temperatura superficial · fiebre", icon: Camera },
+  { id: "scc", name: "Analizador de leche (SCC)", vendor: "DeLaval · Afimilk", desc: "Conteo de células somáticas y conductividad por ordeño — mastitis subclínica.", metrics: [], feeds: "Mastitis (SCC / conductividad)", icon: FlaskConical },
+  { id: "lameness", name: "Sensor de cojera / podómetro", vendor: "Nedap · IceRobotics", desc: "Pasos y patrón de marcha por animal — cojera temprana antes de que se note.", metrics: ["activity_index"], feeds: "Movilidad · cojera", icon: Footprints },
+  { id: "ultrasound", name: "Ultrasonido reproductivo", vendor: "IMV · E.I. Medical", desc: "Diagnóstico de preñez del veterinario, registrado en la ficha reproductiva.", metrics: [], feeds: "Preñez · reproducción", icon: Baby },
+  // ── Campo / operación ──────────────────────────────────────────────────
+  { id: "gps", name: "Collar / arete GPS", vendor: "Digitanimal · Quantified Ag", desc: "Ubicación de cada animal y geocercas — útil en pastoreo extensivo.", metrics: [], feeds: "Ubicación · geocerca", icon: MapPin },
+  { id: "feeder", name: "Comedero / estación de alimentación", vendor: "GEA · Lely", desc: "Consumo individual de alimento y suplemento por visita.", metrics: ["intake_kg"], feeds: "Consumo individual", icon: Wheat },
+  { id: "software", name: "Software de manejo", vendor: "DairyComp 305 · Afimilk", desc: "Sincroniza tu hato y registros existentes vía API o CSV — sin recapturar nada.", metrics: [], feeds: "Hato · registros", icon: Database },
 ];
 
 const DEFAULT_CONNECTED: Record<string, boolean> = { collar: true, weather: true };
