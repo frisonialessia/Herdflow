@@ -48,7 +48,7 @@ export function TopNav() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-sm px-[18px] py-2 rounded-[30px] transition-colors"
+              className="text-sm px-[18px] py-2 rounded-[30px] transition-all duration-200 hover:bg-[rgba(255,255,255,0.08)]"
               style={isActive(l.href) ? { background: "var(--sage-light)", color: "var(--sage-deep)", fontWeight: 600 } : { color: "#cdd6c7" }}
             >
               {l.label}
@@ -66,7 +66,7 @@ export function TopNav() {
               <button
                 onClick={() => setUserOpen((o) => !o)}
                 aria-label="Menú de usuario"
-                className="w-[38px] h-[38px] rounded-full bg-white border flex items-center justify-center cursor-pointer"
+                className="w-[38px] h-[38px] rounded-full bg-white border flex items-center justify-center cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:shadow-sm"
                 style={{ borderColor: "var(--border)" }}
               >
                 <User size={18} strokeWidth={2} color="var(--sage-deep)" />

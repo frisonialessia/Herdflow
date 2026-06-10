@@ -49,7 +49,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="max-w-[1280px] mx-auto p-5">
       <div
-        className="rounded-[28px] border p-6"
+        className="dash rounded-[28px] border p-6"
         style={{
           background: "linear-gradient(160deg,#f5f6ee 0%,#eaece0 100%)",
           borderColor: "var(--border)",

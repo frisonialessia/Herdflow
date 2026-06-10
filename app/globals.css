@@ -44,3 +44,20 @@ body {
 
 @keyframes slidein { from { transform: translateX(100%); } to { transform: none; } }
 .animate-slide { animation: slidein 0.28s ease; }
+
+/* Consistent soft depth for standard dashboard cards — one source of truth, so
+   every board page matches the overview and the drawer without per-card edits. */
+.dash .bg-white.border.rounded-xl2 { box-shadow: 0 8px 24px -18px rgba(58, 90, 64, 0.16); }
+
+/* Smooth in-page navigation + an accessible keyboard focus ring everywhere. */
+html { scroll-behavior: smooth; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
