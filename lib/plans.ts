@@ -15,7 +15,7 @@ export interface Plan {
 }
 
 export const PLANS: Record<PlanId, Plan> = {
-  free: { id: "free", name: "Gratis", animalLimit: 50, priceMxn: 0, blurb: "Para empezar — hasta 50 animales monitoreados." },
+  free: { id: "free", name: "Inicial", animalLimit: 50, priceMxn: 399, blurb: "Para arrancar — hasta 50 animales monitoreados." },
   pro: { id: "pro", name: "Profesional", animalLimit: 500, priceMxn: 1499, blurb: "Para ranchos en crecimiento — hasta 500 animales." },
   business: { id: "business", name: "Empresa", animalLimit: null, priceMxn: 0, blurb: "Hatos grandes y cooperativas — animales ilimitados." },
 };

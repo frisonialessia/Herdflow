@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { useCurrency } from "@/components/CurrencyProvider";
 import { CURRENCY_CODES, CURRENCIES, CurrencyCode } from "@/lib/currency";
@@ -8,6 +9,14 @@ import { X, Play, Pause, RotateCcw, Github } from "lucide-react";
 export function SettingsModal({ onClose }: { onClose: () => void }) {
   const { live, setLive, reset } = useHerd();
   const { code, setCode } = useCurrency();
+  const [lang, setLang] = useState("es");
+  const [location, setLocation] = useState("");
+  useEffect(() => {
+    setLang(localStorage.getItem("hf-lang") || "es");
+    setLocation(localStorage.getItem("hf-location") || "");
+  }, []);
+  const saveLang = (v: string) => { setLang(v); try { localStorage.setItem("hf-lang", v); } catch { /* ignore */ } };
+  const saveLocation = (v: string) => { setLocation(v); try { localStorage.setItem("hf-location", v); } catch { /* ignore */ } };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
@@ -34,6 +43,27 @@ export function SettingsModal({ onClose }: { onClose: () => void }) {
             <option key={c} value={c}>{CURRENCIES[c].label}</option>
           ))}
         </select>
+
+        <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Idioma</div>
+        <select
+          value={lang}
+          onChange={(e) => saveLang(e.target.value)}
+          className="w-full border rounded-xl px-3.5 py-2.5 mb-1 text-sm cursor-pointer outline-none"
+          style={{ background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
+        >
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+        <div className="text-[11.5px] mb-4" style={{ color: "var(--faint)" }}>La interfaz en inglés está en camino.</div>
+
+        <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Ubicación del rancho</div>
+        <input
+          value={location}
+          onChange={(e) => saveLocation(e.target.value)}
+          placeholder="p. ej. Jalisco, México"
+          className="w-full border rounded-xl px-3.5 py-2.5 mb-4 text-sm outline-none"
+          style={{ background: "var(--card-soft)", borderColor: "var(--border)", color: "var(--ink)" }}
+        />
 
         <div className="text-[11px] uppercase tracking-wide mb-2" style={{ color: "var(--faint)" }}>Datos de demo</div>
 

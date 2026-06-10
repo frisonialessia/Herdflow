@@ -99,7 +99,7 @@ export default function LandingPage() {
 
       {/* Breeds */}
       <section className="max-w-[1100px] mx-auto px-6 py-16 md:py-20">
-        <SectionHead kicker="Para todo tu hato" title="Hecho para tus animales — y tus razas">
+        <SectionHead kicker="Para todo tu ganado" title="Hecho para tus animales — y tus razas">
           Cada especie y raza tiene su propia línea base: lo que come y cómo se cuida un Holstein no es lo que un Brahman. Y si la tuya no está, la agregas tú — el campo es libre.
         </SectionHead>
         <SpeciesBreeds />
@@ -139,7 +139,7 @@ export default function LandingPage() {
 
       {/* Capabilities — the breadth */}
       <section id="capacidades" className="scroll-mt-20 max-w-[1100px] mx-auto px-6 py-16 md:py-20">
-        <SectionHead kicker="La plataforma" title="Una sola plataforma para toda la salud del hato">
+        <SectionHead kicker="La plataforma" title="Una sola plataforma para toda la salud de tu ganado">
           No es solo una alerta de fiebre. HerdFlow cubre el ciclo completo —salud, reproducción, bienestar y operación— sobre el mismo motor de líneas base por animal.
         </SectionHead>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -179,25 +179,25 @@ export default function LandingPage() {
 
       {/* Pricing */}
       <section id="precios" className="scroll-mt-20 max-w-[1100px] mx-auto px-6 py-16 md:py-20">
-        <SectionHead kicker="Precios" title="Empieza gratis. Crece cuando crezca tu hato.">
-          Sin hardware obligatorio y sin tarjeta para probar. Pagas por animales monitoreados, no por funciones bloqueadas.
+        <SectionHead kicker="Precios" title="Planes que crecen con tu rancho">
+          Sin hardware obligatorio y sin tarjeta para probar el demo. Pagas por animales monitoreados, no por funciones bloqueadas.
         </SectionHead>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
           <Tier
-            name="Gratis"
-            price="$0"
-            period="para siempre"
+            name="Inicial"
+            price={`$${PLANS.free.priceMxn.toLocaleString("es-MX")}`}
+            period="MXN / mes"
             limit="Hasta 50 animales"
             features={["Los 9 tableros de salud", "1 sitio · alertas en la app", "Razas y expediente por animal", "Ingesta por API o captura a mano"]}
-            cta="Abrir demo"
+            cta="Empezar"
             href="/dashboard"
           />
           <Tier
             name="Profesional"
             price={`$${PLANS.pro.priceMxn.toLocaleString("es-MX")}`}
-            period="/ mes"
+            period="MXN / mes"
             limit="Hasta 500 animales"
-            features={["Todo lo de Gratis", "Equipo y roles (vet, gerente, cuidador)", "Integraciones y API de ingesta", "IA por imagen", "Soporte prioritario"]}
+            features={["Todo lo de Inicial", "Equipo y roles (vet, gerente, cuidador)", "Integraciones y API de ingesta", "IA por imagen", "Soporte prioritario"]}
             cta="Empezar"
             href="/dashboard"
             featured
@@ -212,7 +212,7 @@ export default function LandingPage() {
             href="#precios"
           />
         </div>
-        <p className="text-center text-[12.5px] mt-7" style={{ color: "var(--faint)" }}>Precios ilustrativos en MXN · la facturación se activa al conectar tu hato de verdad.</p>
+        <p className="text-center text-[12.5px] mt-7" style={{ color: "var(--faint)" }}>Precios en MXN — también disponibles en tu divisa. La facturación se activa al conectar tu rancho de verdad.</p>
       </section>
 
       {/* Waitlist */}
