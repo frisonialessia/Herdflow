@@ -4,11 +4,11 @@
 import { Animal, Species, Sex, AnimalProfile, VaccineRecord } from "./types";
 
 export const BREEDS: Record<Species, string[]> = {
-  dairy: ["Holstein", "Jersey", "Brown Swiss", "Guernsey", "Pardo Suizo"],
-  beef: ["Angus", "Hereford", "Charolais", "Brahman", "Beefmaster"],
-  sheep: ["Katahdin", "Dorper", "Suffolk", "Merino", "Pelibuey"],
-  horse: ["Cuarto de Milla", "Criollo", "Azteca", "Pura Sangre", "Frisón"],
-  poultry: ["Rhode Island Red", "Leghorn", "Plymouth Rock", "Sussex"],
+  dairy: ["Holstein", "Jersey", "Pardo Suizo", "Guernsey", "Ayrshire", "Montbéliarde", "Normande", "Sahiwal", "Gyr", "Girolando", "Holstein Rojo", "Shorthorn Lechero"],
+  beef: ["Angus", "Hereford", "Charolais", "Brahman", "Beefmaster", "Simmental", "Limousin", "Brangus", "Wagyu", "Nelore", "Santa Gertrudis", "Braunvieh", "Chianina"],
+  sheep: ["Katahdin", "Dorper", "Suffolk", "Merino", "Pelibuey", "Hampshire", "Rambouillet", "Texel", "Romanov", "Blackbelly", "Columbia", "Charollais"],
+  horse: ["Cuarto de Milla", "Criollo", "Azteca", "Pura Sangre", "Frisón", "Árabe", "Appaloosa", "Andaluz", "Percherón", "Mustang", "Paint Horse", "Haflinger"],
+  poultry: ["Rhode Island Red", "Leghorn", "Plymouth Rock", "Sussex", "Orpington", "Wyandotte", "Australorp", "Brahma", "Cornish", "Marans", "Combatiente", "Criolla de rancho"],
 };
 
 const DIET: Record<Species, string> = {
