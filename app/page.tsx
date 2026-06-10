@@ -5,6 +5,7 @@ import { ZScoreExplainer } from "@/components/ZScoreExplainer";
 import { FarmMapPreview } from "@/components/FarmMapPreview";
 import { BrandMark } from "@/components/BrandMark";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { SpeciesBreeds } from "@/components/SpeciesBreeds";
 
 // Premium card: white, soft green-tinted depth, gentle lift on hover.
 const CARD =
@@ -86,6 +87,14 @@ export default function LandingPage() {
           <Stat k="±2σ" label="alertas explicables" />
           <Stat k="24/7" label="monitoreo en vivo" />
         </div>
+      </section>
+
+      {/* Breeds */}
+      <section className="max-w-[1100px] mx-auto px-6 py-16 md:py-20">
+        <SectionHead kicker="Para todo tu hato" title="Hecho para tus animales — y tus razas">
+          Cada especie y raza tiene su propia línea base: lo que come y cómo se cuida un Holstein no es lo que un Brahman. Y si la tuya no está, la agregas tú — el campo es libre.
+        </SectionHead>
+        <SpeciesBreeds />
       </section>
 
       {/* Live map */}
