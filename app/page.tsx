@@ -31,6 +31,7 @@ export default function LandingPage() {
             <a href="#deteccion" className="transition-colors hover:text-[var(--ink)]">Qué detectamos</a>
             <a href="#como-funciona" className="transition-colors hover:text-[var(--ink)]">Cómo funciona</a>
             <a href="#precios" className="transition-colors hover:text-[var(--ink)]">Precios</a>
+            <Link href="/guia" className="transition-colors hover:text-[var(--ink)]">Guía</Link>
           </nav>
           <Link
             href="/dashboard"
