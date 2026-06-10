@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/EmptyState";
+
 // Nutrition board — feed management. The herd feed index, average intake vs
 // target and rumination, body-condition spread, and the off-feed / dipping
 // worklist (worst first) for a feed or vet check.
@@ -64,9 +66,7 @@ export default function NutritionPage() {
       </h3>
 
       {offFeed.length === 0 ? (
-        <div className="bg-white border rounded-xl2 text-center text-sm py-10" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          Todo el hato come según objetivo.
-        </div>
+        <EmptyState title="Todo el hato come bien" subtitle="Consumo y rumia dentro del objetivo." />
       ) : (
         <div className="flex flex-col gap-2.5">
           {offFeed.map((it) => (

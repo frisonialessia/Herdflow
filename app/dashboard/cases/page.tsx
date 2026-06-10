@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/EmptyState";
+
 // Cases inbox — the vet / herdsman worklist. Every non-healthy animal as a
 // triage queue: condition, severity, predictive lead-time, who owns it and what
 // stage it's at, with one-tap "advance" actions. Click a row for the full case.
@@ -100,9 +102,7 @@ export default function CasesPage() {
           <CaseRow key={a.id} animal={a} status={caseFor(a.id).status} assignee={caseFor(a.id).assignee} onOpen={() => selectAnimal(a.id)} onAdvance={advanceCase} />
         ))}
         {shown.length === 0 && (
-          <div className="bg-white border rounded-xl2 text-center text-sm py-12" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-            Sin casos en esta vista — cada animal aquí está atendido.
-          </div>
+          <EmptyState title="Sin casos pendientes" subtitle="Cada animal en esta vista ya está atendido." />
         )}
       </div>
     </section>

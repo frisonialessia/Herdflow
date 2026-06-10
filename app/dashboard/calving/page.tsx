@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/EmptyState";
+
 // Calving board — the maternity worklist. Confirmed-pregnant cows ranked by how
 // close they are to calving: overdue and imminent first (move to the maternity
 // pen, watch closely), then due within three weeks, with each cow's progress
@@ -45,9 +47,7 @@ export default function CalvingPage() {
       </h3>
 
       {watch.length === 0 ? (
-        <div className="bg-white border rounded-xl2 text-center text-sm py-10" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          Ninguna vaca tiene parto previsto en las próximas tres semanas.
-        </div>
+        <EmptyState title="Sin partos próximos" subtitle="Ninguna vaca tiene parto previsto en las próximas tres semanas." />
       ) : (
         <div className="flex flex-col gap-2.5">
           {watch.map((it) => (

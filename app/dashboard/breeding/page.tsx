@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/EmptyState";
+
 // Reproduction board — the breeding worklist. Cows in standing heat right now
 // (with the insemination-window countdown and a one-tap "Mark bred"), cows
 // approaching heat in the next 48 h, and the herd's reproductive status mix.
@@ -47,7 +49,7 @@ export default function BreedingPage() {
         <span className="text-white rounded-[20px] px-2.5 text-[13px] font-semibold" style={{ background: "var(--sage-deep)" }}>{counts.inHeat}</span>
       </h3>
       {inHeat.length === 0 ? (
-        <Empty text="Ninguna vaca en celo en pie por ahora. Las vacas próximas se listan abajo." />
+        <div className="mb-7"><EmptyState title="Ninguna vaca en celo" subtitle="Sin celos en pie por ahora; las próximas se listan abajo." /></div>
       ) : (
         <div className="flex flex-col gap-2.5 mb-7">
           {inHeat.map((it) => (
@@ -61,7 +63,7 @@ export default function BreedingPage() {
         <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>próximas 48 h</span>
       </h3>
       {approaching.length === 0 ? (
-        <Empty text="Ninguna vaca entrará en celo en las próximas 48 horas." />
+        <EmptyState title="Sin celos próximos" subtitle="Ninguna vaca entrará en celo en las próximas 48 horas." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
           {approaching.map((it) => (
@@ -152,14 +154,6 @@ function Stat({ label, n, color }: { label: string; n: number; color: string }) 
     <div className="bg-white border rounded-[14px] p-3.5" style={{ borderColor: "var(--border)" }}>
       <div className="font-sora text-[24px] font-semibold" style={{ color }}>{n}</div>
       <div className="text-[12px] mt-0.5" style={{ color: "var(--muted)" }}>{label}</div>
-    </div>
-  );
-}
-
-function Empty({ text }: { text: string }) {
-  return (
-    <div className="bg-white border rounded-xl2 text-center text-sm py-9 mb-7" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-      {text}
     </div>
   );
 }

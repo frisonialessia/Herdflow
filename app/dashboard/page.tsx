@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/EmptyState";
+
 import { useMemo, useState } from "react";
 import { useHerd } from "@/components/HerdProvider";
 import { herdSummary } from "@/lib/mock_data_generator";
@@ -124,8 +126,8 @@ export default function OverviewPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
           {alerts.length === 0 ? (
-            <div className="rounded-[18px] p-[18px] border bg-white text-sm" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-              Sin alertas en este grupo — cada animal está dentro de su rango normal.
+            <div className="md:col-span-3">
+              <EmptyState title="Sin alertas en este grupo" subtitle="Cada animal está dentro de su rango normal." />
             </div>
           ) : (
             alerts.map((a) => (

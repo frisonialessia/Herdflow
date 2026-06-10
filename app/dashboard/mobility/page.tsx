@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/EmptyState";
+
 // Mobility & welfare board — the lameness worklist. The herd mobility index, the
 // distribution of locomotion scores, and the list of lame animals (score 2–3)
 // that need a hoof check, worst first.
@@ -64,9 +66,7 @@ export default function MobilityPage() {
       </h3>
 
       {lame.length === 0 ? (
-        <div className="bg-white border rounded-xl2 text-center text-sm py-10" style={{ borderColor: "var(--border)", color: "var(--muted)" }}>
-          Sin animales cojos — todo el hato tiene puntaje 0–1.
-        </div>
+        <EmptyState title="Buena movilidad en todo el hato" subtitle="Ningún animal con cojera — todos con puntaje 0–1." />
       ) : (
         <div className="flex flex-col gap-2.5">
           {lame.map((it) => (
